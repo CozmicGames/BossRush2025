@@ -5,7 +5,7 @@
   <title>LittleKt Game Template</title>
   <style>
     body {
-      background: #6c3ee2;
+      background: #1A1A23;
       color: white;
     }
     a {
@@ -26,7 +26,7 @@
 <body>
   <div id="canvas-container" style="text-align:center;">
     <h1>
-      LittleKt WebGPU Examples
+      Boss Rush 2025
     </h1>
     <p id="error-message">
       Your browser does not currently support WebGPU. You must use Chrome Canary, Edge Canary, or Firefox Nightly and
@@ -56,5 +56,30 @@ requestAnimationFrame(loop)
 });
 }"></script>
 -->
-<script type="text/javascript" src="game.js"></script>
+
+<script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/playroomkit/multiplayer.umd.js"></script>
+<script type="text/javascript">
+  window._USETEMPSTORAGE = true;
+
+  const { onPlayerJoin, insertCoin, isHost } = Playroom;
+
+  insertCoin().then(async () => {
+      console.log("Coin inserted. Loading game script...");
+
+      const script = document.createElement("script");
+      script.src = "game.js";
+      script.type = "text/javascript";
+      script.onload = function() {
+          console.log("Game script loaded and executed.");
+      };
+
+      script.onerror = function() {
+          console.error("Error loading game script.");
+      };
+
+      document.body.appendChild(script);
+  });
+</script>
 </html>
