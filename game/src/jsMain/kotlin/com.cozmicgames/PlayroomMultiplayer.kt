@@ -14,4 +14,8 @@ class PlayroomMultiplayer : Multiplayer {
 
         js("onPlayerJoin(wrappedCallback)")
     }
+
+    override fun getMyPlayerState(): PlayerState {
+        return PlayroomPlayerState(js("myPlayer()"))
+    }
 }

@@ -1,32 +1,46 @@
 package com.cozmicgames
 
 import com.cozmicgames.graphics.Graphics2D
+import com.cozmicgames.input.ControlManager
+import com.cozmicgames.input.InputManager
+import com.cozmicgames.input.InputState
 import com.cozmicgames.multiplayer.Multiplayer
 import com.littlekt.Context
 import com.littlekt.ContextListener
-import com.littlekt.graphics.Color
-import com.littlekt.graphics.HAlign
-import com.littlekt.graphics.g2d.SpriteBatch
-import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.graphics.g2d.use
-import com.littlekt.graphics.webgpu.*
-import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.radians
-import com.littlekt.resources.Fonts
-import com.littlekt.util.viewport.ExtendViewport
-import kotlin.time.Duration.Companion.milliseconds
 
 class Game(multiplayer: Multiplayer, context: Context) : ContextListener(context) {
+    companion object {
+        lateinit var multiplayer: Multiplayer
+        lateinit var input: InputManager
+        val controls = ControlManager()
+    }
+
+    private val inputState = InputState()
+
+    init {
+        Companion.multiplayer = multiplayer
+    }
+
     override suspend fun Context.start() {
+        Companion.input = InputManager(input)
         val g = Graphics2D(this)
 
         onResize { width, height ->
             g.resize(width, height)
         }
-        onUpdate { dt ->
+
+        onUpdate { delta ->
+            Companion.input.update(delta, inputState)
+
             g.beginFrame()
             g.drawFrame()
             g.endFrame()
+
+            multiplayer.getMyPlayerState().setState("input", inputState)
+
+            if (multiplayer.isHost) {
+                println("Host")
+            }
         }
 
         onRelease {
