@@ -6,10 +6,12 @@ import com.littlekt.input.GameStick
 import com.littlekt.input.Key
 import com.littlekt.input.Pointer
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 interface ControlInput {
     val isTriggered: Boolean
     val currentValue: Float
+    val currentValueSign: Float get() = currentValue.sign
 
     fun update(action: ControlAction)
 }
@@ -51,8 +53,13 @@ class MouseDeltaXControlInput : ControlInput {
     override var currentValue = 0.0f
         private set
 
+    override var currentValueSign = 0.0f
+        private set
+
     override fun update(action: ControlAction) {
         currentValue = Game.input.deltaX.toFloat()
+        currentValueSign = currentValue.sign
+        currentValue = currentValue.absoluteValue
     }
 }
 
@@ -63,8 +70,13 @@ class MouseDeltaYControlInput : ControlInput {
     override var currentValue = 0.0f
         private set
 
+    override var currentValueSign = 0.0f
+        private set
+
     override fun update(action: ControlAction) {
         currentValue = Game.input.deltaY.toFloat()
+        currentValueSign = currentValue.sign
+        currentValue = currentValue.absoluteValue
     }
 }
 
@@ -94,6 +106,9 @@ class GamepadLeftJoystickAxisControlInput(var axis: JoystickAxis, var threshold:
     override var currentValue = 0.0f
         private set
 
+    override var currentValueSign = 0.0f
+        private set
+
     override fun update(action: ControlAction) {
         val value = when (axis) {
             JoystickAxis.X -> Game.input.getGamepadJoystickXDistance(GameStick.LEFT, Game.controls.activeGamepad)
@@ -101,6 +116,8 @@ class GamepadLeftJoystickAxisControlInput(var axis: JoystickAxis, var threshold:
         }
         isTriggered = value.absoluteValue >= threshold
         currentValue = value
+        currentValueSign = currentValue.sign
+        currentValue = currentValue.absoluteValue
     }
 }
 
@@ -111,6 +128,9 @@ class GamepadRightJoystickAxisControlInput(var axis: JoystickAxis, var threshold
     override var currentValue = 0.0f
         private set
 
+    override var currentValueSign = 0.0f
+        private set
+
     override fun update(action: ControlAction) {
         val value = when (axis) {
             JoystickAxis.X -> Game.input.getGamepadJoystickXDistance(GameStick.RIGHT, Game.controls.activeGamepad)
@@ -118,5 +138,7 @@ class GamepadRightJoystickAxisControlInput(var axis: JoystickAxis, var threshold
         }
         isTriggered = value.absoluteValue >= threshold
         currentValue = value
+        currentValueSign = currentValue.sign
+        currentValue = currentValue.absoluteValue
     }
 }

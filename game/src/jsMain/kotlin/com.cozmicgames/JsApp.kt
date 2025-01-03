@@ -5,10 +5,7 @@ import com.littlekt.createLittleKtApp
 
 fun main() {
     val multiplayer = PlayroomMultiplayer()
-
-    multiplayer.onPlayerJoin {
-        PlayerManager.registerPlayer(it)
-    }
+    val playerManager = PlayerManager(multiplayer)
 
     createLittleKtApp {
         width = 960
@@ -16,6 +13,6 @@ fun main() {
         title = "Boss Rush 2025"
         canvasId = "canvas"
     }.start {
-        Game(multiplayer, it)
+        Game(playerManager, it)
     }
 }

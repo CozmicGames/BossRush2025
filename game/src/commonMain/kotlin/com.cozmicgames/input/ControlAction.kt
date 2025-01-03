@@ -36,20 +36,25 @@ class ControlAction(var name: String) {
             return
         }
 
+        if (inputs.isEmpty())
+            return
+
         inputs.forEach { (_, input) ->
             input.update(this)
         }
 
         isTriggered = inputs.any { (_, input) -> input.isTriggered }
-        currentValueRaw = inputs.maxOf { (_, input) -> input.currentValue }
 
-        if (currentValueRaw <= deadZone) {
-            currentValue -= rampDownSpeed * delta
-            currentValue = max(0.0f, currentValue)
-        } else {
-            currentValue += rampUpSpeed * delta
-            currentValue = min(currentValueRaw, currentValue)
-        }
+        val currentValueInput = inputs.maxBy { (_, input) -> input.currentValue }.value
+        currentValueRaw = currentValueInput.currentValue
+
+        currentValue = if (currentValueRaw <= deadZone)
+            max(0.0f, abs(currentValue) - rampDownSpeed * delta)
+        else
+            min(currentValueRaw, abs(currentValue) + rampUpSpeed * delta)
+
+        currentValue *= currentValueInput.currentValueSign
+        currentValueRaw *= currentValueInput.currentValueSign
     }
 
     fun addKey(key: Key) {

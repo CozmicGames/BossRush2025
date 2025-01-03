@@ -63,7 +63,7 @@ requestAnimationFrame(loop)
 <script type="text/javascript">
   window._USETEMPSTORAGE = true;
 
-  const { onPlayerJoin, insertCoin, isHost, myPlayer } = Playroom;
+  const { onPlayerJoin, insertCoin, isHost, myPlayer, getState, setState } = Playroom;
 
   insertCoin().then(async () => {
       console.log("Coin inserted. Loading game script...");

@@ -3,47 +3,77 @@ package com.cozmicgames
 import com.cozmicgames.graphics.Graphics2D
 import com.cozmicgames.input.ControlManager
 import com.cozmicgames.input.InputManager
-import com.cozmicgames.input.InputState
-import com.cozmicgames.multiplayer.Multiplayer
+import com.cozmicgames.multiplayer.PlayerManager
+import com.cozmicgames.states.*
 import com.littlekt.Context
 import com.littlekt.ContextListener
+import com.littlekt.log.Logger
+import com.littlekt.util.seconds
 
-class Game(multiplayer: Multiplayer, context: Context) : ContextListener(context) {
+class Game(players: PlayerManager, context: Context) : ContextListener(context) {
     companion object {
-        lateinit var multiplayer: Multiplayer
+        lateinit var logger: Logger
+        lateinit var players: PlayerManager
         lateinit var input: InputManager
+        lateinit var graphics: Graphics2D
         val controls = ControlManager()
+        val resources = Resources()
     }
 
-    private val inputState = InputState()
+    private lateinit var currentGameState: GameState
 
     init {
-        Companion.multiplayer = multiplayer
+        Companion.players = players
     }
 
     override suspend fun Context.start() {
+        Companion.logger = logger
+
+        resources.load(this)
+
         Companion.input = InputManager(input)
         val g = Graphics2D(this)
+        Companion.graphics = g
 
         onResize { width, height ->
             g.resize(width, height)
         }
 
+        currentGameState = TestState()
+
+        var isFirstUpdate = true
+
         onUpdate { delta ->
-            Companion.input.update(delta, inputState)
+            players.updatePlayers(delta)
+            controls.update(delta.seconds)
+
+            if (isFirstUpdate) {
+                currentGameState.begin()
+                isFirstUpdate = false
+            }
 
             g.beginFrame()
-            g.drawFrame()
+            val newState = currentGameState.render(delta)()
             g.endFrame()
 
-            multiplayer.getMyPlayerState().setState("input", inputState)
+            if (newState != currentGameState) {
+                if (newState !is SuspendGameState)
+                    currentGameState.end()
+                else
+                    if (currentGameState is SuspendableGameState)
+                        (currentGameState as SuspendableGameState).suspend()
 
-            if (multiplayer.isHost) {
-                println("Host")
+                if (currentGameState is SuspendGameState && newState is SuspendableGameState)
+                    newState.resumeFromSuspension()
+
+                currentGameState = newState
+
+                currentGameState.begin()
             }
         }
 
         onRelease {
+            resources.release()
             g.release()
         }
     }

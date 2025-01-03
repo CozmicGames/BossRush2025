@@ -3,16 +3,13 @@ package com.cozmicgames.graphics
 import com.littlekt.Context
 import com.littlekt.Releasable
 import com.littlekt.graphics.Color
-import com.littlekt.graphics.HAlign
-import com.littlekt.graphics.g2d.SpriteBatch
-import com.littlekt.graphics.g2d.use
 import com.littlekt.graphics.webgpu.*
-import com.littlekt.resources.Fonts
+import com.littlekt.util.datastructure.Pool
 import com.littlekt.util.viewport.ExtendViewport
 import com.littlekt.util.viewport.Viewport
 
 class Graphics2D(private val context: Context) : Releasable {
-    private class FrameContext(
+    private inner class FrameContext(
         val commandEncoder: CommandEncoder,
         val frame: TextureView,
         val swapChainTexture: WebGPUTexture
@@ -27,12 +24,12 @@ class Graphics2D(private val context: Context) : Releasable {
     private val device = context.graphics.device
     private val surfaceCapabilities = context.graphics.surfaceCapabilities
     private val preferredFormat = context.graphics.preferredFormat
-    private val batch: SpriteBatch
-    private val viewport: Viewport
+    private val renderPassPool = Pool(1) { RenderPass(device, context, preferredFormat) }
+    private val allocatedRenderPasses = arrayListOf<RenderPass>()
 
     private var frameContext: FrameContext? = null
 
-    val camera get() = viewport.camera
+    val mainViewport: Viewport
 
     init {
         context.graphics.configureSurface(
@@ -42,12 +39,11 @@ class Graphics2D(private val context: Context) : Releasable {
             surfaceCapabilities.alphaModes[0]
         )
 
-        batch = SpriteBatch(device, context.graphics, preferredFormat)
-        viewport = ExtendViewport(960, 540)
+        mainViewport = ExtendViewport(context.graphics.width, context.graphics.height)
     }
 
     fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        mainViewport.update(width, height)
         context.graphics.configureSurface(
             TextureUsage.RENDER_ATTACHMENT,
             preferredFormat,
@@ -89,36 +85,26 @@ class Graphics2D(private val context: Context) : Releasable {
         )
     }
 
-    fun drawFrame() {
-        val frameContext = frameContext ?: return
+    fun beginRenderPass(view: TextureView, clearColor: Color): RenderPass {
+        val frameContext = frameContext ?: throw IllegalStateException("beginFrame must be called first")
 
-        val renderPassEncoder =
-            frameContext.commandEncoder.beginRenderPass(
-                desc =
-                RenderPassDescriptor(
-                    listOf(
-                        RenderPassColorAttachmentDescriptor(
-                            view = frameContext.frame,
-                            loadOp = LoadOp.CLEAR,
-                            storeOp = StoreOp.STORE,
-                            clearColor =
-                            if (preferredFormat.srgb) Color.DARK_GRAY.toLinear()
-                            else Color.DARK_GRAY
-                        )
-                    )
-                )
-            )
-        camera.update()
+        val renderPass = renderPassPool.alloc()
+        renderPass.begin(frameContext.commandEncoder, view, clearColor)
+        allocatedRenderPasses += renderPass
 
-        batch.use(renderPassEncoder, camera.viewProjection) {
-            Fonts.default.draw(it, "Hello LittleKt!", 0f, 0f, align = HAlign.CENTER)
-        }
-        renderPassEncoder.end()
-        renderPassEncoder.release()
+        return renderPass
+    }
+
+    fun beginMainRenderPass(clearColor: Color = Color.DARK_GRAY): RenderPass {
+        val frameContext = frameContext ?: throw IllegalStateException("beginFrame must be called first")
+        return beginRenderPass(frameContext.frame, clearColor)
     }
 
     fun endFrame() {
         val frameContext = frameContext ?: return
+
+        renderPassPool.free(allocatedRenderPasses)
+        allocatedRenderPasses.clear()
 
         val commandBuffer = frameContext.commandEncoder.finish()
 
@@ -130,7 +116,10 @@ class Graphics2D(private val context: Context) : Releasable {
     }
 
     override fun release() {
-        batch.release()
+        renderPassPool.allocMultiple(renderPassPool.itemsInPool) {
+            it.forEach(RenderPass::release)
+        }
+
         device.release()
     }
 }

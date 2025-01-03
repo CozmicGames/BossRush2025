@@ -18,4 +18,12 @@ class PlayroomMultiplayer : Multiplayer {
     override fun getMyPlayerState(): PlayerState {
         return PlayroomPlayerState(js("myPlayer()"))
     }
+
+    override fun <T : Any> getState(name: String): T? {
+        return js("getState(name)") as? T
+    }
+
+    override fun <T : Any> setState(name: String, value: T) {
+        js("setState(name, value)")
+    }
 }

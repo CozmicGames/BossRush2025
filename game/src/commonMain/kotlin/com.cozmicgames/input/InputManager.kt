@@ -3,12 +3,24 @@ package com.cozmicgames.input
 import com.cozmicgames.Game
 import com.littlekt.input.*
 import com.littlekt.math.geom.Point
+import com.littlekt.util.seconds
 import kotlin.js.Date
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 class InputManager(private val input: Input) : Input {
-    val moveLeftControl = Game.controls.add("moveLeft")
-    val moveRightControl = Game.controls.add("moveRight")
+    private val moveLeftControl = Game.controls.add("moveLeft")
+    private val moveRightControl = Game.controls.add("moveRight")
+    private val moveUpControl = Game.controls.add("moveUp")
+    private val moveDownControl = Game.controls.add("moveDown")
+    private val rotateControl = Game.controls.add("rotate")
+    private val usePrimaryControl = Game.controls.add("usePrimary")
+    private val useSecondaryControl = Game.controls.add("useSecondary")
+
+    private var recordInputState: InputState? = null
+    private var recordStartTime = 0.0
+    private var recordDuration = 0.0
+    private var recordCallback: ((InputState) -> Unit)? = null
 
     init {
         moveLeftControl.addKey(Key.A)
@@ -18,21 +30,55 @@ class InputManager(private val input: Input) : Input {
         moveRightControl.addKey(Key.D)
         moveRightControl.addKey(Key.ARROW_RIGHT)
         moveRightControl.setLeftJoystickAxis(JoystickAxis.X, 0.1f)
+
+        moveUpControl.addKey(Key.W)
+        moveUpControl.addKey(Key.ARROW_UP)
+        moveUpControl.setLeftJoystickAxis(JoystickAxis.Y, 0.1f)
+
+        moveDownControl.addKey(Key.S)
+        moveDownControl.addKey(Key.ARROW_DOWN)
+        moveDownControl.setLeftJoystickAxis(JoystickAxis.Y, 0.1f)
+
+        rotateControl.setDeltaY()
+        rotateControl.setRightJoystickAxis(JoystickAxis.Y, 0.1f)
+
+        usePrimaryControl.addKey(Key.SPACE)
+        usePrimaryControl.addMouseButton(Pointer.MOUSE_LEFT)
+        usePrimaryControl.setGamepadButton(GameButton.R1)
+
+        useSecondaryControl.addKey(Key.SHIFT_LEFT)
+        useSecondaryControl.addMouseButton(Pointer.MOUSE_RIGHT)
+        useSecondaryControl.setGamepadButton(GameButton.R2)
     }
 
-    fun update(delta: Duration, state: InputState) {
-        val frame = InputFrame()
+    fun recordInputState(inputState: InputState, duration: Duration, callback: (InputState) -> Unit) {
+        recordInputState = inputState
+        recordDuration = duration.toDouble(DurationUnit.MILLISECONDS)
+        recordStartTime = Date.now()
+        recordCallback = callback
+    }
 
+    fun update(delta: Duration, frame: InputFrame) {
         val leftAmount = moveLeftControl.currentValue
         val rightAmount = moveRightControl.currentValue
+        val upAmount = moveUpControl.currentValue
+        val downAmount = moveDownControl.currentValue
 
-        frame.timestamp = Date.now()
-        frame.deltaX = -leftAmount + rightAmount
-        frame.deltaY = 0.0f
-        frame.usePrimary = false
-        frame.useSecondary = false
+        val currentTime = Date.now()
 
-        state.inputFrames.add(frame)
+        frame.timestamp = currentTime
+        frame.deltaX = (-leftAmount + rightAmount) * delta.seconds
+        frame.deltaY = (-downAmount + upAmount) * delta.seconds
+        frame.rotation = (-rotateControl.currentValue) * delta.seconds
+        frame.usePrimary = usePrimaryControl.isTriggered
+        frame.useSecondary = useSecondaryControl.isTriggered
+
+        if (recordInputState != null && currentTime - recordStartTime >= recordDuration) {
+            recordCallback?.invoke(recordInputState!!)
+            recordInputState = null
+            recordCallback = null
+        } else
+            recordInputState?.inputFrames?.add(frame)
     }
 
     override val axisLeftX: Float
