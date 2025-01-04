@@ -5,6 +5,12 @@ import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 
 class PlayroomPlayerState(private val wrappedState: dynamic) : PlayerState {
+    override val id: String
+        get() {
+            val state = wrappedState
+            return js("state.id") as String
+        }
+
     override val color: Color = MutableColor(1.0f, 1.0f, 1.0f, 1.0f)
         get() {
             val state = wrappedState

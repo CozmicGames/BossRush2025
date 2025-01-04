@@ -3,6 +3,8 @@ package com.cozmicgames.multiplayer
 import com.littlekt.graphics.Color
 
 interface PlayerState {
+    val id: String
+
     val color: Color
 
     fun <T : Any> getState(name: String): T?

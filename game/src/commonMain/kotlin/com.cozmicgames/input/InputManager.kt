@@ -1,10 +1,13 @@
 package com.cozmicgames.input
 
+import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.littlekt.input.*
 import com.littlekt.math.geom.Point
+import com.littlekt.math.geom.radians
 import com.littlekt.util.seconds
 import kotlin.js.Date
+import kotlin.math.atan2
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -23,6 +26,18 @@ class InputManager(private val input: Input) : Input {
     private var recordCallback: ((InputState) -> Unit)? = null
 
     init {
+        moveLeftControl.rampUpSpeed = Constants.INPUT_RAMP_UP_SPEED
+        moveLeftControl.rampDownSpeed = Constants.INPUT_RAMP_DOWN_SPEED
+
+        moveRightControl.rampUpSpeed = Constants.INPUT_RAMP_UP_SPEED
+        moveRightControl.rampDownSpeed = Constants.INPUT_RAMP_DOWN_SPEED
+
+        moveUpControl.rampUpSpeed = Constants.INPUT_RAMP_UP_SPEED
+        moveUpControl.rampDownSpeed = Constants.INPUT_RAMP_DOWN_SPEED
+
+        moveDownControl.rampUpSpeed = Constants.INPUT_RAMP_UP_SPEED
+        moveDownControl.rampDownSpeed = Constants.INPUT_RAMP_DOWN_SPEED
+
         moveLeftControl.addKey(Key.A)
         moveLeftControl.addKey(Key.ARROW_LEFT)
         moveLeftControl.setLeftJoystickAxis(JoystickAxis.X, 0.1f)
@@ -59,6 +74,8 @@ class InputManager(private val input: Input) : Input {
     }
 
     fun update(delta: Duration, frame: InputFrame) {
+        val player = Game.players.getMyPlayer() ?: return
+
         val leftAmount = moveLeftControl.currentValue
         val rightAmount = moveRightControl.currentValue
         val upAmount = moveUpControl.currentValue
@@ -66,10 +83,17 @@ class InputManager(private val input: Input) : Input {
 
         val currentTime = Date.now()
 
+        val deltaX = (-leftAmount + rightAmount) * delta.seconds
+        val deltaY = (-downAmount + upAmount) * delta.seconds
+
+        val shipPosition = Game.graphics.mainViewport.camera.worldToScreen(Game.context, player.ship.x, player.ship.y)
+        val angle = atan2((Game.graphics.mainViewport.height - y - 1) - shipPosition.y, x - shipPosition.x).radians
+        val deltaRotation = (angle - player.ship.rotation).radians * delta.seconds
+
         frame.timestamp = currentTime
-        frame.deltaX = (-leftAmount + rightAmount) * delta.seconds
-        frame.deltaY = (-downAmount + upAmount) * delta.seconds
-        frame.rotation = (-rotateControl.currentValue) * delta.seconds
+        frame.deltaX = deltaX
+        frame.deltaY = deltaY
+        frame.deltaRotation = deltaRotation
         frame.usePrimary = usePrimaryControl.isTriggered
         frame.useSecondary = useSecondaryControl.isTriggered
 

@@ -11,7 +11,7 @@ import kotlin.math.sign
 interface ControlInput {
     val isTriggered: Boolean
     val currentValue: Float
-    val currentValueSign: Float get() = currentValue.sign
+    val currentValueSign: Float get() = 1.0f
 
     fun update(action: ControlAction)
 }
@@ -58,7 +58,10 @@ class MouseDeltaXControlInput : ControlInput {
 
     override fun update(action: ControlAction) {
         currentValue = Game.input.deltaX.toFloat()
-        currentValueSign = currentValue.sign
+
+        if (currentValue != 0.0f)
+            currentValueSign = currentValue.sign
+
         currentValue = currentValue.absoluteValue
     }
 }
@@ -75,7 +78,10 @@ class MouseDeltaYControlInput : ControlInput {
 
     override fun update(action: ControlAction) {
         currentValue = Game.input.deltaY.toFloat()
-        currentValueSign = currentValue.sign
+
+        if (currentValue != 0.0f)
+            currentValueSign = currentValue.sign
+
         currentValue = currentValue.absoluteValue
     }
 }
@@ -116,7 +122,10 @@ class GamepadLeftJoystickAxisControlInput(var axis: JoystickAxis, var threshold:
         }
         isTriggered = value.absoluteValue >= threshold
         currentValue = value
-        currentValueSign = currentValue.sign
+
+        if (currentValue != 0.0f)
+            currentValueSign = currentValue.sign
+
         currentValue = currentValue.absoluteValue
     }
 }
@@ -138,7 +147,10 @@ class GamepadRightJoystickAxisControlInput(var axis: JoystickAxis, var threshold
         }
         isTriggered = value.absoluteValue >= threshold
         currentValue = value
-        currentValueSign = currentValue.sign
+
+        if (currentValue != 0.0f)
+            currentValueSign = currentValue.sign
+
         currentValue = currentValue.absoluteValue
     }
 }

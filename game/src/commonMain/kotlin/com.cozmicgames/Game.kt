@@ -4,6 +4,7 @@ import com.cozmicgames.graphics.Graphics2D
 import com.cozmicgames.input.ControlManager
 import com.cozmicgames.input.InputManager
 import com.cozmicgames.multiplayer.PlayerManager
+import com.cozmicgames.physics.PhysicsWorld
 import com.cozmicgames.states.*
 import com.littlekt.Context
 import com.littlekt.ContextListener
@@ -12,10 +13,12 @@ import com.littlekt.util.seconds
 
 class Game(players: PlayerManager, context: Context) : ContextListener(context) {
     companion object {
+        lateinit var context: Context
         lateinit var logger: Logger
         lateinit var players: PlayerManager
         lateinit var input: InputManager
         lateinit var graphics: Graphics2D
+        val physics = PhysicsWorld(1024.0f, 1024.0f)
         val controls = ControlManager()
         val resources = Resources()
     }
@@ -27,7 +30,10 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
     }
 
     override suspend fun Context.start() {
+        Companion.context = this
         Companion.logger = logger
+        physics.width = graphics.width.toFloat()
+        physics.height = graphics.height.toFloat()
 
         resources.load(this)
 
