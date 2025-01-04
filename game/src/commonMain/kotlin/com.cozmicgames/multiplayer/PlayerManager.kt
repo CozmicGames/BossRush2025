@@ -1,5 +1,7 @@
 package com.cozmicgames.multiplayer
 
+import com.cozmicgames.Game
+import com.cozmicgames.weapons.ProjectileType
 import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
@@ -7,13 +9,15 @@ import kotlin.time.Duration
 class PlayerManager(private val multiplayer: Multiplayer) {
     private val players = arrayListOf<Player>()
 
+    val isHost get() = multiplayer.isHost
+
     init {
         multiplayer.onPlayerJoin {
             players += Player(it)
         }
     }
 
-    fun updatePlayers(delta: Duration) {
+    fun update(delta: Duration) {
         if (multiplayer.isHost) {
             for (player in players) {
                 player.state.getState<Float>("inputX")?.let {
@@ -43,6 +47,24 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 player.state.setState("x", player.ship.x)
                 player.state.setState("y", player.ship.y)
                 player.state.setState("rotation", player.ship.rotation.degrees)
+
+                val spawnProjectileType = ProjectileType.entries.getOrNull(player.state.getState("spawnProjectileType") ?: -1)
+                val spawnProjectileX = player.state.getState<Float>("spawnProjectileX")
+                val spawnProjectileY = player.state.getState<Float>("spawnProjectileY")
+                val spawnProjectileDirectionX = player.state.getState<Float>("spawnProjectileDirectionX")
+                val spawnProjectileDirectionY = player.state.getState<Float>("spawnProjectileDirectionY")
+                val spawnProjectileSpeed = player.state.getState<Float>("spawnProjectileSpeed")
+
+                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileDirectionX != null && spawnProjectileDirectionY != null && spawnProjectileSpeed != null) {
+                    Game.projectiles.spawnProjectile(spawnProjectileType, spawnProjectileX, spawnProjectileY, spawnProjectileDirectionX, spawnProjectileDirectionY, spawnProjectileSpeed)
+
+                    player.state.setState("spawnProjectileType", null)
+                    player.state.setState("spawnProjectileX", null)
+                    player.state.setState("spawnProjectileY", null)
+                    player.state.setState("spawnProjectileDirectionX", null)
+                    player.state.setState("spawnProjectileDirectionY", null)
+                    player.state.setState("spawnProjectileSpeed", null)
+                }
             }
         }
 

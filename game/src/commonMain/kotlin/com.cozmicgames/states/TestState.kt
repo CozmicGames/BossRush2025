@@ -40,9 +40,10 @@ class TestState : GameState {
         val pass = Game.graphics.beginMainRenderPass()
 
         pass.render(playerCamera.camera) {
-            it.draw(Game.resources.textBackgroundTexture, 0.0f, 0.0f, originX = 1024.0f, originY = 1024.0f, width = 2048.0f, height = 2048.0f)
+            it.draw(Game.resources.testBackgroundTexture, 0.0f, 0.0f, originX = 1024.0f, originY = 1024.0f, width = 2048.0f, height = 2048.0f)
 
             Game.players.renderPlayers(it)
+            Game.projectiles.render(it)
         }
 
         pass.end()

@@ -28,7 +28,7 @@ class PlayroomPlayerState(private val wrappedState: dynamic) : PlayerState {
         return js("state.getState(name)") as? T
     }
 
-    override fun <T : Any> setState(name: String, value: T) {
+    override fun <T : Any> setState(name: String, value: T?) {
         val state = wrappedState
         js("state.setState(name, value)")
     }

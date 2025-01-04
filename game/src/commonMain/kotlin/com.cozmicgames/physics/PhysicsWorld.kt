@@ -5,10 +5,10 @@ import com.cozmicgames.Constants
 class PhysicsWorld(var width: Float, var height: Float) {
     private val colliders = arrayListOf<Collider>()
 
-    private val minX get() = -width * 0.5f
-    private val minY get() = -height * 0.5f
-    private val maxX get() = width * 0.5f
-    private val maxY get() = height * 0.5f
+    val minX get() = -width * 0.5f
+    val minY get() = -height * 0.5f
+    val maxX get() = width * 0.5f
+    val maxY get() = height * 0.5f
 
     fun addCollider(collider: Collider) {
         colliders.add(collider)

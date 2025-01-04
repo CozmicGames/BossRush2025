@@ -94,8 +94,8 @@ class InputManager(private val input: Input) : Input {
         frame.deltaX = deltaX
         frame.deltaY = deltaY
         frame.deltaRotation = deltaRotation
-        frame.usePrimary = usePrimaryControl.isTriggered
-        frame.useSecondary = useSecondaryControl.isTriggered
+        frame.usePrimary = if (player.ship.primaryWeapon?.canContinoousFire == true) usePrimaryControl.state else usePrimaryControl.isTriggered
+        frame.useSecondary = if (player.ship.secondaryWeapon?.canContinoousFire == true) useSecondaryControl.state else useSecondaryControl.isTriggered
 
         if (recordInputState != null && currentTime - recordStartTime >= recordDuration) {
             recordCallback?.invoke(recordInputState!!)

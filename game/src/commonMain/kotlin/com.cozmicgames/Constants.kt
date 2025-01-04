@@ -9,5 +9,5 @@ object Constants {
 
     const val WORLD_DECELERATION_BORDER = 50.0f
 
-    const val CAMERA_FOLLOW_MOVE_SPEED = 0.8f
+    const val CAMERA_FOLLOW_MOVE_SPEED = 5.0f
 }

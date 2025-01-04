@@ -6,6 +6,7 @@ import com.cozmicgames.input.InputManager
 import com.cozmicgames.multiplayer.PlayerManager
 import com.cozmicgames.physics.PhysicsWorld
 import com.cozmicgames.states.*
+import com.cozmicgames.weapons.ProjectileManager
 import com.littlekt.Context
 import com.littlekt.ContextListener
 import com.littlekt.log.Logger
@@ -21,6 +22,7 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         val physics = PhysicsWorld(1024.0f, 1024.0f)
         val controls = ControlManager()
         val resources = Resources()
+        val projectiles = ProjectileManager()
     }
 
     private lateinit var currentGameState: GameState
@@ -50,7 +52,8 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         var isFirstUpdate = true
 
         onUpdate { delta ->
-            players.updatePlayers(delta)
+            projectiles.update(delta)
+            players.update(delta)
             controls.update(delta.seconds)
 
             if (isFirstUpdate) {
