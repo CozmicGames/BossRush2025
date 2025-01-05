@@ -10,6 +10,7 @@ import com.littlekt.graphics.webgpu.*
 class RenderPass(device: Device, context: Context, preferredFormat: TextureFormat) : Releasable {
     private val batch = SpriteBatch(device, context.graphics, preferredFormat)
     private var renderPassEncoder: RenderPassEncoder? = null
+    private val renderer = Renderer()
 
     fun begin(commandEncoder: CommandEncoder, view: TextureView, clearColor: Color) {
         require(renderPassEncoder == null) { "Render pass already started" }
@@ -40,6 +41,13 @@ class RenderPass(device: Device, context: Context, preferredFormat: TextureForma
         block(batch)
 
         batch.flush(encoder)
+    }
+
+    fun render(camera: Camera, block: (Renderer) -> Unit) {
+        render(camera) { batch: SpriteBatch ->
+            block(renderer)
+            renderer.render(batch)
+        }
     }
 
     fun end() {

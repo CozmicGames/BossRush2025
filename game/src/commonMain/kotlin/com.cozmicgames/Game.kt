@@ -1,5 +1,7 @@
 package com.cozmicgames
 
+import com.cozmicgames.entities.EntityManager
+import com.cozmicgames.events.EventManager
 import com.cozmicgames.graphics.Graphics2D
 import com.cozmicgames.input.ControlManager
 import com.cozmicgames.input.InputManager
@@ -23,6 +25,8 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         val controls = ControlManager()
         val resources = Resources()
         val projectiles = ProjectileManager()
+        val entities = EntityManager()
+        val events = EventManager()
     }
 
     private lateinit var currentGameState: GameState
@@ -52,8 +56,9 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         var isFirstUpdate = true
 
         onUpdate { delta ->
+            events.processEvents()
+
             projectiles.update(delta)
-            players.update(delta)
             controls.update(delta.seconds)
 
             if (isFirstUpdate) {
@@ -64,6 +69,9 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             g.beginFrame()
             val newState = currentGameState.render(delta)()
             g.endFrame()
+
+            players.update(delta)
+            events.sendEvents()
 
             if (newState != currentGameState) {
                 if (newState !is SuspendGameState)

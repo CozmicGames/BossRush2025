@@ -17,11 +17,11 @@ class PhysicsWorld(var width: Float, var height: Float) {
     fun scaleSpeedX(collider: Collider, speed: Float): Float {
         var scale = 1.0f
 
-        if (collider.minX < minX + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
-            scale = (collider.minX - minX) / Constants.WORLD_DECELERATION_BORDER
+        if (collider.boundsMinX < minX + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
+            scale = (collider.boundsMinX - minX) / Constants.WORLD_DECELERATION_BORDER
 
-        if (collider.maxX > maxX - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
-            scale = (maxX - collider.maxX) / Constants.WORLD_DECELERATION_BORDER
+        if (collider.boundsMaxX > maxX - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
+            scale = (maxX - collider.boundsMaxX) / Constants.WORLD_DECELERATION_BORDER
 
         return speed * scale
     }
@@ -29,26 +29,53 @@ class PhysicsWorld(var width: Float, var height: Float) {
     fun scaleSpeedY(collider: Collider, speed: Float): Float {
         var scale = 1.0f
 
-        if (collider.minY < minY + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
-            scale = (collider.minY - minY) / Constants.WORLD_DECELERATION_BORDER
+        if (collider.boundsMinY < minY + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
+            scale = (collider.boundsMinY - minY) / Constants.WORLD_DECELERATION_BORDER
 
-        if (collider.maxY > maxY - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
-            scale = (maxY - collider.maxY) / Constants.WORLD_DECELERATION_BORDER
+        if (collider.boundsMaxY > maxY - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
+            scale = (maxY - collider.boundsMaxY) / Constants.WORLD_DECELERATION_BORDER
 
         return speed * scale
     }
 
     fun updateCollider(collider: Collider) {
-        if (collider.minX < minX)
-            collider.x = minX + collider.radius
+        if (collider.boundsMinX < minX)
+            collider.x = minX + collider.boundsWidth * 0.5f
 
-        if (collider.maxX > maxX)
-            collider.x = maxX - collider.radius
+        if (collider.boundsMaxX > maxX)
+            collider.x = maxX - collider.boundsWidth * 0.5f
 
-        if (collider.minY < minY)
-            collider.y = minY + collider.radius
+        if (collider.boundsMinY < minY)
+            collider.y = minY + collider.boundsHeight * 0.5f
 
-        if (collider.maxY > maxY)
-            collider.y = maxY - collider.radius
+        if (collider.boundsMaxY > maxY)
+            collider.y = maxY - collider.boundsHeight * 0.5f
+
+        collider.update()
+    }
+
+    fun checkCollision(collider: Collider, filter: (Collider) -> Boolean = { true }, callback: (Collider) -> Unit) {
+        colliders.forEach {
+            if (it != collider && filter(it) && collider.collidesWith(it))
+                callback(it)
+        }
+    }
+
+    fun getNearestCollision(collider: Collider, filter: (Collider) -> Boolean = { true }): Collider? {
+        var nearest: Collider? = null
+        var nearestDistance = Float.MAX_VALUE
+
+        checkCollision(collider, filter) {
+            val dx = it.x - collider.x
+            val dy = it.y - collider.y
+            val distance = dx * dx + dy * dy
+
+            if (distance < nearestDistance) {
+                nearest = it
+                nearestDistance = distance
+            }
+        }
+
+        return nearest
     }
 }
