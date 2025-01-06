@@ -3,7 +3,9 @@ package com.cozmicgames.physics
 import com.cozmicgames.Constants
 
 class PhysicsWorld(var width: Float, var height: Float) {
-    private val colliders = arrayListOf<Collider>()
+    val colliders get() = collidersInternal as List<Collider>
+
+    private val collidersInternal = arrayListOf<Collider>()
 
     val minX get() = -width * 0.5f
     val minY get() = -height * 0.5f
@@ -11,7 +13,11 @@ class PhysicsWorld(var width: Float, var height: Float) {
     val maxY get() = height * 0.5f
 
     fun addCollider(collider: Collider) {
-        colliders.add(collider)
+        collidersInternal.add(collider)
+    }
+
+    fun removeCollider(collider: Collider) {
+        collidersInternal.remove(collider)
     }
 
     fun scaleSpeedX(collider: Collider, speed: Float): Float {
@@ -38,7 +44,7 @@ class PhysicsWorld(var width: Float, var height: Float) {
         return speed * scale
     }
 
-    fun updateCollider(collider: Collider) {
+    fun updatePlayerCollider(collider: Collider) {
         if (collider.boundsMinX < minX)
             collider.x = minX + collider.boundsWidth * 0.5f
 
@@ -55,7 +61,7 @@ class PhysicsWorld(var width: Float, var height: Float) {
     }
 
     fun checkCollision(collider: Collider, filter: (Collider) -> Boolean = { true }, callback: (Collider) -> Unit) {
-        colliders.forEach {
+        collidersInternal.forEach {
             if (it != collider && filter(it) && collider.collidesWith(it))
                 callback(it)
         }
@@ -75,6 +81,36 @@ class PhysicsWorld(var width: Float, var height: Float) {
                 nearestDistance = distance
             }
         }
+
+        return nearest
+    }
+
+    fun checkLineCollision(x1: Float, y1: Float, x2: Float, y2: Float, filter: (Collider) -> Boolean = { true }, callback: (Collider, Float) -> Unit) {
+        collidersInternal.forEach {
+            if (filter(it))
+                it.collidesWithLine(x1, y1, x2, y2) { t ->
+                    callback(it, t)
+                }
+        }
+    }
+
+    fun getNearestLineCollision(x1: Float, y1: Float, x2: Float, y2: Float, filter: (Collider) -> Boolean = { true }, callback: (Float) -> Unit = {}): Collider? {
+        var nearest: Collider? = null
+        var nearestDistance = Float.MAX_VALUE
+
+        checkLineCollision(x1, y1, x2, y2, filter) { collider, t ->
+            val dx = x1 + (x2 - x1) * t - collider.x
+            val dy = y1 + (y2 - y1) * t - collider.y
+            val distance = dx * dx + dy * dy
+
+            if (distance < nearestDistance) {
+                nearest = collider
+                nearestDistance = distance
+            }
+        }
+
+        if (nearest != null)
+            callback(nearestDistance)
 
         return nearest
     }

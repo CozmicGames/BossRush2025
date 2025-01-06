@@ -3,7 +3,9 @@ package com.cozmicgames.weapons
 import com.cozmicgames.Game
 import com.cozmicgames.entities.Entity
 import com.cozmicgames.events.Events
+import com.cozmicgames.physics.Collider
 import com.littlekt.graphics.g2d.SpriteBatch
+import com.littlekt.util.seconds
 import kotlin.time.Duration
 
 class ProjectileManager {
@@ -15,19 +17,36 @@ class ProjectileManager {
 
         val projectilesToRemove = arrayListOf<Projectile>()
 
-        projectiles.forEach {
-            it.update(delta)
+        for (projectile in projectiles) {
+            var distance = projectile.speed * delta.seconds
 
-            val nearestCollider = Game.physics.getNearestCollision(it.collider) { checkCollider -> checkCollider.userData != it.fromEntity }
-            if (nearestCollider != null) {
-                if (nearestCollider.userData is Entity)
-                    Game.events.addSendEvent(Events.hit(nearestCollider.userData))
+            val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromEntity }
 
-                projectilesToRemove += it
+            val nearestCollider = Game.physics.getNearestLineCollision(projectile.x, projectile.y, projectile.x + projectile.directionX * distance, projectile.y + projectile.directionY * distance, filter) { collisionDistance ->
+                distance = collisionDistance
             }
 
-            if (it.x < Game.physics.minX - 10000.0f || it.x > Game.physics.maxX + 10000.0f || it.y < Game.physics.minY - 10000.0f || it.y > Game.physics.maxY + 10000.0f)
-                projectilesToRemove += it
+            if (nearestCollider != null) {
+                if (nearestCollider.userData is Entity) {
+                    val impactX = projectile.x + projectile.directionX * distance
+                    val impactY = projectile.y + projectile.directionY * distance
+
+                    Game.events.addSendEvent(Events.hit(nearestCollider.userData, impactX, impactY))
+                }
+
+                projectilesToRemove += projectile
+                continue
+            }
+
+            if (projectile.x < Game.physics.minX - 10000.0f || projectile.x > Game.physics.maxX + 10000.0f || projectile.y < Game.physics.minY - 10000.0f || projectile.y > Game.physics.maxY + 10000.0f) {
+                projectilesToRemove += projectile
+                continue
+            }
+
+            projectile.x += projectile.directionX * distance
+            projectile.y += projectile.directionY * distance
+            projectile.collider.x = projectile.x
+            projectile.collider.y = projectile.y
         }
 
         projectiles -= projectilesToRemove

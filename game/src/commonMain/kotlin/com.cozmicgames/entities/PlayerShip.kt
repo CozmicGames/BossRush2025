@@ -2,24 +2,21 @@ package com.cozmicgames.entities
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.weapons.StandardWeapon
 import com.cozmicgames.weapons.Weapon
 import com.littlekt.graphics.g2d.SpriteBatch
-import com.littlekt.math.geom.cos
+import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.sin
+import com.littlekt.math.geom.sine
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
 class PlayerShip(private val player: Player) : Entity(player.state.id) {
-    override val renderLayer = 0
-
-    var x = 0.0f
-    var y = 0.0f
-    var rotation = 0.0f.degrees
+    override val renderLayer = RenderLayers.PLAYER_BEGIN
 
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
@@ -36,7 +33,7 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
         Game.physics.addCollider(collider)
     }
 
-    override fun update(delta: Duration) {
+    override fun updateEntity(delta: Duration) {
         var deltaX = 0.0f
         var deltaY = 0.0f
         var deltaRotation = 0.0f
@@ -66,13 +63,12 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
         x += Game.physics.scaleSpeedX(collider, deltaX) * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
         y += Game.physics.scaleSpeedY(collider, deltaY) * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
 
-        rotation += (deltaRotation * rotationSpeed * Constants.PLAYER_SHIP_BASE_ROTATION_SPEED).degrees
-        //TODO: Fix Flipping
+        rotation += deltaRotation.degrees * rotationSpeed * Constants.PLAYER_SHIP_BASE_ROTATION_SPEED
 
         collider.x = x
         collider.y = y
         (collider.shape as RectangleCollisionShape).angle = rotation
-        Game.physics.updateCollider(collider)
+        Game.physics.updatePlayerCollider(collider)
         x = collider.x
         y = collider.y
 
@@ -86,7 +82,7 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
     }
 
     override fun render(batch: SpriteBatch) {
-        batch.draw(Game.resources.testPlayer, x, y, originX = 32.0f, originY = 32.0f, rotation = rotation, width = 64.0f, height = 64.0f)
+        batch.draw(Game.resources.testPlayer, x, y, 32.0f, 32.0f, 64.0f, 64.0f, scale, scale, rotation, color, false, false)
     }
 
     fun primaryFire() {
@@ -97,11 +93,13 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
 
         val state = Game.players.getMyPlayerState()
 
+        val direction = rotation + weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
+
         state.setState("spawnProjectileType", weapon.projectileType.ordinal)
         state.setState("spawnProjectileX", x)
         state.setState("spawnProjectileY", y)
-        state.setState("spawnProjectileDirectionX", cos(rotation))
-        state.setState("spawnProjectileDirectionY", sin(rotation))
+        state.setState("spawnProjectileDirectionX", direction.cosine)
+        state.setState("spawnProjectileDirectionY", direction.sine)
         state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
 
         firePrimaryCooldown = weapon.fireRate
@@ -115,16 +113,15 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
 
         val state = Game.players.getMyPlayerState()
 
-        state.setState("spawnProjectileType", weapon.projectileType)
+        val direction = rotation + weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
+
+        state.setState("spawnProjectileType", weapon.projectileType.ordinal)
         state.setState("spawnProjectileX", x)
         state.setState("spawnProjectileY", y)
-        state.setState("spawnProjectileDirectionX", cos(rotation))
-        state.setState("spawnProjectileDirectionY", sin(rotation))
+        state.setState("spawnProjectileDirectionX", direction.cosine)
+        state.setState("spawnProjectileDirectionY", direction.sine)
+        state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
 
         fireSecondaryCooldown = weapon.fireRate
-    }
-
-    override fun playHitAnimation() {
-
     }
 }

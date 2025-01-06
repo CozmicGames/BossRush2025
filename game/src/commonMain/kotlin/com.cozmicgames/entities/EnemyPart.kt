@@ -1,37 +1,23 @@
 package com.cozmicgames.entities
 
-import com.cozmicgames.Game
-import com.cozmicgames.entities.animations.EntityAnimation
-import com.cozmicgames.entities.animations.HitAnimation
-import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.Color
 import com.littlekt.graphics.g2d.SpriteBatch
+import com.littlekt.graphics.g2d.TextureSlice
+import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
-class EnemyPart(id: String) : Entity(id) {
-    override val renderLayer = 10
+abstract class EnemyPart(id: String) : Entity(id) {
+    abstract val width: Float
+    abstract val height: Float
+    abstract val texture: TextureSlice
 
-    var x = 0.0f
-    var y = 0.0f
-    var rotation = 0.0f.degrees
+    open val flipX: Boolean = false
+    open val flipY: Boolean = false
 
-    override val collider = Collider(RectangleCollisionShape(128.0f, 128.0f, 0.0f.degrees), this)
+    protected fun getCollisionShape(scaleX: Float = 1.0f, scaleY: Float = 1.0f, rotation: Angle = 0.0.degrees) = RectangleCollisionShape(width * scaleX, height * scaleY, rotation)
 
-    //TODO: Support multiple animations
-    private var currentAnimation: EntityAnimation? = null
-
-    init {
-        Game.physics.addCollider(collider)
-    }
-
-    override fun update(delta: Duration) {
-        currentAnimation?.let {
-            if (it.update(delta))
-                currentAnimation = null
-        }
-
+    override fun updateEntity(delta: Duration) {
         collider.x = x
         collider.y = y
         (collider.shape as RectangleCollisionShape).angle = rotation
@@ -41,18 +27,6 @@ class EnemyPart(id: String) : Entity(id) {
     }
 
     override fun render(batch: SpriteBatch) {
-        val animation = currentAnimation
-
-        val color = animation?.color ?: Color.WHITE
-        val scaleX = animation?.scale ?: 1.0f
-        val scaleY = animation?.scale ?: 1.0f
-
-        batch.draw(Game.resources.testEnemy, x, y, originX = 64.0f, originY = 64.0f, rotation = rotation, width = 128.0f, height = 128.0f, scaleX = scaleX, scaleY = scaleY, color = color)
-    }
-
-    override fun playHitAnimation() {
-        if (currentAnimation == null) {
-            currentAnimation = HitAnimation()
-        }
+        batch.draw(texture, x, y, originX = width * 0.5f, originY = height * 0.5f, rotation = rotation, width = width, height = height, scaleX = scale, scaleY = scale, color = color, flipX = flipX, flipY = flipY)
     }
 }

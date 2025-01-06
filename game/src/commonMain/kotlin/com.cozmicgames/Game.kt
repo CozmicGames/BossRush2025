@@ -13,6 +13,8 @@ import com.littlekt.Context
 import com.littlekt.ContextListener
 import com.littlekt.log.Logger
 import com.littlekt.util.seconds
+import kotlin.js.Date
+import kotlin.random.Random
 
 class Game(players: PlayerManager, context: Context) : ContextListener(context) {
     companion object {
@@ -21,12 +23,13 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         lateinit var players: PlayerManager
         lateinit var input: InputManager
         lateinit var graphics: Graphics2D
-        val physics = PhysicsWorld(1024.0f, 1024.0f)
+        val physics = PhysicsWorld(1500.0f, 1500.0f)
         val controls = ControlManager()
         val resources = Resources()
         val projectiles = ProjectileManager()
         val entities = EntityManager()
         val events = EventManager()
+        val random = Random(Date.now().toLong())
     }
 
     private lateinit var currentGameState: GameState
@@ -38,8 +41,6 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
     override suspend fun Context.start() {
         Companion.context = this
         Companion.logger = logger
-        physics.width = graphics.width.toFloat()
-        physics.height = graphics.height.toFloat()
 
         resources.load(this)
 

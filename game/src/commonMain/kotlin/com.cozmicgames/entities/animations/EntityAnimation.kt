@@ -7,6 +7,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 abstract class EntityAnimation(val duration: Duration, val startColor: Color, val startScale: Float) {
+    open val isUnique get() = true
+
     private var progress = 0.0.seconds
 
     val color = MutableColor(startColor)

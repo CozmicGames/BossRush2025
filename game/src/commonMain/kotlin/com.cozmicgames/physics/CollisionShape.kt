@@ -2,6 +2,7 @@ package com.cozmicgames.physics
 
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.cosine
+import com.littlekt.math.geom.sine
 
 sealed interface CollisionShape {
     val minX: Float
@@ -34,7 +35,7 @@ class RectangleCollisionShape(var width: Float, var height: Float, var angle: An
 
     override fun update() {
         val cos = angle.cosine
-        val sin = angle.cosine
+        val sin = angle.sine
 
         val x1 = -width * 0.5f
         val y1 = -height * 0.5f
