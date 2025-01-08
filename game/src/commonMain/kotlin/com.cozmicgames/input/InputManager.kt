@@ -62,7 +62,7 @@ class InputManager(private val input: Input) : Input {
         usePrimaryControl.setGamepadButton(GameButton.R1)
 
         useSecondaryControl.addKey(Key.SHIFT_LEFT)
-        useSecondaryControl.addMouseButton(Pointer.MOUSE_RIGHT)
+        useSecondaryControl.addMouseButton(Pointer.MOUSE_MIDDLE) // This should be MOUSE_RIGHT, but it's not working
         useSecondaryControl.setGamepadButton(GameButton.R2)
     }
 

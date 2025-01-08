@@ -46,12 +46,20 @@ abstract class Entity(val id: String) {
     protected abstract fun updateEntity(delta: Duration)
     abstract fun render(batch: SpriteBatch)
 
-    fun addEntityAnimation(animation: EntityAnimation) {
+    open fun addEntityAnimation(animation: EntityAnimation) {
         if (animation.isUnique)
             animations.removeAll { it::class == animation::class }
 
         animations.add(animation)
     }
+
+    open fun onAddToEntities() {}
+
+    open fun onRemoveFromEntities() {}
+
+    open fun onAddToPhysics() {}
+
+    open fun onRemoveFromPhysics() {}
 
     override fun hashCode(): Int {
         return id.hashCode()

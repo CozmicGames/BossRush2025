@@ -1,11 +1,16 @@
 package com.cozmicgames.physics
 
 import com.cozmicgames.Constants
+import com.cozmicgames.entities.Entity
 
 class PhysicsWorld(var width: Float, var height: Float) {
     val colliders get() = collidersInternal as List<Collider>
 
+    val hittables get() = hittablesInternal as Map<String, Hittable>
+
     private val collidersInternal = arrayListOf<Collider>()
+
+    private val hittablesInternal = hashMapOf<String, Hittable>()
 
     val minX get() = -width * 0.5f
     val minY get() = -height * 0.5f
@@ -14,10 +19,20 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     fun addCollider(collider: Collider) {
         collidersInternal.add(collider)
+        (collider.userData as? Entity)?.onAddToPhysics()
     }
 
     fun removeCollider(collider: Collider) {
         collidersInternal.remove(collider)
+        (collider.userData as? Entity)?.onRemoveFromPhysics()
+    }
+
+    fun addHittable(hittable: Hittable) {
+        hittablesInternal[hittable.id] = hittable
+    }
+
+    fun removeHittable(name: String) {
+        hittablesInternal.remove(name)
     }
 
     fun scaleSpeedX(collider: Collider, speed: Float): Float {

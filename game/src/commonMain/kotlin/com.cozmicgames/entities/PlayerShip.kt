@@ -7,6 +7,7 @@ import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.weapons.StandardWeapon
+import com.cozmicgames.weapons.TestWeapon
 import com.cozmicgames.weapons.Weapon
 import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.math.geom.cosine
@@ -21,8 +22,8 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 
-    var primaryWeapon = StandardWeapon()
-    var secondaryWeapon: Weapon? = null
+    var primaryWeapon: Weapon? = StandardWeapon()
+    var secondaryWeapon: Weapon? = TestWeapon()
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
@@ -106,6 +107,8 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
     }
 
     fun secondaryFire() {
+        println("A")
+
         if (fireSecondaryCooldown > 0.0f)
             return
 

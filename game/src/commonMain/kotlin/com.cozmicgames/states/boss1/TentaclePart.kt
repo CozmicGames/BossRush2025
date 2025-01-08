@@ -3,7 +3,6 @@ package com.cozmicgames.states.boss1
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.entities.EnemyPart
-import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.math.geom.cosine
@@ -11,14 +10,14 @@ import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val flip: Boolean, val index: Int) : EnemyPart("boss1tentacle${index}") {
-    override val renderLayer = RenderLayers.ENEMY_BEGIN + 10 + (tentacle.index * Constants.BOSS1_TENTACLE_PARTS) + index
+class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val flip: Boolean, val index: Int, layer: Int) : EnemyPart("boss1tentacle${index}") {
+    override val renderLayer = layer
 
     override val collider = Collider(getCollisionShape(scaleY = 0.8f - index * 0.1f), tentacle) //TODO: Set proper userData, use some kind of proxy object
 
     override val texture = Game.resources.boss1tentacleSlices[index]
 
-    override val width get() = Game.resources.boss1tentacle.width * 4.0f / Constants.BOSS1_TENTACLE_PARTS
+    override val width get() = Game.resources.boss1tentacle.width * 3.0f / Constants.BOSS1_TENTACLE_PARTS
 
     override val height get() = Game.resources.boss1tentacle.height * 3.0f
 
@@ -29,9 +28,6 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
     private val halfHeight get() = height * 0.5f
 
     var tentacleRotation = 0.0.degrees
-
-    var px = 0.0f
-    var py = 0.0f
 
     override fun updateEntity(delta: Duration) {
         if (Game.players.isHost) {
@@ -103,9 +99,6 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
 
             x = pivotX + tentacleCos * xOffset - tentacleSin * yOffset
             y = pivotY + tentacleSin * xOffset + tentacleCos * yOffset
-
-            px = pivotX
-            py = pivotY
 
             collider.x = x
             collider.y = y

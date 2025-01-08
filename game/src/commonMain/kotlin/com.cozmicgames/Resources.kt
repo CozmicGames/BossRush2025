@@ -20,14 +20,11 @@ class Resources : Releasable {
     /**
      * Boss 1 - Space octopus
      */
+    lateinit var boss1head: Texture
+    lateinit var boss1beak: Texture
     lateinit var boss1tentacle: Texture
     lateinit var boss1tentacleSlices: Array<TextureSlice>
 
-    lateinit var boss1tentacle0: Texture
-    lateinit var boss1tentacle1: Texture
-    lateinit var boss1tentacle2: Texture
-    lateinit var boss1tentacle3: Texture
-    lateinit var boss1tentacle4: Texture
 
     suspend fun load(context: Context) {
         testPlayer = context.resourcesVfs["textures/test.png"].readTexture()
@@ -35,14 +32,10 @@ class Resources : Releasable {
         testBackgroundTexture = context.resourcesVfs["textures/test_bg.png"].readTexture()
         testEnergyBall = context.resourcesVfs["textures/energy_ball.png"].readTexture()
 
+        boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
+        boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
         boss1tentacleSlices = boss1tentacle.slice(boss1tentacle.width / Constants.BOSS1_TENTACLE_PARTS, boss1tentacle.height)[0]
-
-        boss1tentacle0 = context.resourcesVfs["textures/boss1/tentacle0.png"].readTexture()
-        boss1tentacle1 = context.resourcesVfs["textures/boss1/tentacle1.png"].readTexture()
-        boss1tentacle2 = context.resourcesVfs["textures/boss1/tentacle2.png"].readTexture()
-        boss1tentacle3 = context.resourcesVfs["textures/boss1/tentacle3.png"].readTexture()
-        boss1tentacle4 = context.resourcesVfs["textures/boss1/tentacle4.png"].readTexture()
     }
 
     override fun release() {
@@ -51,12 +44,8 @@ class Resources : Releasable {
         testBackgroundTexture.release()
         testEnergyBall.release()
 
+        boss1head.release()
+        boss1beak.release()
         boss1tentacle.release()
-
-        boss1tentacle0.release()
-        boss1tentacle1.release()
-        boss1tentacle2.release()
-        boss1tentacle3.release()
-        boss1tentacle4.release()
     }
 }

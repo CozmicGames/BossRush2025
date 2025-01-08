@@ -10,10 +10,12 @@ class EntityManager {
 
     fun add(entity: Entity) {
         entities += entity
+        entity.onAddToEntities()
     }
 
     fun remove(entity: Entity) {
         entities -= entity
+        entity.onRemoveFromEntities()
     }
 
     fun update(delta: Duration) {

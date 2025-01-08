@@ -17,6 +17,8 @@ class TestState : GameState {
         playerCamera = PlayerCamera(Game.graphics.mainViewport.camera)
 
         boss = Boss1()
+        boss.addToEntities()
+        boss.addToPhysics()
     }
 
     override fun resize(width: Int, height: Int) {

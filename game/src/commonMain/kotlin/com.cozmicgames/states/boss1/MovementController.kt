@@ -4,7 +4,16 @@ import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
 class MovementController {
-    var movement: Movement = WaveMovement(5.0.degrees, 3.0f, 0.2f)
+    var tentacleMovement: TentacleMovement = CompoundTentacleMovement()
+    var beakMovement: BeakMovement = IdleBeakMovement()
+
+    init {
+        with(tentacleMovement as CompoundTentacleMovement) {
+            addMovement(SwayTentacleMovement(15.0.degrees, 0.1f, 0.2f))
+            addMovement(HangTentacleMovement())
+            addMovement(WaveTentacleMovement(10.0.degrees, 0.3f, 0.2f))
+        }
+    }
 
     fun update(delta: Duration) {
     }

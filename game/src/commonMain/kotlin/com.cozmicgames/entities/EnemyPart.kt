@@ -20,7 +20,7 @@ abstract class EnemyPart(id: String) : Entity(id) {
     override fun updateEntity(delta: Duration) {
         collider.x = x
         collider.y = y
-        (collider.shape as RectangleCollisionShape).angle = rotation
+        (collider.shape as? RectangleCollisionShape)?.angle = rotation
         collider.update()
         x = collider.x
         y = collider.y
