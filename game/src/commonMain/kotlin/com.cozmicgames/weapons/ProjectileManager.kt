@@ -2,10 +2,14 @@ package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.Entity
+import com.cozmicgames.entities.ProjectileSource
 import com.cozmicgames.events.Events
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.g2d.SpriteBatch
+import com.littlekt.math.geom.Angle
+import com.littlekt.math.geom.cosine
+import com.littlekt.math.geom.sine
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
@@ -19,24 +23,36 @@ class ProjectileManager {
         val projectilesToRemove = arrayListOf<Projectile>()
 
         for (projectile in projectiles) {
-            if (projectile.type.baseType is BeamProjectileType && projectile.type.baseType.getLifetime(projectile.distance) <= 0.0f) {
-                projectilesToRemove += projectile
-                continue
+            var projectileAngle = projectile.direction
 
+            if (projectile.fromEntity is ProjectileSource) {
+                projectile.startX = projectile.fromEntity.muzzleX
+                projectile.startY = projectile.fromEntity.muzzleY
+                projectileAngle += projectile.fromEntity.muzzleRotation
+            }
+
+            val projectileDirectionX = projectileAngle.cosine
+            val projectileDirectionY = projectileAngle.sine
+
+            if (projectile.type.baseType is BeamProjectileType) {
+                if (projectile.type.baseType.getLifetime(projectile.distance) <= 0.0f) {
+                    projectilesToRemove += projectile
+                    continue
+                }
             }
 
             var distance = projectile.speed * delta.seconds
 
             val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromEntity }
 
-            val nearestCollider = Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectile.directionX * distance, projectile.startY + projectile.directionY * distance, filter) { collisionDistance ->
+            val nearestCollider = Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectileDirectionX * distance, projectile.startY + projectileDirectionY * distance, filter) { collisionDistance ->
                 distance = collisionDistance
             }
 
             if (nearestCollider != null) {
                 if (nearestCollider.userData is Hittable) {
-                    val impactX = projectile.currentX + projectile.directionX * distance
-                    val impactY = projectile.currentY + projectile.directionY * distance
+                    val impactX = projectile.currentX + projectileDirectionX * distance
+                    val impactY = projectile.currentY + projectileDirectionY * distance
 
                     Game.events.addSendEvent(Events.hit(nearestCollider.userData.id, impactX, impactY))
                 }
@@ -50,8 +66,19 @@ class ProjectileManager {
                 continue
             }
 
-            projectile.currentX += projectile.directionX * distance
-            projectile.currentY += projectile.directionY * distance
+            when (projectile.type.baseType) {
+                is BulletProjectileType -> {
+                    projectile.currentX += projectileDirectionX * distance
+                    projectile.currentY += projectileDirectionY * distance
+                }
+
+                is BeamProjectileType -> {
+                    projectile.currentX = projectile.startX + projectileDirectionX * (projectile.distance + distance)
+                    projectile.currentY = projectile.startY + projectileDirectionY * (projectile.distance + distance)
+                }
+            }
+
+            projectile.updateDistance()
         }
 
         projectiles -= projectilesToRemove
@@ -69,11 +96,18 @@ class ProjectileManager {
         }
     }
 
-    fun spawnProjectile(fromEntity: Entity, type: ProjectileType, x: Float, y: Float, directionX: Float, directionY: Float, speed: Float) {
+    fun stopBeamProjectile(fromEntity: Entity) {
         if (!Game.players.isHost)
             return
 
-        projectiles += Projectile(fromEntity, type, x, y, directionX, directionY, speed)
+        projectiles.removeAll { it.fromEntity == fromEntity && it.type == ProjectileType.ENERGY_BEAM }
+    }
+
+    fun spawnProjectile(fromEntity: Entity, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float) {
+        if (!Game.players.isHost)
+            return
+
+        projectiles += Projectile(fromEntity, type, x, y, direction, speed)
     }
 
     fun render(batch: SpriteBatch) {

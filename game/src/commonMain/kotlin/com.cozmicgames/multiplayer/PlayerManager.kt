@@ -35,19 +35,25 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 val spawnProjectileType = ProjectileType.entries.getOrNull(player.state.getState("spawnProjectileType") ?: -1)
                 val spawnProjectileX = player.state.getState<Float>("spawnProjectileX")
                 val spawnProjectileY = player.state.getState<Float>("spawnProjectileY")
-                val spawnProjectileDirectionX = player.state.getState<Float>("spawnProjectileDirectionX")
-                val spawnProjectileDirectionY = player.state.getState<Float>("spawnProjectileDirectionY")
+                val spawnProjectileDirection = player.state.getState<Float>("spawnProjectileDirection")?.degrees
                 val spawnProjectileSpeed = player.state.getState<Float>("spawnProjectileSpeed")
 
-                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileDirectionX != null && spawnProjectileDirectionY != null && spawnProjectileSpeed != null) {
-                    Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, spawnProjectileDirectionX, spawnProjectileDirectionY, spawnProjectileSpeed)
+                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileDirection != null && spawnProjectileSpeed != null) {
+                    Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, spawnProjectileDirection, spawnProjectileSpeed)
 
                     player.state.setState("spawnProjectileType", null)
                     player.state.setState("spawnProjectileX", null)
                     player.state.setState("spawnProjectileY", null)
-                    player.state.setState("spawnProjectileDirectionX", null)
-                    player.state.setState("spawnProjectileDirectionY", null)
+                    player.state.setState("spawnProjectileDirection", null)
                     player.state.setState("spawnProjectileSpeed", null)
+                }
+
+                val stopBeamProjectile = player.state.getState<Boolean>("stopBeamProjectile")
+
+                if(stopBeamProjectile == true) {
+                    Game.projectiles.stopBeamProjectile(player.ship)
+
+                    player.state.setState("stopBeamProjectile", null)
                 }
 
                 val eventCount = player.state.getState<Int>("sendEventCount")

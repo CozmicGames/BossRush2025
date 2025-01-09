@@ -7,22 +7,17 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.cozmicgames.weapons.StandardWeapon
-import com.cozmicgames.weapons.TestWeapon
-import com.cozmicgames.weapons.Weapon
+import com.cozmicgames.weapons.*
 import com.littlekt.graphics.*
-import com.littlekt.math.clamp
-import com.littlekt.math.geom.absoluteValue
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
-import com.littlekt.math.isFuzzyZero
 import com.littlekt.util.seconds
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 import kotlin.time.Duration
 
-class PlayerShip(private val player: Player) : Entity(player.state.id) {
+class PlayerShip(private val player: Player) : Entity(player.state.id), ProjectileSource {
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 
@@ -38,6 +33,12 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
     private val lightColor = MutableColor()
     private val mainColor = MutableColor()
     private val darkColor = MutableColor()
+
+    override var muzzleX = 0.0f
+    override var muzzleY = 0.0f
+    override var muzzleRotation = 0.0.degrees
+
+    private var isBeamProjectileFiring = false
 
     init {
         Game.physics.addCollider(collider)
@@ -61,13 +62,24 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
         }
 
         player.state.getState<Boolean>("inputUsePrimary")?.let {
-            if (it)
-                primaryFire()
+            if (firePrimaryCooldown <= 0.0f)
+                primaryWeapon?.let { weapon ->
+                    if (it)
+                        fireWeapon(weapon) { firePrimaryCooldown = it }
+                    else
+                        stopFiringWeapon(weapon) { firePrimaryCooldown = it }
+                }
         }
 
         player.state.getState<Boolean>("inputUseSecondary")?.let {
-            if (it)
-                secondaryFire()
+            if (fireSecondaryCooldown <= 0.0f) {
+                secondaryWeapon?.let { weapon ->
+                    if (it)
+                        fireWeapon(weapon) { fireSecondaryCooldown = it }
+                    else
+                        stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+                }
+            }
         }
 
         val moveX = Game.physics.scaleSpeedX(collider, deltaX) * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
@@ -86,6 +98,10 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
         Game.physics.updatePlayerCollider(collider)
         x = collider.x
         y = collider.y
+
+        muzzleX = x + rotation.cosine * Constants.PLAYER_SHIP_WIDTH * 0.47f
+        muzzleY = y + rotation.sine * Constants.PLAYER_SHIP_HEIGHT * 0.47f
+        muzzleRotation = rotation
 
         firePrimaryCooldown -= delta.seconds
         if (firePrimaryCooldown < 0.0f)
@@ -107,68 +123,57 @@ class PlayerShip(private val player: Player) : Entity(player.state.id) {
         mainColor.set(player.state.color)
         lightColor.set(player.state.color.lighten(0.15f))
 
-        //darkColor.mul(color)
-        //mainColor.mul(color)
-        //lightColor.mul(color)
+        darkColor.mul(color)
+        mainColor.mul(color)
+        lightColor.mul(color)
 
         renderer.submit(RenderLayers.PLAYER_BEGIN) {
             it.draw(baseTexture, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, color)
         }
 
         renderer.submit(RenderLayers.PLAYER_BEGIN + 1) {
-            it.draw(Game.resources.playerShipTemplateDark, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, lightColor)
+            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, lightColor)
         }
 
         renderer.submit(RenderLayers.PLAYER_BEGIN + 2) {
-            it.draw(Game.resources.playerShipTemplateMain, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, mainColor)
+            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, mainColor)
         }
 
         renderer.submit(RenderLayers.PLAYER_BEGIN + 3) {
-            it.draw(Game.resources.playerShipTemplateLight, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, darkColor)
+            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, darkColor)
         }
     }
 
-    fun primaryFire() {
-        if (firePrimaryCooldown > 0.0f)
+    private fun fireWeapon(weapon: Weapon, setCooldown: (Float) -> Unit) {
+        if (isBeamProjectileFiring)
             return
-
-        val weapon = primaryWeapon ?: return
 
         val state = Game.players.getMyPlayerState()
 
-        val spawnX = x + rotation.cosine * Constants.PLAYER_SHIP_WIDTH * 0.47f
-        val spawnY = y + rotation.sine * Constants.PLAYER_SHIP_HEIGHT * 0.47f
-        val direction = rotation + weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
+        val direction = weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
 
         state.setState("spawnProjectileType", weapon.projectileType.ordinal)
-        state.setState("spawnProjectileX", spawnX)
-        state.setState("spawnProjectileY", spawnY)
-        state.setState("spawnProjectileDirectionX", direction.cosine)
-        state.setState("spawnProjectileDirectionY", direction.sine)
+        state.setState("spawnProjectileX", muzzleX)
+        state.setState("spawnProjectileY", muzzleY)
+        state.setState("spawnProjectileDirection", direction.degrees)
         state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
 
-        firePrimaryCooldown = weapon.fireRate
+        if (weapon.projectileType.baseType is BulletProjectileType)
+            setCooldown(weapon.fireRate)
+
+        if (weapon.projectileType.baseType is BeamProjectileType)
+            isBeamProjectileFiring = true
     }
 
-    fun secondaryFire() {
-        if (fireSecondaryCooldown > 0.0f)
-            return
+    private fun stopFiringWeapon(weapon: Weapon, setCooldown: (Float) -> Unit) {
+        if (weapon.projectileType.baseType is BeamProjectileType) {
+            val state = Game.players.getMyPlayerState()
 
-        val weapon = secondaryWeapon ?: return
+            state.setState("stopBeamProjectile", true)
 
-        val state = Game.players.getMyPlayerState()
+            setCooldown(weapon.fireRate)
 
-        val spawnX = x + rotation.cosine * Constants.PLAYER_SHIP_WIDTH * 0.47f
-        val spawnY = y + rotation.sine * Constants.PLAYER_SHIP_HEIGHT * 0.47f
-        val direction = rotation + weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
-
-        state.setState("spawnProjectileType", weapon.projectileType.ordinal)
-        state.setState("spawnProjectileX", spawnX)
-        state.setState("spawnProjectileY", spawnY)
-        state.setState("spawnProjectileDirectionX", direction.cosine)
-        state.setState("spawnProjectileDirectionY", direction.sine)
-        state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
-
-        fireSecondaryCooldown = weapon.fireRate
+            isBeamProjectileFiring = false
+        }
     }
 }

@@ -1,16 +1,16 @@
 package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
-import com.littlekt.graphics.Color
 import com.littlekt.graphics.Texture
 import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.math.clamp
 import com.littlekt.math.geom.radians
 import kotlin.math.atan2
+import kotlin.math.sqrt
 
 enum class ProjectileType(val baseType: ProjectileBaseType) {
-    ENERGY_BALL(BulletProjectileType({ Game.resources.testEnergyBall }, 16.0f)),
-    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.testEnergyBall })
+    ENERGY_BALL(BulletProjectileType({ Game.resources.energyBall }, 16.0f)),
+    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.energyBeam })
 }
 
 sealed interface ProjectileBaseType
@@ -29,10 +29,14 @@ class BeamProjectileType(val maxDistance: Float, val textureGetter: () -> Textur
 
         val centerX = (startX + x) * 0.5f
         val centerY = (startY + y) * 0.5f
-        val width = (x - startX)
-        val height = texture.height.toFloat()
-        val angle = atan2((y - startY), (x - startX)).radians
 
-        batch.draw(texture, centerX, centerY, width * 0.5f, height * 0.5f, width, height, 1.0f, 1.0f, angle, Color.WHITE, false, false)
+        val dx = x - startX
+        val dy = y - startY
+        val width = sqrt(dx * dx + dy * dy)
+
+        val height = texture.height.toFloat()
+        val angle = atan2(y - startY, x - startX).radians
+
+        batch.draw(texture, centerX, centerY, width * 0.5f, height * 0.5f, width, height, rotation = angle)
     }
 }

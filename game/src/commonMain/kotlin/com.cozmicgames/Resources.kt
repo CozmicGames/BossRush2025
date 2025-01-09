@@ -9,13 +9,15 @@ import com.littlekt.graphics.slice
 
 class Resources : Releasable {
     /**
-     * Test textures
+     * Projectiles
      */
-    lateinit var testPlayer: Texture
-    lateinit var testEnemy: Texture
-    lateinit var testBackgroundTexture: Texture
-    lateinit var testEnergyBall: Texture
+    lateinit var energyBall: Texture
+    lateinit var energyBeam: Texture
 
+    /**
+     * Asteroids
+     */
+    lateinit var asteroid0: Texture
 
     /**
      * Player
@@ -23,9 +25,7 @@ class Resources : Releasable {
     lateinit var playerShipBaseStill: Texture
     lateinit var playerShipBaseSlow: Texture
     lateinit var playerShipBaseFast: Texture
-    lateinit var playerShipTemplateDark: Texture
-    lateinit var playerShipTemplateMain: Texture
-    lateinit var playerShipTemplateLight: Texture
+    lateinit var playerShipTemplate: Texture
 
 
     /**
@@ -37,19 +37,16 @@ class Resources : Releasable {
     lateinit var boss1tentacle: Texture
     lateinit var boss1tentacleSlices: Array<TextureSlice>
 
-
     suspend fun load(context: Context) {
-        testPlayer = context.resourcesVfs["textures/test.png"].readTexture()
-        testEnemy = context.resourcesVfs["textures/enemy.png"].readTexture()
-        testBackgroundTexture = context.resourcesVfs["textures/test_bg.png"].readTexture()
-        testEnergyBall = context.resourcesVfs["textures/energy_ball.png"].readTexture()
+        energyBall = context.resourcesVfs["textures/projectiles/energy_ball.png"].readTexture()
+        energyBeam = context.resourcesVfs["textures/projectiles/energy_beam.png"].readTexture()
+
+        asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
 
         playerShipBaseStill = context.resourcesVfs["textures/player/player_ship_base_still.png"].readTexture()
         playerShipBaseSlow = context.resourcesVfs["textures/player/player_ship_base_slow.png"].readTexture()
         playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
-        playerShipTemplateDark = context.resourcesVfs["textures/player/player_ship_template_dark.png"].readTexture()
-        playerShipTemplateMain = context.resourcesVfs["textures/player/player_ship_template_main.png"].readTexture()
-        playerShipTemplateLight = context.resourcesVfs["textures/player/player_ship_template_light.png"].readTexture()
+        playerShipTemplate = context.resourcesVfs["textures/player/player_ship_template.png"].readTexture()
 
         boss1background = context.resourcesVfs["textures/boss1/background.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
@@ -59,17 +56,14 @@ class Resources : Releasable {
     }
 
     override fun release() {
-        testPlayer.release()
-        testEnemy.release()
-        testBackgroundTexture.release()
-        testEnergyBall.release()
+        energyBall.release()
+
+        asteroid0.release()
 
         playerShipBaseStill.release()
         playerShipBaseSlow.release()
         playerShipBaseFast.release()
-        playerShipTemplateDark.release()
-        playerShipTemplateMain.release()
-        playerShipTemplateLight.release()
+        playerShipTemplate.release()
 
         boss1background.release()
         boss1head.release()
