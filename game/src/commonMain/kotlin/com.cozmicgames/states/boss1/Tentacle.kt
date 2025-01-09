@@ -1,13 +1,17 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Constants
+import com.cozmicgames.Game
+import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
-class Tentacle(val flip: Boolean, val layer: Int) {
+class Tentacle(val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle) {
     var x = 0.0f
     var y = 0.0f
     var rotation = 0.0.degrees
+
+    val tentacleAngle = rotation + baseRotation
 
     val parts: List<TentaclePart>
 
@@ -22,6 +26,7 @@ class Tentacle(val flip: Boolean, val layer: Int) {
     }
 
     fun update(delta: Duration, movement: TentacleMovement) {
-        movement.updateParts(delta, parts)
+        if (Game.players.isHost)
+            movement.updateParts(delta, parts)
     }
 }

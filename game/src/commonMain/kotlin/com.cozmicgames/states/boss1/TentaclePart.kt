@@ -33,7 +33,7 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
         if (Game.players.isHost) {
             val tentacleRotation = if (flip) -tentacleRotation else tentacleRotation
 
-            val parentRotation = parent?.rotation ?: tentacle.rotation
+            val parentRotation = parent?.rotation ?: tentacle.tentacleAngle
             val parentCos = parentRotation.cosine
             val parentSin = parentRotation.sine
 
@@ -105,13 +105,13 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
             (collider.shape as RectangleCollisionShape).angle = rotation
             collider.update()
 
-            Game.players.setGlobalState("boss1tentacle${index}X", x)
-            Game.players.setGlobalState("boss1tentacle${index}Y", y)
-            Game.players.setGlobalState("boss1tentacle${index}Angle", rotation.degrees)
+            Game.players.setGlobalState("boss1tentacle${tentacle.index}part${index}X", x)
+            Game.players.setGlobalState("boss1tentacle${tentacle.index}part${index}Y", y)
+            Game.players.setGlobalState("boss1tentacle${tentacle.index}part${index}Angle", rotation.degrees)
         } else {
-            x = Game.players.getGlobalState("boss1tentacle${index}X") ?: 0.0f
-            y = Game.players.getGlobalState("boss1tentacle${index}Y") ?: 0.0f
-            rotation = (Game.players.getGlobalState("boss1tentacle${index}Angle") ?: 0.0f).degrees
+            x = Game.players.getGlobalState("boss1tentacle${tentacle.index}part${index}X") ?: 0.0f
+            y = Game.players.getGlobalState("boss1tentacle${tentacle.index}part${index}Y") ?: 0.0f
+            rotation = (Game.players.getGlobalState("boss1tentacle${tentacle.index}part${index}Angle") ?: 0.0f).degrees
         }
     }
 }

@@ -4,13 +4,25 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.animations.EntityAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.littlekt.Releasable
+import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
+import com.littlekt.math.geom.sine
+import com.littlekt.util.seconds
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class Boss1 : Releasable {
+    //TODO: Ideas
+    // - Make it spin as a special attack
+    // - Add movement patterns
+    // - Add stages
+    // - Make it shoot projectiles
+    // - Make it spawn enemies
+    // - Obstacles, asteroids
+
     private companion object {
-        private val HEAD_WIDTH = 256.0f
-        private val HEAD_HEIGHT = 256.0f
+        private const val HEAD_WIDTH = 256.0f
+        private const val HEAD_HEIGHT = 256.0f
 
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
 
@@ -48,10 +60,14 @@ class Boss1 : Releasable {
             RenderLayers.ENEMY_BEGIN + 70,
             RenderLayers.ENEMY_BEGIN + 80
         )
+
+        private const val BEAK_OFFSET_X = 0.0f
+        private const val BEAK_OFFSET_Y = -0.7f
     }
 
     var x = 0.0f
     var y = 0.0f
+    var rotation = 0.0.degrees
 
     private val head = Head(HEAD_LAYER)
     private val tentacles: List<Tentacle>
@@ -63,8 +79,7 @@ class Boss1 : Releasable {
         val tentacles = arrayListOf<Tentacle>()
 
         repeat(8) {
-            val tentacle = Tentacle(it > 3, TENTACLE_LAYERS[it])
-            tentacle.rotation = TENTACLE_ANGLES[it]
+            val tentacle = Tentacle(it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it])
             tentacles += tentacle
         }
 
@@ -119,21 +134,73 @@ class Boss1 : Releasable {
         Game.physics.removeCollider(beak.rightBeak.collider)
     }
 
+    var t = 0.0.seconds
+
     fun update(delta: Duration) {
-        movementController.update(delta)
+        if (Game.players.isHost) {
+            t += delta
 
-        tentacles.forEachIndexed { index, tentacle ->
-            val (offsetX, offsetY) = TENTACLE_OFFSETS[index]
+            rotation = 10.0.degrees * kotlin.math.sin(t.seconds * 2.0)
 
-            tentacle.x = x + offsetX * HEAD_WIDTH * 0.5f
-            tentacle.y = y + offsetY * HEAD_HEIGHT * 0.5f
+            x = 100.0f * kotlin.math.cos(t.seconds)
+            y = 100.0f * kotlin.math.sin(t.seconds)
 
-            tentacle.update(delta, movementController.tentacleMovement)
+            movementController.update(delta)
+
+            val cos = rotation.cosine
+            val sin = rotation.sine
+
+            head.x = x
+            head.y = y
+            head.rotation = rotation
+            head.collider.x = head.x
+            head.collider.y = head.y
+            head.collider.update()
+
+            tentacles.forEachIndexed { index, tentacle ->
+                val (offsetX, offsetY) = TENTACLE_OFFSETS[index]
+
+                val tentacleOffsetX = offsetX * HEAD_WIDTH * 0.5f
+                val tentacleOffsetY = offsetY * HEAD_HEIGHT * 0.5f
+
+                tentacle.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
+                tentacle.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
+                tentacle.rotation = rotation
+
+                Game.players.setGlobalState("boss1tentacle${index}x", tentacle.x)
+                Game.players.setGlobalState("boss1tentacle${index}y", tentacle.y)
+                Game.players.setGlobalState("boss1tentacle${index}rotation", tentacle.rotation.degrees)
+            }
+
+            val beakOffsetX = BEAK_OFFSET_X * HEAD_WIDTH * 0.5f
+            val beakOffsetY = BEAK_OFFSET_Y * HEAD_HEIGHT * 0.5f
+
+            beak.x = x + cos * beakOffsetX - sin * beakOffsetY
+            beak.y = y + sin * beakOffsetX + cos * beakOffsetY
+            beak.rotation = rotation
+
+            Game.players.setGlobalState("boss1beakx", beak.x)
+            Game.players.setGlobalState("boss1beaky", beak.y)
+            Game.players.setGlobalState("boss1beakrotation", beak.rotation.degrees)
+        } else {
+            x = Game.players.getGlobalState("boss1x") ?: head.x
+            y = Game.players.getGlobalState("boss1y") ?: head.y
+            rotation = (Game.players.getGlobalState("boss1rotation") ?: 0.0f).degrees
+
+            tentacles.forEachIndexed { index, tentacle ->
+                tentacle.x = Game.players.getGlobalState("boss1tentacle${index}x") ?: 0.0f
+                tentacle.y = Game.players.getGlobalState("boss1tentacle${index}y") ?: 0.0f
+                tentacle.rotation = (Game.players.getGlobalState("boss1tentacle${index}rotation") ?: 0.0f).degrees
+            }
+
+            beak.x = Game.players.getGlobalState("boss1beakx") ?: 0.0f
+            beak.y = Game.players.getGlobalState("boss1beaky") ?: 0.0f
+            beak.rotation = (Game.players.getGlobalState("boss1beakrotation") ?: 0.0f).degrees
         }
 
-        beak.x = x
-        beak.y = y - 90.0f
-
+        tentacles.forEach {
+            it.update(delta, movementController.tentacleMovement)
+        }
         beak.update(delta, movementController.beakMovement)
     }
 

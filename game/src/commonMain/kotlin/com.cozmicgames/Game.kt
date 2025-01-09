@@ -52,7 +52,7 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             g.resize(width, height)
         }
 
-        currentGameState = TestState()
+        currentGameState = StartState()
 
         var isFirstUpdate = true
 

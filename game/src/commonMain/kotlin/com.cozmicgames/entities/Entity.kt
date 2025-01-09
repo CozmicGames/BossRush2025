@@ -1,6 +1,7 @@
 package com.cozmicgames.entities
 
 import com.cozmicgames.entities.animations.EntityAnimation
+import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.physics.Collider
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
@@ -12,8 +13,6 @@ abstract class Entity(val id: String) {
     var x = 0.0f
     var y = 0.0f
     var rotation = 0.0.degrees
-
-    abstract val renderLayer: Int
 
     abstract val collider: Collider
 
@@ -44,7 +43,8 @@ abstract class Entity(val id: String) {
     }
 
     protected abstract fun updateEntity(delta: Duration)
-    abstract fun render(batch: SpriteBatch)
+
+    abstract fun render(renderer: Renderer)
 
     open fun addEntityAnimation(animation: EntityAnimation) {
         if (animation.isUnique)

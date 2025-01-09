@@ -7,7 +7,7 @@ import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
-abstract class EnemyPart(id: String) : Entity(id) {
+abstract class EnemyPart(id: String) : SingleLayerEntity(id) {
     abstract val width: Float
     abstract val height: Float
     abstract val texture: TextureSlice

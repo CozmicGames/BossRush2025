@@ -18,8 +18,20 @@ class Resources : Releasable {
 
 
     /**
+     * Player
+     */
+    lateinit var playerShipBaseStill: Texture
+    lateinit var playerShipBaseSlow: Texture
+    lateinit var playerShipBaseFast: Texture
+    lateinit var playerShipTemplateDark: Texture
+    lateinit var playerShipTemplateMain: Texture
+    lateinit var playerShipTemplateLight: Texture
+
+
+    /**
      * Boss 1 - Space octopus
      */
+    lateinit var boss1background: Texture
     lateinit var boss1head: Texture
     lateinit var boss1beak: Texture
     lateinit var boss1tentacle: Texture
@@ -32,6 +44,14 @@ class Resources : Releasable {
         testBackgroundTexture = context.resourcesVfs["textures/test_bg.png"].readTexture()
         testEnergyBall = context.resourcesVfs["textures/energy_ball.png"].readTexture()
 
+        playerShipBaseStill = context.resourcesVfs["textures/player/player_ship_base_still.png"].readTexture()
+        playerShipBaseSlow = context.resourcesVfs["textures/player/player_ship_base_slow.png"].readTexture()
+        playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
+        playerShipTemplateDark = context.resourcesVfs["textures/player/player_ship_template_dark.png"].readTexture()
+        playerShipTemplateMain = context.resourcesVfs["textures/player/player_ship_template_main.png"].readTexture()
+        playerShipTemplateLight = context.resourcesVfs["textures/player/player_ship_template_light.png"].readTexture()
+
+        boss1background = context.resourcesVfs["textures/boss1/background.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
         boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
@@ -44,6 +64,14 @@ class Resources : Releasable {
         testBackgroundTexture.release()
         testEnergyBall.release()
 
+        playerShipBaseStill.release()
+        playerShipBaseSlow.release()
+        playerShipBaseFast.release()
+        playerShipTemplateDark.release()
+        playerShipTemplateMain.release()
+        playerShipTemplateLight.release()
+
+        boss1background.release()
         boss1head.release()
         boss1beak.release()
         boss1tentacle.release()

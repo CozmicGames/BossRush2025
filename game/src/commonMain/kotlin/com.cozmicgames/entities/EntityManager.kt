@@ -26,9 +26,7 @@ class EntityManager {
 
     fun render(renderer: Renderer) {
         for (entity in entities) {
-            renderer.submit(entity.renderLayer) {
-                entity.render(it)
-            }
+            entity.render(renderer)
         }
     }
 }
