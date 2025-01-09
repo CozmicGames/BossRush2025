@@ -36,7 +36,7 @@ class Collider(var shape: CollisionShape, val userData: Any? = null) {
 
     fun collidesWithLine(x0: Float, y0: Float, x1: Float, y1: Float, callback: (Float) -> Unit = {}): Boolean {
         return when (val shape = shape) {
-            is CircleCollisionShape -> CollisionUtils.collideLineCircle(x0, y0, x1, y1, x, y, shape.radius)
+            is CircleCollisionShape -> CollisionUtils.collideLineCircle(x0, y0, x1, y1, x, y, shape.radius, callback)
             is RectangleCollisionShape -> CollisionUtils.collideLineRectangle(x0, y0, x1, y1, x, y, shape.width, shape.height, shape.angle, callback)
         }
     }

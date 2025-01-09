@@ -3,6 +3,7 @@ package com.cozmicgames.states.boss1
 import com.cozmicgames.Game
 import com.cozmicgames.entities.EnemyPart
 import com.cozmicgames.physics.Collider
+import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
@@ -33,5 +34,10 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
         x = pivotX + cos * xOffset - sin * yOffset
         y = pivotY + sin * xOffset + cos * yOffset
+
+        collider.x = x
+        collider.y = y
+        (collider.shape as? RectangleCollisionShape)?.angle = rotation
+        collider.update()
     }
 }

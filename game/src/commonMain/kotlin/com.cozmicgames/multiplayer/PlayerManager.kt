@@ -6,28 +6,30 @@ import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
-    private val players = arrayListOf<Player>()
+    private val playersInternal = arrayListOf<Player>()
+
+    val players get() = playersInternal as List<Player>
 
     val isHost get() = multiplayer.isHost
 
     init {
         multiplayer.onPlayerJoin {
             val player = Player(it)
-            players += player
+            playersInternal += player
             Game.entities.add(player.ship)
 
             it.onQuit {
-                players.remove(player)
+                playersInternal.remove(player)
                 Game.entities.remove(player.ship)
             }
         }
     }
 
-    fun getById(id: String) = players.find { it.state.id == id }
+    fun getById(id: String) = playersInternal.find { it.state.id == id }
 
     fun update(delta: Duration) {
         if (multiplayer.isHost) {
-            for (player in players) {
+            for (player in playersInternal) {
                 player.state.setState("x", player.ship.x)
                 player.state.setState("y", player.ship.y)
                 player.state.setState("rotation", player.ship.rotation.degrees)
@@ -68,13 +70,13 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 }
             }
 
-            for (player in players)
+            for (player in playersInternal)
                 Game.events.sendProcessEvents(player.state)
 
             Game.events.clearProcessEvents()
         }
 
-        for (player in players) {
+        for (player in playersInternal) {
             player.state.getState<Float>("x")?.let { player.ship.x = it }
             player.state.getState<Float>("y")?.let { player.ship.y = it }
             player.state.getState<Float>("rotation")?.let { player.ship.rotation = it.degrees }
@@ -83,7 +85,7 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
     fun getMyPlayerState() = multiplayer.getMyPlayerState()
 
-    fun getMyPlayer() = players.find { it.state.id == getMyPlayerState().id }
+    fun getMyPlayer() = playersInternal.find { it.state.id == getMyPlayerState().id }
 
     fun <T : Any> getGlobalState(name: String) = multiplayer.getState<T>(name)
 

@@ -12,7 +12,6 @@ plugins {
 
 kotlin {
     js {
-        binaries.executable()
         browser {
             testTask { useKarma { useChromeHeadless() } }
             commonWebpackConfig {
@@ -24,11 +23,16 @@ kotlin {
                             open = mapOf("app" to mapOf("name" to "chrome")),
                         )
             }
+
+            distribution {
+                outputDirectory = File("$projectDir/build/distributions")
+            }
         }
+        binaries.executable()
 
         this.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
 
-        compilerOptions { sourceMap = true }
+        //compilerOptions { sourceMap = true }
     }
 
     sourceSets {

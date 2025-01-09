@@ -15,5 +15,5 @@ object Constants {
     const val CAMERA_FOLLOW_MOVE_SPEED = 5.0f
     const val CAMERA_FOLLOW_ROTATE_SPEED = 0.5f
 
-    const val BOSS1_TENTACLE_PARTS = 20
+    const val BOSS1_TENTACLE_PARTS = 8 //20
 }

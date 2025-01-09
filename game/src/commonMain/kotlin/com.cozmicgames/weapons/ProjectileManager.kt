@@ -45,8 +45,14 @@ class ProjectileManager {
 
             val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromEntity }
 
-            val nearestCollider = Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectileDirectionX * distance, projectile.startY + projectileDirectionY * distance, filter) { collisionDistance ->
-                distance = collisionDistance
+            val nearestCollider = when (projectile.type.baseType) {
+                is BulletProjectileType -> Game.physics.getNearestLineCollision(projectile.currentX, projectile.currentY, projectile.currentX + projectileDirectionX * distance, projectile.currentY + projectileDirectionY * distance, filter) { collisionDistance ->
+                    distance = collisionDistance
+                }
+
+                is BeamProjectileType -> Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectileDirectionX * (projectile.distance + distance), projectile.startY + projectileDirectionY * (projectile.distance + distance), filter) { collisionDistance ->
+                    distance = collisionDistance
+                }
             }
 
             if (nearestCollider != null) {

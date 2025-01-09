@@ -9,11 +9,8 @@ import kotlin.math.sqrt
 
 object CollisionUtils {
     fun collideCircleCircle(x0: Float, y0: Float, r0: Float, x1: Float, y1: Float, r1: Float): Boolean {
-        val dx = x0 - x1
-        val dy = y0 - y1
-        val radius = r0 + r1
-        val radiusSquared = radius * radius
-        return dx * dx + dy * dy < radiusSquared
+        val d = (x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1)
+        return d <= (r0 + r1) * (r0 + r1)
     }
 
 
@@ -127,29 +124,35 @@ object CollisionUtils {
     fun collideLineCircle(x0: Float, y0: Float, x1: Float, y1: Float, circleX: Float, circleY: Float, circleRadius: Float, callback: (Float) -> Unit = {}): Boolean {
         val dx = x1 - x0
         val dy = y1 - y0
-        val l2 = dx * dx + dy * dy
 
-        if (l2 == 0.0f)
+        val fx = x0 - circleX
+        val fy = y0 - circleY
+
+        val a = dx * dx + dy * dy
+        val b = 2 * (fx * dx + fy * dy)
+        val c = (fx * fx + fy * fy) - circleRadius * circleRadius
+
+        val discriminant = b * b - 4 * a * c
+
+        if (discriminant < 0)
             return false
+        else {
+            val sqrtDiscriminant = sqrt(discriminant)
+            val t1 = (-b - sqrtDiscriminant) / (2 * a)
+            val t2 = (-b + sqrtDiscriminant) / (2 * a)
 
-        val t = ((circleX - x0) * dx + (circleY - y0) * dy) / l2
-        val tClamped = max(0.0f, min(1.0f, t))
+            if (t1 in 0.0f..1.0f) {
+                callback(t1)
+                return true
+            }
 
-        val closestX = x0 + tClamped * dx
-        val closestY = y0 + tClamped * dy
+            if (t2 in 0.0f..1.0f) {
+                callback(t2)
+                return true
+            }
 
-        val dxClosest = circleX - closestX
-        val dyClosest = circleY - closestY
-
-        val distSquared = dxClosest * dxClosest + dyClosest * dyClosest
-        val radiusSquared = circleRadius * circleRadius
-
-        if (distSquared <= radiusSquared) {
-            callback(tClamped)
-            return true
+            return false
         }
-
-        return false
     }
 
     fun collideLineRectangle(x0: Float, y0: Float, x1: Float, y1: Float, rectangleX: Float, rectangleY: Float, rectangleWidth: Float, rectangleHeight: Float, rectangleAngle: Angle, callback: (Float) -> Unit = {}): Boolean {

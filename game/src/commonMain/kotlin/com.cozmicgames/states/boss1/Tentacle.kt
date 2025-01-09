@@ -11,7 +11,7 @@ class Tentacle(val index: Int, val flip: Boolean, val layer: Int, val baseRotati
     var y = 0.0f
     var rotation = 0.0.degrees
 
-    val tentacleAngle = rotation + baseRotation
+    val tentacleAngle get() = rotation + baseRotation
 
     val parts: List<TentaclePart>
 
@@ -27,6 +27,6 @@ class Tentacle(val index: Int, val flip: Boolean, val layer: Int, val baseRotati
 
     fun update(delta: Duration, movement: TentacleMovement) {
         if (Game.players.isHost)
-            movement.updateParts(delta, parts)
+            movement.updateParts(delta, this)
     }
 }

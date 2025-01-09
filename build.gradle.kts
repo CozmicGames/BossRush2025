@@ -9,7 +9,7 @@ allprojects {
         mavenCentral()
     }
 
-    group = "com.game.template"
+    group = "com.cozmicgames"
     version = "1.0"
 }
 

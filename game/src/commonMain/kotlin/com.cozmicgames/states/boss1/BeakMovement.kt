@@ -1,6 +1,7 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
+import com.cozmicgames.utils.lerpAngle
 import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.math.sin
@@ -15,8 +16,12 @@ class IdleBeakMovement : BeakMovement {
     private var time = Game.random.nextDouble().seconds
 
     override fun updateBeak(delta: Duration, beak: Beak) {
-        time += delta
+        beak.beakAngle = lerpAngle(beak.beakAngle, 8.0.degrees * sin(time.seconds * 3.0), 0.5f)
+    }
+}
 
-        beak.beakAngle = 8.0.degrees * sin(time.seconds * 3.0)
+class ScreamBeakMovement : BeakMovement {
+    override fun updateBeak(delta: Duration, beak: Beak) {
+        beak.beakAngle = lerpAngle(beak.beakAngle, 12.0.degrees, 0.5f)
     }
 }

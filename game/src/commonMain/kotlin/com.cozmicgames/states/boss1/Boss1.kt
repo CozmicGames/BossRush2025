@@ -4,16 +4,14 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.animations.EntityAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.littlekt.Releasable
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
-import com.littlekt.util.seconds
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class Boss1 : Releasable {
     //TODO: Ideas
-    // - Make it spin as a special attack
     // - Add movement patterns
     // - Add stages
     // - Make it shoot projectiles
@@ -73,7 +71,7 @@ class Boss1 : Releasable {
     private val tentacles: List<Tentacle>
     private val beak = Beak(BEAK_LAYER)
 
-    val movementController = MovementController()
+    val movementController = MovementController(this)
 
     init {
         val tentacles = arrayListOf<Tentacle>()
@@ -134,17 +132,8 @@ class Boss1 : Releasable {
         Game.physics.removeCollider(beak.rightBeak.collider)
     }
 
-    var t = 0.0.seconds
-
     fun update(delta: Duration) {
         if (Game.players.isHost) {
-            t += delta
-
-            rotation = 10.0.degrees * kotlin.math.sin(t.seconds * 2.0)
-
-            x = 100.0f * kotlin.math.cos(t.seconds)
-            y = 100.0f * kotlin.math.sin(t.seconds)
-
             movementController.update(delta)
 
             val cos = rotation.cosine
@@ -215,6 +204,19 @@ class Boss1 : Releasable {
 
         beak.leftBeak.addEntityAnimation(animation)
         beak.rightBeak.addEntityAnimation(animation)
+    }
+
+    fun drawDebug(renderer: ShapeRenderer) {
+        head.collider.drawDebug(renderer)
+
+        tentacles.forEach {
+            it.parts.forEach { part ->
+                part.collider.drawDebug(renderer)
+            }
+        }
+
+        beak.leftBeak.collider.drawDebug(renderer)
+        beak.rightBeak.collider.drawDebug(renderer)
     }
 
     override fun release() {

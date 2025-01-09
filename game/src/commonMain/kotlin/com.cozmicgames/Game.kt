@@ -11,6 +11,7 @@ import com.cozmicgames.states.*
 import com.cozmicgames.weapons.ProjectileManager
 import com.littlekt.Context
 import com.littlekt.ContextListener
+import com.littlekt.async.newSingleThreadAsyncContext
 import com.littlekt.log.Logger
 import com.littlekt.util.seconds
 import kotlin.js.Date
@@ -55,6 +56,8 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         currentGameState = StartState()
 
         var isFirstUpdate = true
+
+        newSingleThreadAsyncContext()
 
         onUpdate { delta ->
             events.processEvents()
