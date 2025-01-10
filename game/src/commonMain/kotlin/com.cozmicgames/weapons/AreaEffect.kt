@@ -7,7 +7,7 @@ import com.littlekt.util.seconds
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class AreaEffect(private val fromSource: AreaEffectSource, val type: AreaEffectType, val sourceType: AreaEffectSourceType, val growthType: AreaEffectGrowthType, var sourceX: Float, var sourceY: Float, var radius: Float, var growRate: Float, var duration: Duration) {
+class AreaEffect(val fromSource: AreaEffectSource, val type: AreaEffectType, val sourceType: AreaEffectSourceType, val growthType: AreaEffectGrowthType, var sourceX: Float, var sourceY: Float, var radius: Float, var growRate: Float, var duration: Duration) {
     val collider = Collider(CircleCollisionShape(radius))
     val hitColliders = arrayListOf<Collider>()
 

@@ -40,16 +40,26 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 val spawnProjectileType = ProjectileType.entries.getOrNull(player.state.getState("spawnProjectileType") ?: -1)
                 val spawnProjectileX = player.state.getState<Float>("spawnProjectileX")
                 val spawnProjectileY = player.state.getState<Float>("spawnProjectileY")
-                val spawnProjectileDirection = player.state.getState<Float>("spawnProjectileDirection")?.degrees
+                val spawnProjectileCount = player.state.getState<Int>("spawnProjectileCount")
                 val spawnProjectileSpeed = player.state.getState<Float>("spawnProjectileSpeed")
 
-                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileDirection != null && spawnProjectileSpeed != null) {
-                    Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, spawnProjectileDirection, spawnProjectileSpeed)
+                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileCount != null && spawnProjectileSpeed != null) {
+                    val directions = Array(spawnProjectileCount) {
+                        player.state.getState<Float>("spawnProjectileDirection$it")?.degrees
+                    }
+
+                    if (directions.all { it != null })
+                        directions.forEach {
+                            Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, it!!, spawnProjectileSpeed)
+                        }
 
                     player.state.setState("spawnProjectileType", null)
                     player.state.setState("spawnProjectileX", null)
                     player.state.setState("spawnProjectileY", null)
-                    player.state.setState("spawnProjectileDirection", null)
+                    player.state.setState("spawnProjectileCount", null)
+                    repeat(spawnProjectileCount) {
+                        player.state.setState("spawnProjectileDirection$it", null)
+                    }
                     player.state.setState("spawnProjectileSpeed", null)
                 }
 

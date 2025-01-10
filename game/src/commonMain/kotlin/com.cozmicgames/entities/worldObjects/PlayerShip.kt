@@ -24,8 +24,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 
-    var primaryWeapon: Weapon? = StandardWeapon()
-    var secondaryWeapon: Weapon? = TestWeapon()
+    var primaryWeapon: Weapon? = EnergyGun()
+    var secondaryWeapon: Weapon? = EnergyShotgun()
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
@@ -174,15 +174,23 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         val state = Game.players.getMyPlayerState()
 
-        var direction = weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
-
-        if (weapon.projectileType.baseType is BulletProjectileType)
-            direction += rotation
-
         state.setState("spawnProjectileType", weapon.projectileType.ordinal)
         state.setState("spawnProjectileX", muzzleX)
         state.setState("spawnProjectileY", muzzleY)
-        state.setState("spawnProjectileDirection", direction.degrees)
+        state.setState("spawnProjectileCount", weapon.projectileCount)
+
+        repeat(weapon.projectileCount) {
+            var direction = if (weapon.isRandomSpread)
+                weapon.spread * (Game.random.nextFloat() * 2.0f - 1.0f)
+            else
+                weapon.spread * (it - weapon.projectileCount * 0.5f) / weapon.projectileCount
+
+            if (weapon.projectileType.baseType is BulletProjectileType)
+                direction += rotation
+
+            state.setState("spawnProjectileDirection$it", direction.degrees)
+        }
+
         state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
 
         if (weapon.projectileType.baseType is BulletProjectileType)

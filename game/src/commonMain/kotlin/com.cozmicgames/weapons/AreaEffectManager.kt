@@ -3,6 +3,7 @@ package com.cozmicgames.weapons
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.events.Events
+import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.g2d.SpriteBatch
 import kotlin.time.Duration
@@ -23,7 +24,9 @@ class AreaEffectManager {
         areaEffects -= areaEffectsToRemove
 
         for (areaEffect in areaEffects) {
-            Game.physics.checkCollision(areaEffect.collider) {
+            val filter = { collider: Collider -> collider.userData != areaEffect.fromSource }
+
+            Game.physics.checkCollision(areaEffect.collider, filter) {
                 if (it.userData is Hittable) {
                     val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat()
 

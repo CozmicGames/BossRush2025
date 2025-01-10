@@ -17,12 +17,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
-    //TODO: Ideas
-    // - Add stages
-    // - Make it shoot projectiles
-    // - Make it spawn enemies
-    // - Obstacles, asteroids
-
     private companion object {
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds

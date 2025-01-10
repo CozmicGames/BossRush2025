@@ -13,7 +13,7 @@ import kotlin.time.Duration
 class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val flip: Boolean, val index: Int, layer: Int) : EnemyPart("boss1tentacle${index}") {
     override val renderLayer = layer
 
-    override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), tentacle) //TODO: Set proper userData, use some kind of proxy object
+    override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), tentacle)
 
     override val texture = Game.resources.boss1tentacleSlices[index]
 

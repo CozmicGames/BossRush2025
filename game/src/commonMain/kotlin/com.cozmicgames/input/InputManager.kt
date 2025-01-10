@@ -5,6 +5,7 @@ import com.cozmicgames.Game
 import com.littlekt.input.*
 import com.littlekt.math.geom.Point
 import com.littlekt.math.geom.radians
+import com.littlekt.math.geom.shortDistanceTo
 import com.littlekt.util.seconds
 import kotlin.js.Date
 import kotlin.math.atan2
@@ -89,7 +90,7 @@ class InputManager(private val input: Input) : Input {
 
         val shipPosition = player.camera.worldToScreen(Game.context, player.ship.x, player.ship.y)
         val angle = atan2((player.camera.virtualHeight - y - 1) - shipPosition.y, x - shipPosition.x).radians
-        val deltaRotation = (angle - player.ship.rotation).radians * delta.seconds
+        val deltaRotation = player.ship.rotation.shortDistanceTo(angle).radians * delta.seconds
 
         frame.timestamp = currentTime
         frame.deltaX = deltaX

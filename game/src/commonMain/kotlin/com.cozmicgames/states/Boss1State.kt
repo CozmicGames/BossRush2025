@@ -74,7 +74,7 @@ class Boss1State : GameState {
         }
 
         boss.update(delta)
-        playerCamera.update(cameraTargetX, cameraTargetY, playerShip.rotation, delta)
+        playerCamera.update(cameraTargetX, cameraTargetY, delta)
         Game.world.update(delta)
 
         val pass = Game.graphics.beginMainRenderPass()
