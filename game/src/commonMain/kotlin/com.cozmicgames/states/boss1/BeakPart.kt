@@ -1,7 +1,7 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.EnemyPart
+import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.slice
@@ -22,7 +22,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
     override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f))
 
-    override fun updateEntity(delta: Duration) {
+    override fun updateWorldObject(delta: Duration) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
         val pivotY = beak.y
 

@@ -1,10 +1,10 @@
-package com.cozmicgames.entities.animations
+package com.cozmicgames.entities.worldObjects.animations
 
 import com.littlekt.graphics.Color
 import kotlin.math.pow
 import kotlin.time.Duration
 
-class HitAnimation(duration: Duration) : EntityAnimation(duration, HIT_COLOR, 1.05f) {
+class HitAnimation(duration: Duration) : WorldObjectAnimation(duration, HIT_COLOR, 1.05f) {
     companion object {
         private val HIT_COLOR = Color(0.9f, 0.3f, 0.2f, 1.0f)
     }

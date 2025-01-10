@@ -1,4 +1,4 @@
-package com.cozmicgames.entities
+package com.cozmicgames.entities.worldObjects
 
 import com.littlekt.math.geom.Angle
 

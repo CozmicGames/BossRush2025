@@ -20,6 +20,12 @@ class IdleBeakMovement : BeakMovement {
     }
 }
 
+class ClosedBeakMovement : BeakMovement {
+    override fun updateBeak(delta: Duration, beak: Beak) {
+        beak.beakAngle = lerpAngle(beak.beakAngle, 5.0.degrees, 0.5f)
+    }
+}
+
 class ScreamBeakMovement : BeakMovement {
     override fun updateBeak(delta: Duration, beak: Beak) {
         beak.beakAngle = lerpAngle(beak.beakAngle, 12.0.degrees, 0.5f)

@@ -1,8 +1,8 @@
 package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.Entity
-import com.cozmicgames.entities.ProjectileSource
+import com.cozmicgames.entities.worldObjects.WorldObject
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.events.Events
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
@@ -25,10 +25,10 @@ class ProjectileManager {
         for (projectile in projectiles) {
             var projectileAngle = projectile.direction
 
-            if (projectile.fromEntity is ProjectileSource) {
-                projectile.startX = projectile.fromEntity.muzzleX
-                projectile.startY = projectile.fromEntity.muzzleY
-                projectileAngle += projectile.fromEntity.muzzleRotation
+            if (projectile.fromWorldObject is ProjectileSource && projectile.type.baseType is BeamProjectileType) {
+                projectile.startX = projectile.fromWorldObject.muzzleX
+                projectile.startY = projectile.fromWorldObject.muzzleY
+                projectileAngle += projectile.fromWorldObject.muzzleRotation
             }
 
             val projectileDirectionX = projectileAngle.cosine
@@ -43,7 +43,7 @@ class ProjectileManager {
 
             var distance = projectile.speed * delta.seconds
 
-            val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromEntity }
+            val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromWorldObject }
 
             val nearestCollider = when (projectile.type.baseType) {
                 is BulletProjectileType -> Game.physics.getNearestLineCollision(projectile.currentX, projectile.currentY, projectile.currentX + projectileDirectionX * distance, projectile.currentY + projectileDirectionY * distance, filter) { collisionDistance ->
@@ -67,7 +67,7 @@ class ProjectileManager {
                 continue
             }
 
-            if (projectile.currentX < Game.physics.minX - 10000.0f || projectile.currentX > Game.physics.maxX + 10000.0f || projectile.currentY < Game.physics.minY - 10000.0f || projectile.currentY > Game.physics.maxY + 10000.0f) {
+            if (projectile.currentX < Game.physics.minX - 100000.0f || projectile.currentX > Game.physics.maxX + 100000.0f || projectile.currentY < Game.physics.minY - 100000.0f || projectile.currentY > Game.physics.maxY + 100000.0f) {
                 projectilesToRemove += projectile
                 continue
             }
@@ -102,18 +102,18 @@ class ProjectileManager {
         }
     }
 
-    fun stopBeamProjectile(fromEntity: Entity) {
+    fun stopBeamProjectile(fromWorldObject: WorldObject) {
         if (!Game.players.isHost)
             return
 
-        projectiles.removeAll { it.fromEntity == fromEntity && it.type == ProjectileType.ENERGY_BEAM }
+        projectiles.removeAll { it.fromWorldObject == fromWorldObject && it.type == ProjectileType.ENERGY_BEAM }
     }
 
-    fun spawnProjectile(fromEntity: Entity, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float) {
+    fun spawnProjectile(fromWorldObject: WorldObject, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float) {
         if (!Game.players.isHost)
             return
 
-        projectiles += Projectile(fromEntity, type, x, y, direction, speed)
+        projectiles += Projectile(fromWorldObject, type, x, y, direction, speed)
     }
 
     fun render(batch: SpriteBatch) {

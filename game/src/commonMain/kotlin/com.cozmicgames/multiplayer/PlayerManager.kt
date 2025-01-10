@@ -1,8 +1,12 @@
 package com.cozmicgames.multiplayer
 
 import com.cozmicgames.Game
+import com.cozmicgames.weapons.AreaEffectGrowthType
+import com.cozmicgames.weapons.AreaEffectSourceType
+import com.cozmicgames.weapons.AreaEffectType
 import com.cozmicgames.weapons.ProjectileType
 import com.littlekt.math.geom.degrees
+import com.littlekt.util.seconds
 import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
@@ -16,11 +20,10 @@ class PlayerManager(private val multiplayer: Multiplayer) {
         multiplayer.onPlayerJoin {
             val player = Player(it)
             playersInternal += player
-            Game.entities.add(player.ship)
 
             it.onQuit {
                 playersInternal.remove(player)
-                Game.entities.remove(player.ship)
+                Game.world.remove(player.ship)
             }
         }
     }
@@ -52,10 +55,27 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
                 val stopBeamProjectile = player.state.getState<Boolean>("stopBeamProjectile")
 
-                if(stopBeamProjectile == true) {
+                if (stopBeamProjectile == true) {
                     Game.projectiles.stopBeamProjectile(player.ship)
 
                     player.state.setState("stopBeamProjectile", null)
+                }
+
+                val spawnAreaEffectType = AreaEffectType.entries.getOrNull(player.state.getState("spawnAreaEffectType") ?: -1)
+                val spawnAreaEffectSourceType = AreaEffectSourceType.entries.getOrNull(player.state.getState("spawnAreaEffectSourceType") ?: -1)
+                val spawnAreaEffectGrowthType = AreaEffectGrowthType.entries.getOrNull(player.state.getState("spawnAreaEffectGrowthType") ?: -1)
+                val spawnAreaEffectRadius = player.state.getState<Float>("spawnAreaEffectRadius")
+                val spawnAreaEffectGrowRate = player.state.getState<Float>("spawnAreaEffectGrowRate")
+                val spawnAreaEffectDuration = player.state.getState<Float>("spawnAreaEffectDuration")?.seconds
+
+                if (spawnAreaEffectType != null && spawnAreaEffectSourceType != null && spawnAreaEffectGrowthType != null && spawnAreaEffectRadius != null && spawnAreaEffectGrowRate != null && spawnAreaEffectDuration != null) {
+                    Game.areaEffects.spawnEffect(player.ship, spawnAreaEffectType, spawnAreaEffectSourceType, spawnAreaEffectGrowthType, spawnAreaEffectRadius, spawnAreaEffectGrowRate, spawnAreaEffectDuration)
+
+                    player.state.setState("spawnAreaEffectType", null)
+                    player.state.setState("spawnAreaEffectSourceType", null)
+                    player.state.setState("spawnAreaEffectGrowthType", null)
+                    player.state.setState("spawnAreaEffectRadius", null)
+                    player.state.setState("spawnAreaEffectDuration", null)
                 }
 
                 val eventCount = player.state.getState<Int>("sendEventCount")

@@ -1,7 +1,7 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.EnemyPart
+import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
@@ -27,7 +27,7 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable {
     private var size = 1.0f
     private var timer = 0.0.seconds
 
-    override fun updateEntity(delta: Duration) {
+    override fun updateWorldObject(delta: Duration) {
         timer += delta
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f
@@ -39,7 +39,7 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable {
         y = collider.y
     }
 
-    override fun onHit(x: Float, y: Float) {
+    override fun onDamageHit() {
         if (boss.isParalyzed && !boss.isInvulnerable)
             boss.hit()
     }

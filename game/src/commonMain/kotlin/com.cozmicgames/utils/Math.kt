@@ -30,3 +30,7 @@ fun lerpAngle(from: Angle, to: Angle, alpha: Float): Angle {
     val radiansTo = to.radians
     return (radiansFrom + (radiansTo - radiansFrom) * alpha).radians
 }
+
+fun lerp(from: Float, to: Float, alpha: Float): Float {
+    return from + (to - from) * alpha
+}

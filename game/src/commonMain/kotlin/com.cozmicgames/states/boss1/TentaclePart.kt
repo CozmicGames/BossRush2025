@@ -2,7 +2,7 @@ package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.entities.EnemyPart
+import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.math.geom.cosine
@@ -29,7 +29,7 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
 
     var tentacleRotation = 0.0.degrees
 
-    override fun updateEntity(delta: Duration) {
+    override fun updateWorldObject(delta: Duration) {
         if (Game.players.isHost) {
             val tentacleRotation = if (flip) -tentacleRotation else tentacleRotation
 

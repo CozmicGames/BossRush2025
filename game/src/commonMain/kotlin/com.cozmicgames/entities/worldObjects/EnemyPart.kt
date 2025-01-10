@@ -1,4 +1,4 @@
-package com.cozmicgames.entities
+package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.RectangleCollisionShape
@@ -9,7 +9,7 @@ import com.littlekt.math.geom.degrees
 import kotlin.math.max
 import kotlin.time.Duration
 
-abstract class EnemyPart(id: String) : SingleLayerEntity(id) {
+abstract class EnemyPart(id: String) : SingleLayerWorldObject(id) {
     abstract val width: Float
     abstract val height: Float
     abstract val texture: TextureSlice
@@ -21,7 +21,7 @@ abstract class EnemyPart(id: String) : SingleLayerEntity(id) {
 
     protected fun getCircleCollisionShape(scale: Float = 1.0f) = CircleCollisionShape(max(width, height) * 0.5f * scale)
 
-    override fun updateEntity(delta: Duration) {
+    override fun updateWorldObject(delta: Duration) {
         collider?.let {
             it.x = x
             it.y = y

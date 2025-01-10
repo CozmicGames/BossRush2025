@@ -5,5 +5,7 @@ interface Hittable {
 
     val canHit: Boolean get() = true
 
-    fun onHit(x: Float, y: Float)
+    fun onDamageHit() {}
+
+    fun onShockwaveHit(x: Float, y: Float, strength: Float) {}
 }

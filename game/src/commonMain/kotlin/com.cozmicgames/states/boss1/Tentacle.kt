@@ -2,7 +2,7 @@ package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.entities.animations.ParalyzeAnimation
+import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
@@ -62,7 +62,7 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
         }
     }
 
-    override fun onHit(x: Float, y: Float) {
+    override fun onDamageHit() {
         paralyze()
     }
 }

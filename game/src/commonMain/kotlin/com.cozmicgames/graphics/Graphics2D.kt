@@ -29,6 +29,9 @@ class Graphics2D(private val context: Context) : Releasable {
 
     private var frameContext: FrameContext? = null
 
+    val width get() = context.graphics.width
+    val height get() = context.graphics.height
+
     val mainViewport: Viewport
 
     init {

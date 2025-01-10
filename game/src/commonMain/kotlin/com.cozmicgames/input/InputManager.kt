@@ -87,8 +87,8 @@ class InputManager(private val input: Input) : Input {
         val deltaX = (-leftAmount + rightAmount) * delta.seconds
         val deltaY = (-downAmount + upAmount) * delta.seconds
 
-        val shipPosition = Game.graphics.mainViewport.camera.worldToScreen(Game.context, player.ship.x, player.ship.y)
-        val angle = atan2((Game.graphics.mainViewport.height - y - 1) - shipPosition.y, x - shipPosition.x).radians
+        val shipPosition = player.camera.worldToScreen(Game.context, player.ship.x, player.ship.y)
+        val angle = atan2((player.camera.virtualHeight - y - 1) - shipPosition.y, x - shipPosition.x).radians
         val deltaRotation = (angle - player.ship.rotation).radians * delta.seconds
 
         frame.timestamp = currentTime

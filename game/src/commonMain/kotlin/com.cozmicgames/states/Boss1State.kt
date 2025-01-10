@@ -7,7 +7,6 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.states.boss1.Boss1
-import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.isFuzzyZero
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -19,13 +18,29 @@ class Boss1State : GameState {
     private lateinit var boss: Boss1
 
     override fun begin() {
-        playerCamera = PlayerCamera(Game.graphics.mainViewport.camera)
+        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+
+        Game.physics.clear()
+        Game.physics.width = 2500.0f
+        Game.physics.height = 2500.0f
+        playerCamera = PlayerCamera(player.camera)
 
         background = Background(Game.resources.boss1background)
 
         boss = Boss1()
-        boss.addToEntities()
+        boss.addToWorld()
         boss.addToPhysics()
+
+        Game.players.players.forEach {
+            it.ship.addToWorld()
+            it.ship.addToPhysics()
+        }
+    }
+
+    override fun resize(width: Int, height: Int) {
+        playerCamera.camera.virtualWidth = width.toFloat()
+        playerCamera.camera.virtualHeight = height.toFloat()
+        playerCamera.camera.update()
     }
 
     override fun render(delta: Duration): () -> GameState {
@@ -60,23 +75,34 @@ class Boss1State : GameState {
 
         boss.update(delta)
         playerCamera.update(cameraTargetX, cameraTargetY, playerShip.rotation, delta)
-        Game.entities.update(delta)
+        Game.world.update(delta)
 
         val pass = Game.graphics.beginMainRenderPass()
 
         pass.render(playerCamera.camera) { renderer: Renderer ->
             background.render(renderer)
 
-            Game.entities.render(renderer)
+            Game.world.render(renderer)
 
             renderer.submit(RenderLayers.PROJECTILES_BEGIN) {
                 Game.projectiles.render(it)
             }
+
+            renderer.submit(RenderLayers.AREA_EFFECTS_BEGIN) {
+                Game.areaEffects.render(it)
+            }
         }
 
-        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-            boss.drawDebug(renderer)
-        }
+        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+        //    boss.drawDebug(renderer)
+        //}
+
+        if (player.indicatorColor.a > 0.0f)
+            pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
+                renderer.submit(RenderLayers.BORDER_INDICATOR) {
+                    it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
+                }
+            }
 
         pass.end()
 
@@ -85,6 +111,11 @@ class Boss1State : GameState {
 
     override fun end() {
         boss.removeFromPhysics()
-        boss.removeFromEntities()
+        boss.removeFromWorld()
+
+        Game.players.players.forEach {
+            it.ship.removeFromPhysics()
+            it.ship.removeFromWorld()
+        }
     }
 }

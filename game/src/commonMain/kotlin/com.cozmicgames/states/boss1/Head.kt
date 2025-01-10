@@ -1,7 +1,7 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.EnemyPart
+import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
@@ -20,7 +20,7 @@ class Head(private val boss: Boss1, layer: Int) : EnemyPart("boss1head"), Hittab
 
     override val texture = Game.resources.boss1head.slice()
 
-    override fun onHit(x: Float, y: Float) {
+    override fun onDamageHit() {
         boss.paralyze()
     }
 }

@@ -1,7 +1,7 @@
 package com.cozmicgames.physics
 
 import com.cozmicgames.Constants
-import com.cozmicgames.entities.Entity
+import com.cozmicgames.entities.worldObjects.WorldObject
 
 class PhysicsWorld(var width: Float, var height: Float) {
     val colliders get() = collidersInternal as List<Collider>
@@ -19,12 +19,12 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     fun addCollider(collider: Collider) {
         collidersInternal.add(collider)
-        (collider.userData as? Entity)?.onAddToPhysics()
+        (collider.userData as? WorldObject)?.onAddToPhysics()
     }
 
     fun removeCollider(collider: Collider) {
         collidersInternal.remove(collider)
-        (collider.userData as? Entity)?.onRemoveFromPhysics()
+        (collider.userData as? WorldObject)?.onRemoveFromPhysics()
     }
 
     fun addHittable(hittable: Hittable) {
@@ -39,7 +39,12 @@ class PhysicsWorld(var width: Float, var height: Float) {
         removeHittable(hittable.id)
     }
 
-    fun scaleSpeedX(collider: Collider, speed: Float): Float {
+    fun clear() {
+        collidersInternal.clear()
+        hittablesInternal.clear()
+    }
+
+    fun getSpeedScaleX(collider: Collider, speed: Float): Float {
         var scale = 1.0f
 
         if (collider.boundsMinX < minX + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
@@ -48,10 +53,10 @@ class PhysicsWorld(var width: Float, var height: Float) {
         if (collider.boundsMaxX > maxX - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
             scale = (maxX - collider.boundsMaxX) / Constants.WORLD_DECELERATION_BORDER
 
-        return speed * scale
+        return scale
     }
 
-    fun scaleSpeedY(collider: Collider, speed: Float): Float {
+    fun getSpeedScaleY(collider: Collider, speed: Float): Float {
         var scale = 1.0f
 
         if (collider.boundsMinY < minY + Constants.WORLD_DECELERATION_BORDER && speed < 0.0f)
@@ -60,7 +65,7 @@ class PhysicsWorld(var width: Float, var height: Float) {
         if (collider.boundsMaxY > maxY - Constants.WORLD_DECELERATION_BORDER && speed > 0.0f)
             scale = (maxY - collider.boundsMaxY) / Constants.WORLD_DECELERATION_BORDER
 
-        return speed * scale
+        return scale
     }
 
     fun updatePlayerCollider(collider: Collider) {

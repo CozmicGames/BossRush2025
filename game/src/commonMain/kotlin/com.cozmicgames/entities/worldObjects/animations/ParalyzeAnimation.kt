@@ -1,11 +1,11 @@
-package com.cozmicgames.entities.animations
+package com.cozmicgames.entities.worldObjects.animations
 
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 import kotlin.math.pow
 import kotlin.time.Duration
 
-class ParalyzeAnimation(duration: Duration, strength: Float = 1.0f) : EntityAnimation(duration, MutableColor(Color.WHITE).mix(PARALYZED_COLOR, strength), 1.0f) {
+class ParalyzeAnimation(duration: Duration, strength: Float = 1.0f) : WorldObjectAnimation(duration, MutableColor(Color.WHITE).mix(PARALYZED_COLOR, strength), 1.0f) {
     companion object {
         private val PARALYZED_COLOR = Color(0.3f, 0.4f, 1.0f, 1.0f)
     }

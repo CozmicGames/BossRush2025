@@ -1,6 +1,6 @@
 package com.cozmicgames
 
-import com.cozmicgames.entities.EntityManager
+import com.cozmicgames.entities.worldObjects.World
 import com.cozmicgames.events.EventManager
 import com.cozmicgames.graphics.Graphics2D
 import com.cozmicgames.input.ControlManager
@@ -8,6 +8,7 @@ import com.cozmicgames.input.InputManager
 import com.cozmicgames.multiplayer.PlayerManager
 import com.cozmicgames.physics.PhysicsWorld
 import com.cozmicgames.states.*
+import com.cozmicgames.weapons.AreaEffectManager
 import com.cozmicgames.weapons.ProjectileManager
 import com.littlekt.Context
 import com.littlekt.ContextListener
@@ -28,7 +29,8 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         val controls = ControlManager()
         val resources = Resources()
         val projectiles = ProjectileManager()
-        val entities = EntityManager()
+        val areaEffects = AreaEffectManager()
+        val world = World()
         val events = EventManager()
         val random = Random(Date.now().toLong())
     }
@@ -63,6 +65,7 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             events.processEvents()
 
             projectiles.update(delta)
+            areaEffects.update(delta)
             controls.update(delta.seconds)
 
             if (isFirstUpdate) {

@@ -1,9 +1,9 @@
-package com.cozmicgames.entities
+package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.graphics.Renderer
 import com.littlekt.graphics.g2d.SpriteBatch
 
-abstract class SingleLayerEntity(id: String) : Entity(id) {
+abstract class SingleLayerWorldObject(id: String) : WorldObject(id) {
     abstract val renderLayer: Int
 
     abstract fun render(batch: SpriteBatch)

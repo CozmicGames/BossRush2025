@@ -1,4 +1,4 @@
-package com.cozmicgames.entities.animations
+package com.cozmicgames.entities.worldObjects.animations
 
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
@@ -6,7 +6,7 @@ import com.littlekt.util.seconds
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-abstract class EntityAnimation(val duration: Duration, val startColor: Color, val startScale: Float) {
+abstract class WorldObjectAnimation(val duration: Duration, val startColor: Color, val startScale: Float) {
     open val isUnique get() = true
 
     private var timer = 0.0.seconds

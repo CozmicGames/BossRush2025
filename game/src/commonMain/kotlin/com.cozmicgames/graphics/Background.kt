@@ -12,8 +12,10 @@ class Background(private val texture: Texture) {
     }
 
     fun render(renderer: Renderer) {
+        val player = Game.players.getMyPlayer() ?: return
+
         renderer.submit(RenderLayers.BACKGROUND) { batch ->
-            val camera = Game.graphics.mainViewport.camera
+            val camera = player.camera
 
             val startX = (camera.position.x * PARALLAX_FACTOR) - camera.virtualWidth * 0.5f
             val startY = (camera.position.y * PARALLAX_FACTOR) - camera.virtualHeight * 0.5f

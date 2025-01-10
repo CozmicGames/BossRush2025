@@ -21,8 +21,9 @@ class Renderer {
     }
 
     fun render(batch: SpriteBatch) {
-        renderables.sortBy { it.layer }
-        renderables.forEach { it.block(batch) }
+        val renderablesToRender = renderables.subList(0, currentIndex)
+        renderablesToRender.sortBy { it.layer }
+        renderablesToRender.forEach { it.block(batch) }
         currentIndex = 0
     }
 

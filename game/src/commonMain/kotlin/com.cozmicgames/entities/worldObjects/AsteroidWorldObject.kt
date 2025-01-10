@@ -1,4 +1,4 @@
-package com.cozmicgames.entities
+package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.RenderLayers
@@ -9,7 +9,7 @@ import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
-class AsteroidEntity(index: Int, private val directionX: Float, private val directionY: Float, private val speed: Float) : Entity("asteroid$index") {
+class AsteroidWorldObject(index: Int, private val directionX: Float, private val directionY: Float, private val speed: Float) : WorldObject("asteroid$index") {
     companion object {
         private const val MIN_SIZE = 32.0f
         private const val MAX_SIZE = 128.0f
@@ -23,7 +23,7 @@ class AsteroidEntity(index: Int, private val directionX: Float, private val dire
 
     override val collider = Collider(CircleCollisionShape(size), this)
 
-    override fun updateEntity(delta: Duration) {
+    override fun updateWorldObject(delta: Duration) {
         rotation += rotationSpeed.degrees * delta.seconds
 
         x += directionX * speed * delta.seconds

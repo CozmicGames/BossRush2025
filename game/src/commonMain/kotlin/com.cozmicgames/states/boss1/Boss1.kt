@@ -1,9 +1,11 @@
 package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.animations.EntityAnimation
-import com.cozmicgames.entities.animations.HitAnimation
-import com.cozmicgames.entities.animations.ParalyzeAnimation
+import com.cozmicgames.entities.Entity
+import com.cozmicgames.entities.worldObjects.AreaEffectSource
+import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
+import com.cozmicgames.entities.worldObjects.animations.HitAnimation
+import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.littlekt.Releasable
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
@@ -14,9 +16,8 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1 : Releasable {
+class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
     //TODO: Ideas
-    // - Add movement patterns
     // - Add stages
     // - Make it shoot projectiles
     // - Make it spawn enemies
@@ -24,7 +25,7 @@ class Boss1 : Releasable {
 
     private companion object {
         private val INVULNERABLE_TIME = 2.0.seconds
-        private val PARALYZED_TIME = 10.0.seconds
+        private val PARALYZED_TIME = 5.0.seconds
 
         private const val HEAD_WIDTH = 256.0f
         private const val HEAD_HEIGHT = 256.0f
@@ -86,8 +87,10 @@ class Boss1 : Releasable {
         private const val HEART_OFFSET_Y = -0.8f
     }
 
-    var health = 3
-        private set
+    override var health = 3
+
+    override val effectSourceX get() = beak.x
+    override val effectSourceY get() = beak.y
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
@@ -117,28 +120,28 @@ class Boss1 : Releasable {
         this.tentacles = tentacles
     }
 
-    fun addToEntities() {
-        Game.entities.add(head)
+    fun addToWorld() {
+        Game.world.add(head)
 
         tentacles.forEach { tentacle ->
-            tentacle.parts.forEach(Game.entities::add)
+            tentacle.parts.forEach(Game.world::add)
         }
 
-        Game.entities.add(beak.leftBeak)
-        Game.entities.add(beak.rightBeak)
-        Game.entities.add(heart)
+        Game.world.add(beak.leftBeak)
+        Game.world.add(beak.rightBeak)
+        Game.world.add(heart)
     }
 
-    fun removeFromEntities() {
-        Game.entities.remove(head)
+    fun removeFromWorld() {
+        Game.world.remove(head)
 
         tentacles.forEach { tentacle ->
-            tentacle.parts.forEach(Game.entities::remove)
+            tentacle.parts.forEach(Game.world::remove)
         }
 
-        Game.entities.remove(beak.leftBeak)
-        Game.entities.remove(beak.rightBeak)
-        Game.entities.remove(heart)
+        Game.world.remove(beak.leftBeak)
+        Game.world.remove(beak.rightBeak)
+        Game.world.remove(heart)
     }
 
     fun addToPhysics() {
@@ -293,7 +296,7 @@ class Boss1 : Releasable {
         }
     }
 
-    fun addEntityAnimation(block: () -> EntityAnimation) {
+    fun addEntityAnimation(block: () -> WorldObjectAnimation) {
         head.addEntityAnimation(block())
 
         tentacles.forEach {
@@ -308,11 +311,11 @@ class Boss1 : Releasable {
         heart.addEntityAnimation(block())
     }
 
-    inline fun <reified T : EntityAnimation> cancelEntityAnimation() {
+    inline fun <reified T : WorldObjectAnimation> cancelEntityAnimation() {
         cancelEntityAnimation(T::class)
     }
 
-    fun <T : EntityAnimation> cancelEntityAnimation(type: KClass<T>) {
+    fun <T : WorldObjectAnimation> cancelEntityAnimation(type: KClass<T>) {
         head.cancelEntityAnimation(type)
 
         tentacles.forEach {

@@ -14,4 +14,9 @@ object RenderLayers {
 
     const val PROJECTILES_BEGIN = 500
     const val PROJECTILES_END = 600
+
+    const val AREA_EFFECTS_BEGIN = 600
+    const val AREA_EFFECTS_END = 700
+
+    const val BORDER_INDICATOR = 10000
 }
