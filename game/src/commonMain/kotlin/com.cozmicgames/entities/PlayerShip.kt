@@ -18,6 +18,8 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class PlayerShip(private val player: Player) : Entity(player.state.id), ProjectileSource {
+    var health = 3
+
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 

@@ -11,12 +11,12 @@ class MovementController(private val boss: Boss1) {
     }
 
     var tentacleMovement: TentacleMovement = CompoundTentacleMovement()
-    var beakMovement: BeakMovement = IdleBeakMovement()
-    var bossMovement: BossMovement = IdleBossMovement()
+    var beakMovement: BeakMovement = ParalyzedBeakMovement()
+    var bossMovement: BossMovement = ParalyzedBossMovement()
 
     private var currentAttack: Attack? = null
-
     private val transform = BossTransform()
+    private val fightGraph = FightGraph(boss)
 
     init {
         with(tentacleMovement as CompoundTentacleMovement) {
@@ -24,6 +24,11 @@ class MovementController(private val boss: Boss1) {
             addMovement(HangTentacleMovement())
             addMovement(WaveTentacleMovement(10.0.degrees, 0.3f, 0.2f))
         }
+
+        //fightGraph.addNode(WaitNode(5.0.seconds))
+        //fightGraph.addNode(AttackNode(SpinAttack()))
+        //fightGraph.addNode(WaitNode(5.0.seconds))
+        //fightGraph.addNode(AttackNode(GrabAttack()))
     }
 
     fun performAttack(attack: Attack, onDone: () -> Unit = {}) {
@@ -45,7 +50,17 @@ class MovementController(private val boss: Boss1) {
         currentAttack = attack
     }
 
+    fun onParalyze() {
+
+    }
+
+    fun onHit() {
+
+    }
+
     fun update(delta: Duration) {
+        fightGraph.update(delta)
+
         if (currentAttack?.isDone(delta) == true)
             currentAttack = null
 

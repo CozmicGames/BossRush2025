@@ -2,13 +2,17 @@ package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.animations.EntityAnimation
+import com.cozmicgames.entities.animations.HitAnimation
+import com.cozmicgames.entities.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.littlekt.Releasable
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import kotlin.reflect.KClass
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class Boss1 : Releasable {
     //TODO: Ideas
@@ -19,12 +23,17 @@ class Boss1 : Releasable {
     // - Obstacles, asteroids
 
     private companion object {
+        private val INVULNERABLE_TIME = 2.0.seconds
+        private val PARALYZED_TIME = 10.0.seconds
+
         private const val HEAD_WIDTH = 256.0f
         private const val HEAD_HEIGHT = 256.0f
 
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
 
-        private const val BEAK_LAYER = RenderLayers.ENEMY_BEGIN + 5
+        private const val BEAK_LAYER = RenderLayers.ENEMY_BEGIN + 8
+
+        private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 5
 
         private val TENTACLE_OFFSETS = arrayOf(
             0.67f to -0.45f,
@@ -38,14 +47,25 @@ class Boss1 : Releasable {
         )
 
         private val TENTACLE_ANGLES = arrayOf(
-            10.0.degrees,
+            15.0.degrees,
             0.0.degrees,
-            (-10.0).degrees,
+            (-15.0).degrees,
             (-30.0).degrees,
-            (-10.0).degrees,
+            (-15.0).degrees,
             0.0.degrees,
-            10.0.degrees,
+            15.0.degrees,
             30.0.degrees
+        )
+
+        private val TENTACLE_SCALES = arrayOf(
+            2.0f,
+            2.3f,
+            2.7f,
+            3.0f,
+            2.0f,
+            2.3f,
+            2.7f,
+            3.0f
         )
 
         private val TENTACLE_LAYERS = arrayOf(
@@ -61,23 +81,36 @@ class Boss1 : Releasable {
 
         private const val BEAK_OFFSET_X = 0.0f
         private const val BEAK_OFFSET_Y = -0.7f
+
+        private const val HEART_OFFSET_X = 0.0f
+        private const val HEART_OFFSET_Y = -0.8f
     }
+
+    var health = 3
+        private set
+
+    val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
+
+    val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
     var x = 0.0f
     var y = 0.0f
     var rotation = 0.0.degrees
 
-    private val head = Head(HEAD_LAYER)
+    val movementController = MovementController(this)
+
+    private val head = Head(this, HEAD_LAYER)
     private val tentacles: List<Tentacle>
     private val beak = Beak(BEAK_LAYER)
-
-    val movementController = MovementController(this)
+    private val heart = Heart(this, HEART_LAYER)
+    private var isInvulnerableTimer = 0.0.seconds
+    private var isParalyzedTimer = 0.0.seconds
 
     init {
         val tentacles = arrayListOf<Tentacle>()
 
         repeat(8) {
-            val tentacle = Tentacle(it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it])
+            val tentacle = Tentacle(this, it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it], TENTACLE_SCALES[it])
             tentacles += tentacle
         }
 
@@ -93,6 +126,7 @@ class Boss1 : Releasable {
 
         Game.entities.add(beak.leftBeak)
         Game.entities.add(beak.rightBeak)
+        Game.entities.add(heart)
     }
 
     fun removeFromEntities() {
@@ -104,36 +138,51 @@ class Boss1 : Releasable {
 
         Game.entities.remove(beak.leftBeak)
         Game.entities.remove(beak.rightBeak)
+        Game.entities.remove(heart)
     }
 
     fun addToPhysics() {
         Game.physics.addCollider(head.collider)
+        Game.physics.addHittable(head)
 
         tentacles.forEach { tentacle ->
             tentacle.parts.forEach {
                 Game.physics.addCollider(it.collider)
             }
+
+            Game.physics.addHittable(tentacle)
         }
 
-        Game.physics.addCollider(beak.leftBeak.collider)
-        Game.physics.addCollider(beak.rightBeak.collider)
+        Game.physics.addCollider(heart.collider)
+        Game.physics.addHittable(heart)
     }
 
     fun removeFromPhysics() {
         Game.physics.removeCollider(head.collider)
+        Game.physics.removeHittable(head)
 
         tentacles.forEach { tentacle ->
             tentacle.parts.forEach {
                 Game.physics.removeCollider(it.collider)
             }
+
+            Game.physics.removeHittable(tentacle)
         }
 
-        Game.physics.removeCollider(beak.leftBeak.collider)
-        Game.physics.removeCollider(beak.rightBeak.collider)
+        Game.physics.removeCollider(heart.collider)
+        Game.physics.removeHittable(heart)
     }
 
     fun update(delta: Duration) {
         if (Game.players.isHost) {
+            isInvulnerableTimer -= delta
+            if (isInvulnerableTimer <= 0.0.seconds)
+                isInvulnerableTimer = 0.0.seconds
+
+            isParalyzedTimer -= delta
+            if (isParalyzedTimer <= 0.0.seconds)
+                isParalyzedTimer = 0.0.seconds
+
             movementController.update(delta)
 
             val cos = rotation.cosine
@@ -171,6 +220,17 @@ class Boss1 : Releasable {
             Game.players.setGlobalState("boss1beakx", beak.x)
             Game.players.setGlobalState("boss1beaky", beak.y)
             Game.players.setGlobalState("boss1beakrotation", beak.rotation.degrees)
+
+            val heartOffsetX = HEART_OFFSET_X * HEAD_WIDTH * 0.5f
+            val heartOffsetY = HEART_OFFSET_Y * HEAD_HEIGHT * 0.5f
+
+            heart.x = x + cos * heartOffsetX - sin * heartOffsetY
+            heart.y = y + sin * heartOffsetX + cos * heartOffsetY
+            heart.rotation = rotation
+
+            Game.players.setGlobalState("boss1heartx", heart.x)
+            Game.players.setGlobalState("boss1hearty", heart.y)
+            Game.players.setGlobalState("boss1heartrotation", heart.rotation.degrees)
         } else {
             x = Game.players.getGlobalState("boss1x") ?: head.x
             y = Game.players.getGlobalState("boss1y") ?: head.y
@@ -185,6 +245,10 @@ class Boss1 : Releasable {
             beak.x = Game.players.getGlobalState("boss1beakx") ?: 0.0f
             beak.y = Game.players.getGlobalState("boss1beaky") ?: 0.0f
             beak.rotation = (Game.players.getGlobalState("boss1beakrotation") ?: 0.0f).degrees
+
+            heart.x = Game.players.getGlobalState("boss1heartx") ?: 0.0f
+            heart.y = Game.players.getGlobalState("boss1hearty") ?: 0.0f
+            heart.rotation = (Game.players.getGlobalState("boss1heartrotation") ?: 0.0f).degrees
         }
 
         tentacles.forEach {
@@ -193,17 +257,74 @@ class Boss1 : Releasable {
         beak.update(delta, movementController.beakMovement)
     }
 
-    fun addEntityAnimation(animation: EntityAnimation) {
-        head.addEntityAnimation(animation)
+    fun paralyze() {
+        if (isInvulnerable)
+            return
+
+        addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
+
+        if (Game.players.isHost) {
+            tentacles.forEach {
+                it.paralyze(PARALYZED_TIME, false)
+            }
+
+            movementController.onParalyze()
+            isParalyzedTimer = PARALYZED_TIME
+        }
+    }
+
+    fun hit() {
+        if (isInvulnerable)
+            return
+
+        cancelEntityAnimation<ParalyzeAnimation>()
+        addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
+
+        if (Game.players.isHost) {
+            health--
+            movementController.onHit()
+
+            tentacles.forEach {
+                it.unparalyze()
+            }
+
+            isInvulnerableTimer = INVULNERABLE_TIME
+            isParalyzedTimer = 0.0.seconds
+        }
+    }
+
+    fun addEntityAnimation(block: () -> EntityAnimation) {
+        head.addEntityAnimation(block())
 
         tentacles.forEach {
             it.parts.forEach { part ->
-                part.addEntityAnimation(animation)
+                part.addEntityAnimation(block())
             }
         }
 
-        beak.leftBeak.addEntityAnimation(animation)
-        beak.rightBeak.addEntityAnimation(animation)
+        beak.leftBeak.addEntityAnimation(block())
+        beak.rightBeak.addEntityAnimation(block())
+
+        heart.addEntityAnimation(block())
+    }
+
+    inline fun <reified T : EntityAnimation> cancelEntityAnimation() {
+        cancelEntityAnimation(T::class)
+    }
+
+    fun <T : EntityAnimation> cancelEntityAnimation(type: KClass<T>) {
+        head.cancelEntityAnimation(type)
+
+        tentacles.forEach {
+            it.parts.forEach { part ->
+                part.cancelEntityAnimation(type)
+            }
+        }
+
+        beak.leftBeak.cancelEntityAnimation(type)
+        beak.rightBeak.cancelEntityAnimation(type)
+
+        heart.cancelEntityAnimation(type)
     }
 
     fun drawDebug(renderer: ShapeRenderer) {
@@ -217,6 +338,8 @@ class Boss1 : Releasable {
 
         beak.leftBeak.collider.drawDebug(renderer)
         beak.rightBeak.collider.drawDebug(renderer)
+
+        heart.collider.drawDebug(renderer)
     }
 
     override fun release() {

@@ -16,6 +16,8 @@ sealed interface TentacleMovement {
     fun updateParts(delta: Duration, tentacle: Tentacle)
 }
 
+private const val TENTACLE_PARALYZED_FACTOR = 0.05f
+
 class SwayTentacleMovement(val maxAngle: Angle, val frequency: Float, val smoothFactor: Float) : TentacleMovement {
     private val randomOffset = Game.random.nextFloat() * 2.0f * PI_F
     private var time = 0.0.seconds
@@ -25,10 +27,10 @@ class SwayTentacleMovement(val maxAngle: Angle, val frequency: Float, val smooth
 
         val targetAngle = maxAngle * sin(time.seconds * frequency + randomOffset)
 
-        tentacle.parts[0].tentacleRotation = lerpAngle(tentacle.parts[0].tentacleRotation, targetAngle, smoothFactor)
+        tentacle.parts[0].tentacleRotation = lerpAngle(tentacle.parts[0].tentacleRotation, targetAngle, if (tentacle.isParalyzed) smoothFactor * TENTACLE_PARALYZED_FACTOR else smoothFactor)
 
         for (i in 1 until tentacle.parts.size) {
-            tentacle.parts[i].tentacleRotation = lerpAngle(tentacle.parts[i].tentacleRotation, tentacle.parts[i - 1].tentacleRotation, smoothFactor)
+            tentacle.parts[i].tentacleRotation = lerpAngle(tentacle.parts[i].tentacleRotation, tentacle.parts[i - 1].tentacleRotation, if (tentacle.isParalyzed) smoothFactor * TENTACLE_PARALYZED_FACTOR else smoothFactor)
         }
     }
 }
@@ -43,7 +45,7 @@ class WaveTentacleMovement(val maxAngle: Angle, val frequency: Float, val smooth
         tentacle.parts.forEachIndexed { index, part ->
             val waveFactor = (index.toFloat() / tentacle.parts.size.toFloat()).pow(2)
             val targetAngle = maxAngle * sin(time.seconds * frequency + waveFactor * 2.0f * PI_F + randomOffset)
-            part.tentacleRotation = lerpAngle(part.tentacleRotation, targetAngle, smoothFactor)
+            part.tentacleRotation = lerpAngle(part.tentacleRotation, targetAngle, if (tentacle.isParalyzed) smoothFactor * TENTACLE_PARALYZED_FACTOR else smoothFactor)
         }
     }
 }
@@ -65,8 +67,10 @@ class StretchOutTentacleMovement(val stretchFactor: Float) : TentacleMovement {
     override fun updateParts(delta: Duration, tentacle: Tentacle) {
         val targetAngle = TARGET_ANGLES[tentacle.index]
 
-        tentacle.parts.forEach { part ->
-            part.tentacleRotation = lerpAngle(part.tentacleRotation, targetAngle, stretchFactor)
+        tentacle.parts[0].tentacleRotation = lerpAngle(tentacle.parts[0].tentacleRotation, targetAngle, if (tentacle.isParalyzed) stretchFactor * TENTACLE_PARALYZED_FACTOR else stretchFactor)
+
+        for (i in 1 until tentacle.parts.size) {
+            tentacle.parts[i].tentacleRotation = lerpAngle(tentacle.parts[i].tentacleRotation, tentacle.parts[i - 1].tentacleRotation, if (tentacle.isParalyzed) stretchFactor * TENTACLE_PARALYZED_FACTOR else stretchFactor)
         }
     }
 }
@@ -87,7 +91,7 @@ class CurlTentacleMovement(val curlFactor: Float) : TentacleMovement {
     override fun updateParts(delta: Duration, tentacle: Tentacle) {
         tentacle.parts.forEachIndexed { index, part ->
             val curlAngle = (Constants.BOSS1_TENTACLE_PARTS * 0.08f).degrees * index
-            part.tentacleRotation = lerpAngle(part.tentacleRotation, curlAngle, curlFactor)
+            part.tentacleRotation = lerpAngle(part.tentacleRotation, curlAngle, if (tentacle.isParalyzed) curlFactor * TENTACLE_PARALYZED_FACTOR else curlFactor)
         }
     }
 }
@@ -97,7 +101,7 @@ class HangTentacleMovement : TentacleMovement {
         tentacle.parts.forEachIndexed { index, part ->
             val hangFactor = (1.0f - index.toFloat() / tentacle.parts.size.toFloat()).pow(2)
             val hangAngle = 200.0.degrees / Constants.BOSS1_TENTACLE_PARTS * hangFactor
-            part.tentacleRotation = lerpAngle(part.tentacleRotation, -hangAngle, hangFactor)
+            part.tentacleRotation = lerpAngle(part.tentacleRotation, -hangAngle, if (tentacle.isParalyzed) hangFactor * TENTACLE_PARALYZED_FACTOR else hangFactor)
         }
     }
 }

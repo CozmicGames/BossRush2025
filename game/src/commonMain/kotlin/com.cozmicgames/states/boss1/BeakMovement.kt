@@ -25,3 +25,9 @@ class ScreamBeakMovement : BeakMovement {
         beak.beakAngle = lerpAngle(beak.beakAngle, 12.0.degrees, 0.5f)
     }
 }
+
+class ParalyzedBeakMovement : BeakMovement {
+    override fun updateBeak(delta: Duration, beak: Beak) {
+        beak.beakAngle = lerpAngle(beak.beakAngle, 70.0.degrees, 0.5f)
+    }
+}

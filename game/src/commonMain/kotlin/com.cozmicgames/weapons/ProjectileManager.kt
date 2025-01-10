@@ -56,7 +56,7 @@ class ProjectileManager {
             }
 
             if (nearestCollider != null) {
-                if (nearestCollider.userData is Hittable) {
+                if (nearestCollider.userData is Hittable && nearestCollider.userData.canHit) {
                     val impactX = projectile.currentX + projectileDirectionX * distance
                     val impactY = projectile.currentY + projectileDirectionY * distance
 

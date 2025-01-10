@@ -4,9 +4,12 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.EnemyPart
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
+import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 
-class Head(layer: Int) : EnemyPart("boss1head") {
+class Head(private val boss: Boss1, layer: Int) : EnemyPart("boss1head"), Hittable {
+    override val canHit get() = !boss.isInvulnerable
+
     override val renderLayer = layer
 
     override val collider = Collider(CircleCollisionShape(100.0f), this)
@@ -16,4 +19,8 @@ class Head(layer: Int) : EnemyPart("boss1head") {
     override val height = 256.0f
 
     override val texture = Game.resources.boss1head.slice()
+
+    override fun onHit(x: Float, y: Float) {
+        boss.paralyze()
+    }
 }

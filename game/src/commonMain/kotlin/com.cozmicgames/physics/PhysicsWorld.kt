@@ -35,6 +35,10 @@ class PhysicsWorld(var width: Float, var height: Float) {
         hittablesInternal.remove(name)
     }
 
+    fun removeHittable(hittable: Hittable) {
+        removeHittable(hittable.id)
+    }
+
     fun scaleSpeedX(collider: Collider, speed: Float): Float {
         var scale = 1.0f
 

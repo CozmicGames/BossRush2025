@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.seconds
 abstract class EntityAnimation(val duration: Duration, val startColor: Color, val startScale: Float) {
     open val isUnique get() = true
 
-    private var progress = 0.0.seconds
+    private var timer = 0.0.seconds
 
     val color = MutableColor(startColor)
 
@@ -19,13 +19,13 @@ abstract class EntityAnimation(val duration: Duration, val startColor: Color, va
     abstract fun getFactor(progress: Float): Float
 
     fun update(delta: Duration): Boolean {
-        progress += delta
+        timer += delta
 
-        val factor = getFactor(progress.seconds / duration.seconds)
+        val factor = getFactor(timer.seconds / duration.seconds)
 
         startColor.mix(Color.WHITE, factor, color)
         scale = startScale + (1.0f - startScale) * factor
 
-        return progress >= duration
+        return timer >= duration
     }
 }

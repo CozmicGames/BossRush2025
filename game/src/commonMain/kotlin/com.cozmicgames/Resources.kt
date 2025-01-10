@@ -34,6 +34,7 @@ class Resources : Releasable {
     lateinit var boss1background: Texture
     lateinit var boss1head: Texture
     lateinit var boss1beak: Texture
+    lateinit var boss1heart: Texture
     lateinit var boss1tentacle: Texture
     lateinit var boss1tentacleSlices: Array<TextureSlice>
 
@@ -51,6 +52,7 @@ class Resources : Releasable {
         boss1background = context.resourcesVfs["textures/boss1/background.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
         boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
+        boss1heart = context.resourcesVfs["textures/boss1/heart.png"].readTexture()
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
         boss1tentacleSlices = boss1tentacle.slice(boss1tentacle.width / Constants.BOSS1_TENTACLE_PARTS, boss1tentacle.height)[0]
     }
@@ -68,6 +70,7 @@ class Resources : Releasable {
         boss1background.release()
         boss1head.release()
         boss1beak.release()
+        boss1heart.release()
         boss1tentacle.release()
     }
 }

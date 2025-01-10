@@ -1,4 +1,4 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.states
 
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.PlayerCamera
@@ -6,16 +6,17 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.input.InputFrame
-import com.cozmicgames.states.GameState
+import com.cozmicgames.states.boss1.Boss1
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
+import com.littlekt.math.isFuzzyZero
+import kotlin.math.min
+import kotlin.math.sqrt
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class Boss1State : GameState {
     private lateinit var playerCamera: PlayerCamera
     private lateinit var background: Background
     private lateinit var boss: Boss1
-    private lateinit var fightGraph: FightGraph
 
     override fun begin() {
         playerCamera = PlayerCamera(Game.graphics.mainViewport.camera)
@@ -25,12 +26,6 @@ class Boss1State : GameState {
         boss = Boss1()
         boss.addToEntities()
         boss.addToPhysics()
-
-        fightGraph = FightGraph(boss)
-        fightGraph.addNode(WaitNode(5.0.seconds))
-        fightGraph.addNode(AttackNode(SpinAttack()))
-        fightGraph.addNode(WaitNode(5.0.seconds))
-        fightGraph.addNode(AttackNode(GrabAttack()))
     }
 
     override fun render(delta: Duration): () -> GameState {
@@ -47,9 +42,24 @@ class Boss1State : GameState {
             it.setState("inputUseSecondary", inputFrame.useSecondary)
         }
 
-        fightGraph.update(delta)
+        var cameraTargetX = playerShip.x
+        var cameraTargetY = playerShip.y
+
+        var playerShipToBossX = boss.x - playerShip.x
+        var playerShipToBossY = boss.y - playerShip.y
+        val playerShipToBossDistance = sqrt(playerShipToBossX * playerShipToBossX + playerShipToBossY * playerShipToBossY)
+
+        if (!playerShipToBossDistance.isFuzzyZero()) {
+            playerShipToBossX /= playerShipToBossDistance
+            playerShipToBossY /= playerShipToBossDistance
+
+            val cameraTargetDistance = min(playerShipToBossDistance, min(playerCamera.camera.virtualWidth, playerCamera.camera.virtualHeight) * 0.25f)
+            cameraTargetX += playerShipToBossX * cameraTargetDistance
+            cameraTargetY += playerShipToBossY * cameraTargetDistance
+        }
+
         boss.update(delta)
-        playerCamera.update(playerShip.x, playerShip.y, playerShip.rotation, delta)
+        playerCamera.update(cameraTargetX, cameraTargetY, playerShip.rotation, delta)
         Game.entities.update(delta)
 
         val pass = Game.graphics.beginMainRenderPass()
@@ -71,5 +81,10 @@ class Boss1State : GameState {
         pass.end()
 
         return { this }
+    }
+
+    override fun end() {
+        boss.removeFromPhysics()
+        boss.removeFromEntities()
     }
 }
