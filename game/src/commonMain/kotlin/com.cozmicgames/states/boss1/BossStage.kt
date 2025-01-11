@@ -42,7 +42,7 @@ abstract class FightStage : BossStage() {
 
     protected abstract fun decideBossMovement(boss: Boss1, controller: MovementController)
 
-    private fun decideAttack(controller: MovementController) {
+    private fun decideAttack(boss: Boss1, controller: MovementController) {
         if (controller.isAttacking)
             return
 
@@ -56,7 +56,7 @@ abstract class FightStage : BossStage() {
 
             if (probability < attackProbability) {
                 controller.performAttack(attack.attack)
-                nextAttackDecisionTime = attack.timeToNextAttack
+                nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
             }
         }
     }
@@ -72,7 +72,7 @@ abstract class FightStage : BossStage() {
             decideBossMovement(controller.boss, controller)
 
         if (nextAttackDecisionTime <= 0.0.seconds)
-            decideAttack(controller)
+            decideAttack(controller.boss, controller)
 
         return this
     }

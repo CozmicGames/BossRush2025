@@ -2,6 +2,7 @@ package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.Angle
@@ -10,7 +11,7 @@ import kotlin.math.pow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable {
+class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource {
     override val id = "boss1tentacle$index"
 
     var x = 0.0f
@@ -22,6 +23,9 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
     val isParalyzed get() = paralyzeTimer > 0.0.seconds
 
     private var paralyzeTimer = 0.0.seconds
+
+    override val damageSourceX get() = boss.x
+    override val damageSourceY get() = boss.y
 
     init {
         val parts = arrayListOf<TentaclePart>()

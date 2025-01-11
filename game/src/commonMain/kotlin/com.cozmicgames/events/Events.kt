@@ -3,9 +3,11 @@ package com.cozmicgames.events
 import com.cozmicgames.Game
 
 object Events {
-    fun hit(id: String, x: Float, y: Float): String = "hit:$id"
+    fun hit(id: String): String = "hit:$id"
 
-    fun shockwaveHit(id: String, x: Float, y: Float, strength: Float): String = "shockwaveHit:$id,$x,$y,$strength"
+    fun impulseHit(id: String, x: Float, y: Float, strength: Float): String = "impulseHit:$id,$x,$y,$strength"
+
+    fun playerDeath(id: String): String = "playerDeath$id"
 
     fun process(event: String) {
         when {
@@ -15,7 +17,7 @@ object Events {
                 hittable?.onDamageHit()
             }
 
-            event.startsWith("shockwaveHit") -> {
+            event.startsWith("impulseHit") -> {
                 val data = event.substringAfter(":")
                 val parts = data.split(",")
                 if (parts.size == 4) {
@@ -26,9 +28,14 @@ object Events {
 
                     val hittable = Game.physics.hittables[id]
                     if (hittable != null && x != null && y != null && strength != null)
-                        hittable.onShockwaveHit(x, y, strength)
-
+                        hittable.onImpulseHit(x, y, strength)
                 }
+            }
+
+            event.startsWith("playerDeath") -> {
+                val id = event.substringAfter("playerDeath")
+                val player = Game.players.players.find { it.state.id == id }
+                player?.ship?.onDeath()
             }
         }
     }

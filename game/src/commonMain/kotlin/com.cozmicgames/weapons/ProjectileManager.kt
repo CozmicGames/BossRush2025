@@ -1,6 +1,7 @@
 package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
+import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.entities.worldObjects.WorldObject
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.events.Events
@@ -56,12 +57,11 @@ class ProjectileManager {
             }
 
             if (nearestCollider != null) {
-                if (nearestCollider.userData is Hittable && nearestCollider.userData.canHit) {
-                    val impactX = projectile.currentX + projectileDirectionX * distance
-                    val impactY = projectile.currentY + projectileDirectionY * distance
+                if (nearestCollider.userData is Hittable && nearestCollider.userData.canHit)
+                    Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
 
-                    Game.events.addSendEvent(Events.hit(nearestCollider.userData.id, impactX, impactY))
-                }
+                if (projectile.fromWorldObject is PlayerShip)
+                    Game.players.shootStatistics.shotsHit++
 
                 projectilesToRemove += projectile
                 continue

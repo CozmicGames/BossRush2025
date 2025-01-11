@@ -100,10 +100,8 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
             x = pivotX + tentacleCos * xOffset - tentacleSin * yOffset
             y = pivotY + tentacleSin * xOffset + tentacleCos * yOffset
 
-            collider.x = x
-            collider.y = y
             (collider.shape as RectangleCollisionShape).angle = rotation
-            collider.update()
+            collider.update(x, y)
 
             Game.players.setGlobalState("boss1tentacle${tentacle.index}part${index}X", x)
             Game.players.setGlobalState("boss1tentacle${tentacle.index}part${index}Y", y)

@@ -5,20 +5,31 @@ import com.cozmicgames.graphics.PlayerCamera
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Background
+import com.cozmicgames.graphics.ui.ResultsPanel
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.states.boss1.Boss1
+import com.cozmicgames.utils.Difficulty
+import com.cozmicgames.utils.FightResults
+import com.littlekt.math.Vec2f
 import com.littlekt.math.isFuzzyZero
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.time.Duration
 
-class Boss1State : GameState {
+class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
     private lateinit var playerCamera: PlayerCamera
     private lateinit var background: Background
     private lateinit var boss: Boss1
+    private lateinit var resultsPanel: ResultsPanel
+
+    private var showResults = false
+
+    private var returnState: GameState = this
 
     override fun begin() {
         val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+
+        Game.players.shootStatistics.reset()
 
         Game.physics.clear()
         Game.physics.width = 2500.0f
@@ -27,13 +38,22 @@ class Boss1State : GameState {
 
         background = Background(Game.resources.boss1background)
 
-        boss = Boss1()
+        boss = Boss1(difficulty)
         boss.addToWorld()
         boss.addToPhysics()
 
-        Game.players.players.forEach {
-            it.ship.addToWorld()
-            it.ship.addToPhysics()
+        val numPlayers = Game.players.players.size
+        val spawnPositions = Array(numPlayers) {
+            val spawnX = -Game.physics.width * 0.25f
+            val spawnY = Game.physics.height * 0.5f + (it - numPlayers * 0.5f) * 200.0f
+            Vec2f(spawnX, spawnY)
+        }
+
+        Game.players.players.forEachIndexed { index, p ->
+            val spawnPosition = spawnPositions[index]
+            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y)
+            p.ship.addToWorld()
+            p.ship.addToPhysics()
         }
     }
 
@@ -68,7 +88,7 @@ class Boss1State : GameState {
             playerShipToBossX /= playerShipToBossDistance
             playerShipToBossY /= playerShipToBossDistance
 
-            val cameraTargetDistance = min(playerShipToBossDistance, min(playerCamera.camera.virtualWidth, playerCamera.camera.virtualHeight) * 0.25f)
+            val cameraTargetDistance = min(playerShipToBossDistance, min(playerCamera.camera.virtualWidth, playerCamera.camera.virtualHeight) * 0.4f)
             cameraTargetX += playerShipToBossX * cameraTargetDistance
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
@@ -76,6 +96,30 @@ class Boss1State : GameState {
         boss.update(delta)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
         Game.world.update(delta)
+
+        if (!showResults && (boss.isDead || Game.players.players.all { it.ship.isDead })) {
+            showResults = true
+
+            if (!boss.isDead)
+                boss.movementController.onFailFight()
+
+            val averagePlayerHealth = Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size
+            val results = FightResults(difficulty, Boss1.FULL_HEALTH, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
+
+            println(results.message)
+
+            resultsPanel = ResultsPanel(results)
+        }
+
+        if (showResults) {
+            when (resultsPanel.renderAndGetResultState(delta)) {
+                ResultsPanel.ResultState.RETURN -> returnState = MenuState()
+                ResultsPanel.ResultState.RETRY_EASY -> returnState = Boss1State(Difficulty.EASY)
+                ResultsPanel.ResultState.RETRY_NORMAL -> returnState = Boss1State(Difficulty.NORMAL)
+                ResultsPanel.ResultState.RETRY_HARD -> returnState = Boss1State(Difficulty.HARD)
+                else -> {}
+            }
+        }
 
         val pass = Game.graphics.beginMainRenderPass()
 
@@ -97,16 +141,24 @@ class Boss1State : GameState {
         //    boss.drawDebug(renderer)
         //}
 
-        if (player.indicatorColor.a > 0.0f)
+        if (!showResults)
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
-                renderer.submit(RenderLayers.BORDER_INDICATOR) {
-                    it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
+                renderer.submit(RenderLayers.UI_BEGIN) {
+                    repeat(difficulty.basePlayerHealth) { health ->
+                        val texture = if (health < playerShip.health) Game.resources.playerHealthIndicator else Game.resources.playerHealthEmptyIndicator
+                        it.draw(texture, -Game.graphics.width * 0.5f + 5.0f + health * 25.0f, -Game.graphics.height * 0.5f + 5.0f, width = 25.0f, height = 25.0f)
+                    }
                 }
+
+                if (player.indicatorColor.a > 0.0f)
+                    renderer.submit(RenderLayers.BORDER_INDICATOR) {
+                        it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
+                    }
             }
 
         pass.end()
 
-        return { this }
+        return { returnState }
     }
 
     override fun end() {

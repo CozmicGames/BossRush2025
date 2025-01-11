@@ -23,10 +23,8 @@ abstract class EnemyPart(id: String) : SingleLayerWorldObject(id) {
 
     override fun updateWorldObject(delta: Duration) {
         collider?.let {
-            it.x = x
-            it.y = y
             (it.shape as? RectangleCollisionShape)?.angle = rotation
-            it.update()
+            it.update(x, y)
         }
     }
 

@@ -20,7 +20,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
     override val flipX get() = !left
 
-    override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f))
+    override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f), beak)
 
     override fun updateWorldObject(delta: Duration) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
@@ -35,9 +35,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
         x = pivotX + cos * xOffset - sin * yOffset
         y = pivotY + sin * xOffset + cos * yOffset
 
-        collider.x = x
-        collider.y = y
         (collider.shape as? RectangleCollisionShape)?.angle = rotation
-        collider.update()
+        collider.update(x,y)
     }
 }

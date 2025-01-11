@@ -2,6 +2,7 @@ package com.cozmicgames.states.boss1
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
+import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
@@ -11,7 +12,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable {
+class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, PlayerDamageSource {
     override val canHit get() = boss.isParalyzed
 
     override val renderLayer = layer
@@ -24,6 +25,9 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable {
 
     override val texture = Game.resources.boss1heart.slice()
 
+    override val damageSourceX get() = boss.x
+    override val damageSourceY get() = boss.y
+
     private var size = 1.0f
     private var timer = 0.0.seconds
 
@@ -34,13 +38,11 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable {
 
         collider.x = x
         collider.y = y
-        collider.update()
-        x = collider.x
-        y = collider.y
+        collider.update(x, y)
     }
 
     override fun onDamageHit() {
-        if (boss.isParalyzed && !boss.isInvulnerable)
+        if (!boss.isInvulnerable)
             boss.hit()
     }
 }

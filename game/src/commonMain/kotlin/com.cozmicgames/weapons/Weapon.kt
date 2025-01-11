@@ -1,14 +1,15 @@
 package com.cozmicgames.weapons
 
 import com.littlekt.math.geom.Angle
+import kotlin.time.Duration
 
-abstract class Weapon {
-    abstract val name: String
-    abstract val fireRate: Float
-    abstract val canContinoousFire: Boolean
-    abstract val projectileCount: Int
-    abstract val projectileType: ProjectileType
-    abstract val projectileSpeed: Float
-    abstract val spread: Angle
-    abstract val isRandomSpread: Boolean
+interface Weapon {
+    val displayName: String
+    val fireRate: Duration
+    val canContinoousFire: Boolean
+    val projectileCount: Int
+    val projectileType: ProjectileType
+    val projectileSpeed: Float
+    val spread: Angle
+    val isRandomSpread: Boolean
 }

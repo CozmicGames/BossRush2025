@@ -9,7 +9,7 @@ fun main() {
 
     createLittleKtApp {
         width = 960
-        height = 540
+        height = 660
         title = "Boss Rush 2025"
         canvasId = "canvas"
     }.start {

@@ -7,6 +7,9 @@ class Collider(var shape: CollisionShape, val userData: Any? = null) {
     var x = 0.0f
     var y = 0.0f
 
+    var deltaX = 0.0f
+    var deltaY = 0.0f
+
     val boundsMinX get() = x + shape.minX
     val boundsMinY get() = y + shape.minY
     val boundsMaxX get() = x + shape.maxX
@@ -14,7 +17,11 @@ class Collider(var shape: CollisionShape, val userData: Any? = null) {
     val boundsWidth get() = boundsMaxX - boundsMinX
     val boundsHeight get() = boundsMaxY - boundsMinY
 
-    fun update() {
+    fun update(x: Float, y: Float) {
+        deltaX = x - this.x
+        deltaY = y - this.y
+        this.x = x
+        this.y = y
         shape.update()
     }
 

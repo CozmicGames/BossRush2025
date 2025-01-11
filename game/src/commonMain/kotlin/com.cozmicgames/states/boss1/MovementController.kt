@@ -87,4 +87,16 @@ class MovementController(val boss: Boss1) {
         boss.y += dy * MOVEMENT_SPEED * delta.seconds * transform.moveSpeedModifier
         boss.rotation += dr * ROTATION_SPEED * delta.seconds * transform.rotationSpeedModifier
     }
+
+    fun onFailFight() {
+        currentStage = EndStage()
+
+        tentacleMovement = CompoundTentacleMovement().also {
+            it.addMovement(SwayTentacleMovement(15.0.degrees, 0.1f, 0.2f))
+            it.addMovement(HangTentacleMovement())
+            it.addMovement(WaveTentacleMovement(10.0.degrees, 0.3f, 0.2f))
+        }
+        beakMovement = IdleBeakMovement()
+        bossMovement = IdleBossMovement()
+    }
 }

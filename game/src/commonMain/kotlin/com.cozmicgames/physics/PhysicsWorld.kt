@@ -68,20 +68,23 @@ class PhysicsWorld(var width: Float, var height: Float) {
         return scale
     }
 
-    fun updatePlayerCollider(collider: Collider) {
-        if (collider.boundsMinX < minX)
-            collider.x = minX + collider.boundsWidth * 0.5f
+    fun updatePlayerCollider(collider: Collider, x: Float, y: Float) {
+        var newX = x
+        var newY = y
 
-        if (collider.boundsMaxX > maxX)
-            collider.x = maxX - collider.boundsWidth * 0.5f
+        if (collider.boundsMinX + (newX - collider.x) < minX)
+            newX = minX + collider.boundsWidth * 0.5f
 
-        if (collider.boundsMinY < minY)
-            collider.y = minY + collider.boundsHeight * 0.5f
+        if (collider.boundsMaxX + (newX - collider.x) > maxX)
+            newX = maxX - collider.boundsWidth * 0.5f
 
-        if (collider.boundsMaxY > maxY)
-            collider.y = maxY - collider.boundsHeight * 0.5f
+        if (collider.boundsMinY + (newY - collider.y) < minY)
+            newY = minY + collider.boundsHeight * 0.5f
 
-        collider.update()
+        if (collider.boundsMaxY + (newY - collider.y) > maxY)
+            newY = maxY - collider.boundsHeight * 0.5f
+
+        collider.update(newX, newY)
     }
 
     fun checkCollision(collider: Collider, filter: (Collider) -> Boolean = { true }, callback: (Collider) -> Unit) {

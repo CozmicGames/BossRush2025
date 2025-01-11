@@ -18,5 +18,8 @@ object RenderLayers {
     const val AREA_EFFECTS_BEGIN = 600
     const val AREA_EFFECTS_END = 700
 
+    const val UI_BEGIN = 1000
+    const val UI_END = 2000
     const val BORDER_INDICATOR = 10000
+
 }

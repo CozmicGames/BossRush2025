@@ -31,6 +31,8 @@ class Resources : Releasable {
     lateinit var playerShipBaseSlow: Texture
     lateinit var playerShipBaseFast: Texture
     lateinit var playerShipTemplate: Texture
+    lateinit var playerHealthIndicator: Texture
+    lateinit var playerHealthEmptyIndicator: Texture
     lateinit var borderIndicator: Texture
     lateinit var borderIndicatorNinePatch: NinePatch
 
@@ -57,6 +59,8 @@ class Resources : Releasable {
         playerShipBaseSlow = context.resourcesVfs["textures/player/player_ship_base_slow.png"].readTexture()
         playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
         playerShipTemplate = context.resourcesVfs["textures/player/player_ship_template.png"].readTexture()
+        playerHealthIndicator = context.resourcesVfs["textures/player/health.png"].readTexture()
+        playerHealthEmptyIndicator = context.resourcesVfs["textures/player/health_empty.png"].readTexture()
         borderIndicator = context.resourcesVfs["textures/player/border_indicator.png"].readTexture()
         borderIndicatorNinePatch = NinePatch(borderIndicator, 24, 24, 24, 24)
 
@@ -81,6 +85,8 @@ class Resources : Releasable {
         playerShipBaseSlow.release()
         playerShipBaseFast.release()
         playerShipTemplate.release()
+        playerHealthIndicator.release()
+        playerHealthEmptyIndicator.release()
         borderIndicator.release()
 
         boss1background.release()

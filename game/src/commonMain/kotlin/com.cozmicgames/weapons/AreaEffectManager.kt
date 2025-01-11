@@ -31,11 +31,11 @@ class AreaEffectManager {
                     val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat()
 
                     when (areaEffect.type) {
-                        AreaEffectType.SHOCKWAVE -> Game.events.addSendEvent(Events.shockwaveHit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY, strength))
+                        AreaEffectType.SHOCKWAVE -> Game.events.addSendEvent(Events.impulseHit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY, strength))
                         AreaEffectType.SHOCKWAVE_WITH_DAMAGE -> {
-                            Game.events.addSendEvent(Events.shockwaveHit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY, strength))
+                            Game.events.addSendEvent(Events.impulseHit(it.userData.id, it.x - areaEffect.sourceX, it.y - areaEffect.sourceY, strength))
                             if (it !in areaEffect.hitColliders) {
-                                Game.events.addSendEvent(Events.hit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY))
+                                Game.events.addSendEvent(Events.hit(it.userData.id))
                                 areaEffect.hitColliders += it
                             }
                         }

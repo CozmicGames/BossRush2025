@@ -6,8 +6,8 @@ object Constants {
     const val INPUT_RAMP_UP_SPEED = 1.5f
     const val INPUT_RAMP_DOWN_SPEED = 1.0f
 
-    const val PLAYER_SHIP_WIDTH = 128.0f
-    const val PLAYER_SHIP_HEIGHT = 128.0f
+    const val PLAYER_SHIP_WIDTH = 100.0f
+    const val PLAYER_SHIP_HEIGHT = 100.0f
     const val PLAYER_SHIP_BASE_MOVEMENT_SPEED = 400.0f
     const val PLAYER_SHIP_BASE_ROTATION_SPEED = 300.0f
 

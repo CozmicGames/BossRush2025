@@ -7,5 +7,5 @@ interface Hittable {
 
     fun onDamageHit() {}
 
-    fun onShockwaveHit(x: Float, y: Float, strength: Float) {}
+    fun onImpulseHit(x: Float, y: Float, strength: Float) {}
 }

@@ -2,12 +2,15 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.entities.worldObjects.animations.HitAnimation
+import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.cozmicgames.physics.RectangleCollisionShape
+import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.*
 import com.littlekt.graphics.*
 import com.littlekt.math.geom.cosine
@@ -19,18 +22,29 @@ import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class PlayerShip(private val player: Player) : WorldObject(player.state.id), ProjectileSource, AreaEffectSource, Hittable {
+    companion object {
+        private val PLAYER_SHIP_INVULNERABILITY_TIME = 2.0.seconds
+    }
+
+    var health = 0
+    val isDead get() = health <= 0
+
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 
-    var primaryWeapon: Weapon? = EnergyGun()
-    var secondaryWeapon: Weapon? = EnergyShotgun()
+    val isInvulnerable get() = invulnerabilityTimer > 0.0.seconds
+
+    var primaryWeapon: Weapon? = Weapons.ENERGY_GUN
+    var secondaryWeapon: Weapon? = Weapons.ENERGY_GUN
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
-    private var firePrimaryCooldown = 0.0f
-    private var fireSecondaryCooldown = 0.0f
+    private var firePrimaryCooldown = 0.0.seconds
+    private var fireSecondaryCooldown = 0.0.seconds
+    private var invulnerabilityTimer = 0.0.seconds
 
     private var flySpeed = 0.0f
     private val lightColor = MutableColor()
@@ -41,15 +55,28 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     private var impulseY = 0.0f
 
     override var muzzleX = 0.0f
+        private set
+
     override var muzzleY = 0.0f
+        private set
+
     override var muzzleRotation = 0.0.degrees
+        private set
+
 
     override var effectSourceX = 0.0f
+        private set
+
     override var effectSourceY = 0.0f
+        private set
 
     private var isBeamProjectileFiring = false
 
     override fun updateWorldObject(delta: Duration) {
+        invulnerabilityTimer -= delta
+        if (invulnerabilityTimer < 0.0.seconds)
+            invulnerabilityTimer = 0.0.seconds
+
         var deltaX = impulseX * delta.seconds
         var deltaY = impulseY * delta.seconds
         var deltaRotation = 0.0f
@@ -76,7 +103,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         }
 
         player.state.getState<Boolean>("inputUsePrimary")?.let {
-            if (firePrimaryCooldown <= 0.0f)
+            if (firePrimaryCooldown <= 0.0.seconds)
                 primaryWeapon?.let { weapon ->
                     if (it)
                         fireWeapon(weapon) { firePrimaryCooldown = it }
@@ -86,7 +113,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         }
 
         player.state.getState<Boolean>("inputUseSecondary")?.let {
-            if (fireSecondaryCooldown <= 0.0f) {
+            if (fireSecondaryCooldown <= 0.0.seconds) {
                 secondaryWeapon?.let { weapon ->
                     if (it)
                         fireWeapon(weapon) { fireSecondaryCooldown = it }
@@ -113,10 +140,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         flySpeed = sqrt(moveX * moveX + moveY * moveY) + (moveRotation.degrees).absoluteValue
 
-        collider.x = x
-        collider.y = y
         (collider.shape as RectangleCollisionShape).angle = rotation
-        Game.physics.updatePlayerCollider(collider)
+        Game.physics.updatePlayerCollider(collider, x, y)
         x = collider.x
         y = collider.y
 
@@ -127,13 +152,41 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         effectSourceX = x
         effectSourceY = y
 
-        firePrimaryCooldown -= delta.seconds
-        if (firePrimaryCooldown < 0.0f)
-            firePrimaryCooldown = 0.0f
+        firePrimaryCooldown -= delta
+        if (firePrimaryCooldown < 0.0.seconds)
+            firePrimaryCooldown = 0.0.seconds
 
-        fireSecondaryCooldown -= delta.seconds
-        if (fireSecondaryCooldown < 0.0f)
-            fireSecondaryCooldown = 0.0f
+        fireSecondaryCooldown -= delta
+        if (fireSecondaryCooldown < 0.0.seconds)
+            fireSecondaryCooldown = 0.0.seconds
+    }
+
+    fun checkCollision() {
+        if (!Game.players.isHost)
+            return
+
+        if (isInvulnerable)
+            return
+
+        Game.physics.checkCollision(collider, { it != collider }) {
+            if (!isInvulnerable && it.userData is PlayerDamageSource) {
+                health--
+
+                if (health <= 0) {
+                    health = 0
+                    Game.events.addSendEvent(Events.playerDeath(id))
+                } else {
+                    invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
+
+                    Game.events.addSendEvent(Events.hit(id))
+
+                    val impulseX = x - it.userData.damageSourceX
+                    val impulseY = y - it.userData.damageSourceY
+
+                    Game.events.addSendEvent(Events.impulseHit(id, impulseX, impulseY, 20.0f))
+                }
+            }
+        }
     }
 
     override fun render(renderer: Renderer) {
@@ -168,7 +221,10 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         }
     }
 
-    private fun fireWeapon(weapon: Weapon, setCooldown: (Float) -> Unit) {
+    private fun fireWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
+        if (isInvulnerable)
+            return
+
         if (isBeamProjectileFiring)
             return
 
@@ -200,7 +256,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             isBeamProjectileFiring = true
     }
 
-    private fun stopFiringWeapon(weapon: Weapon, setCooldown: (Float) -> Unit) {
+    private fun stopFiringWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
         if (weapon.projectileType.baseType is BeamProjectileType) {
             val state = Game.players.getMyPlayerState()
 
@@ -213,16 +269,21 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     }
 
     override fun onDamageHit() {
-//TODO
+        addEntityAnimation(HitAnimation(PLAYER_SHIP_INVULNERABILITY_TIME))
     }
 
-    override fun onShockwaveHit(x: Float, y: Float, strength: Float) {
-        val dx = this.x - x
-        val dy = this.y - y
-        val distance = sqrt(dx * dx + dy * dy)
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
 
-        impulseX = dx / distance * strength * 0.15f
-        impulseY = dy / distance * strength * 0.15f
+        impulseX = x / distance * strength * 0.15f
+        impulseY = y / distance * strength * 0.15f
+    }
+
+    fun onDeath() {
+        removeFromWorld()
+        removeFromPhysics()
+
+        //TODO: Play death animation
     }
 
     fun addToWorld() {
@@ -241,5 +302,24 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     fun removeFromPhysics() {
         Game.physics.removeCollider(collider)
         Game.physics.removeHittable(this)
+    }
+
+    fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float) {
+        health = difficulty.basePlayerHealth
+        x = spawnX
+        y = spawnY
+        rotation = 0.0.degrees
+
+        primaryWeapon = player.primaryWeapon
+        secondaryWeapon = player.secondaryWeapon
+
+        firePrimaryCooldown = 0.0.seconds
+        fireSecondaryCooldown = 0.0.seconds
+        invulnerabilityTimer = 0.0.seconds
+
+        impulseX = 0.0f
+        impulseY = 0.0f
+
+        isBeamProjectileFiring = false
     }
 }

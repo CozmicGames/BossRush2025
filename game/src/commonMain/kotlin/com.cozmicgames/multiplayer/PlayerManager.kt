@@ -1,6 +1,7 @@
 package com.cozmicgames.multiplayer
 
 import com.cozmicgames.Game
+import com.cozmicgames.utils.ShootStatistics
 import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
 import com.cozmicgames.weapons.AreaEffectType
@@ -10,6 +11,8 @@ import com.littlekt.util.seconds
 import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
+    val shootStatistics = ShootStatistics()
+
     private val playersInternal = arrayListOf<Player>()
 
     val players get() = playersInternal as List<Player>
@@ -33,6 +36,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     fun update(delta: Duration) {
         if (multiplayer.isHost) {
             for (player in playersInternal) {
+                player.ship.checkCollision()
+
                 player.state.setState("x", player.ship.x)
                 player.state.setState("y", player.ship.y)
                 player.state.setState("rotation", player.ship.rotation.degrees)
@@ -61,6 +66,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                         player.state.setState("spawnProjectileDirection$it", null)
                     }
                     player.state.setState("spawnProjectileSpeed", null)
+
+                    shootStatistics.shotsFired += spawnProjectileCount
                 }
 
                 val stopBeamProjectile = player.state.getState<Boolean>("stopBeamProjectile")

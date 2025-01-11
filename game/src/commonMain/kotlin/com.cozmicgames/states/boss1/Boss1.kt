@@ -7,6 +7,7 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
+import com.cozmicgames.utils.Difficulty
 import com.littlekt.Releasable
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
@@ -16,13 +17,14 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
-    private companion object {
+class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffectSource {
+    companion object {
+        const val FULL_HEALTH = 3
+
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds
 
-        private const val HEAD_WIDTH = 256.0f
-        private const val HEAD_HEIGHT = 256.0f
+        private const val HEAD_SIZE = 180.0f
 
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
 
@@ -81,7 +83,9 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
         private const val HEART_OFFSET_Y = -0.8f
     }
 
-    override var health = 3
+    override var health = FULL_HEALTH
+
+    val isDead get() = health <= 0
 
     override val effectSourceX get() = beak.x
     override val effectSourceY get() = beak.y
@@ -96,9 +100,9 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
 
     val movementController = MovementController(this)
 
-    private val head = Head(this, HEAD_LAYER)
+    private val head = Head(this, HEAD_SIZE, HEAD_LAYER)
     private val tentacles: List<Tentacle>
-    private val beak = Beak(BEAK_LAYER)
+    private val beak = Beak(this, BEAK_LAYER)
     private val heart = Heart(this, HEART_LAYER)
     private var isInvulnerableTimer = 0.0.seconds
     private var isParalyzedTimer = 0.0.seconds
@@ -107,7 +111,7 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
         val tentacles = arrayListOf<Tentacle>()
 
         repeat(8) {
-            val tentacle = Tentacle(this, it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it], TENTACLE_SCALES[it])
+            val tentacle = Tentacle(this, it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it], TENTACLE_SCALES[it] * 0.8f)
             tentacles += tentacle
         }
 
@@ -188,15 +192,13 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
             head.x = x
             head.y = y
             head.rotation = rotation
-            head.collider.x = head.x
-            head.collider.y = head.y
-            head.collider.update()
+            head.collider.update(head.x, head.y)
 
             tentacles.forEachIndexed { index, tentacle ->
                 val (offsetX, offsetY) = TENTACLE_OFFSETS[index]
 
-                val tentacleOffsetX = offsetX * HEAD_WIDTH * 0.5f
-                val tentacleOffsetY = offsetY * HEAD_HEIGHT * 0.5f
+                val tentacleOffsetX = offsetX * HEAD_SIZE * 0.5f
+                val tentacleOffsetY = offsetY * HEAD_SIZE * 0.5f
 
                 tentacle.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
                 tentacle.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
@@ -207,8 +209,8 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
                 Game.players.setGlobalState("boss1tentacle${index}rotation", tentacle.rotation.degrees)
             }
 
-            val beakOffsetX = BEAK_OFFSET_X * HEAD_WIDTH * 0.5f
-            val beakOffsetY = BEAK_OFFSET_Y * HEAD_HEIGHT * 0.5f
+            val beakOffsetX = BEAK_OFFSET_X * HEAD_SIZE * 0.5f
+            val beakOffsetY = BEAK_OFFSET_Y * HEAD_SIZE * 0.5f
 
             beak.x = x + cos * beakOffsetX - sin * beakOffsetY
             beak.y = y + sin * beakOffsetX + cos * beakOffsetY
@@ -218,8 +220,8 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
             Game.players.setGlobalState("boss1beaky", beak.y)
             Game.players.setGlobalState("boss1beakrotation", beak.rotation.degrees)
 
-            val heartOffsetX = HEART_OFFSET_X * HEAD_WIDTH * 0.5f
-            val heartOffsetY = HEART_OFFSET_Y * HEAD_HEIGHT * 0.5f
+            val heartOffsetX = HEART_OFFSET_X * HEAD_SIZE * 0.5f
+            val heartOffsetY = HEART_OFFSET_Y * HEAD_SIZE * 0.5f
 
             heart.x = x + cos * heartOffsetX - sin * heartOffsetY
             heart.y = y + sin * heartOffsetX + cos * heartOffsetY
@@ -281,12 +283,16 @@ class Boss1 : Entity("boss1"), Releasable, AreaEffectSource {
             health--
             movementController.onHit()
 
-            tentacles.forEach {
-                it.unparalyze()
-            }
+            if (health <= 0) {
+                //TODO: Handle boss death
+            } else {
+                tentacles.forEach {
+                    it.unparalyze()
+                }
 
-            isInvulnerableTimer = INVULNERABLE_TIME
-            isParalyzedTimer = 0.0.seconds
+                isInvulnerableTimer = INVULNERABLE_TIME
+                isParalyzedTimer = 0.0.seconds
+            }
         }
     }
 
