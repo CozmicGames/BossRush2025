@@ -11,6 +11,12 @@ class PlayerCamera(val camera: Camera) {
     var getMaxX: (() -> Float)? = null
     var getMaxY: (() -> Float)? = null
 
+    fun resize(width: Int, height: Int) {
+        camera.virtualWidth = width.toFloat()
+        camera.virtualHeight = height.toFloat()
+        camera.update()
+    }
+
     fun update(targetX: Float, targetY: Float, delta: Duration) {
         camera.position.x += (targetX - camera.position.x) * delta.seconds * Constants.CAMERA_FOLLOW_MOVE_SPEED
         camera.position.y += (targetY - camera.position.y) * delta.seconds * Constants.CAMERA_FOLLOW_MOVE_SPEED
