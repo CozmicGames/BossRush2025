@@ -28,6 +28,13 @@ class Resources : Releasable {
     lateinit var resultBanner: Texture
     lateinit var returnIcon: Texture
     lateinit var playIcon: Texture
+    lateinit var fightSelectionPoster: Texture
+    lateinit var fightSelectionPosterNinePatch: NinePatch
+    lateinit var fightSelectionPosterMask: Texture
+    lateinit var fightSelectionPosterMaskNinePatch: NinePatch
+    lateinit var lockBody: Texture
+    lateinit var lockShackle: Texture
+    lateinit var todoPreview: Texture
 
 
     lateinit var debug: Texture
@@ -63,6 +70,7 @@ class Resources : Releasable {
     /**
      * Boss 1 - Space octopus
      */
+    lateinit var boss1preview: Texture
     lateinit var boss1background: Texture
     lateinit var boss1head: Texture
     lateinit var boss1beak: Texture
@@ -85,6 +93,13 @@ class Resources : Releasable {
         resultBanner = context.resourcesVfs["textures/ui/result_banner.png"].readTexture()
         returnIcon = context.resourcesVfs["textures/ui/return_icon.png"].readTexture()
         playIcon = context.resourcesVfs["textures/ui/play_icon.png"].readTexture()
+        fightSelectionPoster = context.resourcesVfs["textures/ui/fight_selection_poster.png"].readTexture()
+        fightSelectionPosterNinePatch = NinePatch(fightSelectionPoster, 28, 28, 28, 28)
+        fightSelectionPosterMask = context.resourcesVfs["textures/ui/fight_selection_poster_mask.png"].readTexture()
+        fightSelectionPosterMaskNinePatch = NinePatch(fightSelectionPoster, 28, 28, 28, 28)
+        lockBody = context.resourcesVfs["textures/ui/lock_body.png"].readTexture()
+        lockShackle = context.resourcesVfs["textures/ui/lock_shackle.png"].readTexture()
+        todoPreview = context.resourcesVfs["textures/todo_preview.png"].readTexture()
 
         debug = context.resourcesVfs["textures/ui/debug.png"].readTexture()
         debugNinePatch = NinePatch(debug, 4, 4, 4, 4)
@@ -106,6 +121,7 @@ class Resources : Releasable {
         borderIndicator = context.resourcesVfs["textures/player/border_indicator.png"].readTexture()
         borderIndicatorNinePatch = NinePatch(borderIndicator, 24, 24, 24, 24)
 
+        boss1preview = context.resourcesVfs["textures/boss1/preview.png"].readTexture()
         boss1background = context.resourcesVfs["textures/boss1/background.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
         boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
@@ -125,6 +141,11 @@ class Resources : Releasable {
         resultBanner.release()
         returnIcon.release()
         playIcon.release()
+        fightSelectionPoster.release()
+        fightSelectionPosterMask.release()
+        lockBody.release()
+        lockShackle.release()
+        todoPreview.release()
 
         debug.release()
 
@@ -144,6 +165,7 @@ class Resources : Releasable {
         playerHealthEmptyIndicator.release()
         borderIndicator.release()
 
+        boss1preview.release()
         boss1background.release()
         boss1head.release()
         boss1beak.release()

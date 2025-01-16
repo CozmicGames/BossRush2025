@@ -1,4 +1,4 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game

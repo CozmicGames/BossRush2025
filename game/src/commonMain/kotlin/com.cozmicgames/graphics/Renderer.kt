@@ -2,7 +2,7 @@ package com.cozmicgames.graphics
 
 import com.littlekt.graphics.g2d.SpriteBatch
 
-class Renderer {
+class Renderer(private val pass: RenderPass) {
     private class Renderable {
         var layer = 0
         var block: (SpriteBatch) -> Unit = {}
@@ -29,5 +29,13 @@ class Renderer {
 
     fun clear() {
         currentIndex = 0
+    }
+
+    fun pushScissor(x: Float, y: Float, width: Float, height: Float) {
+        pass.pushScissor(x.toInt(), y.toInt(), width.toInt(), height.toInt())
+    }
+
+    fun popScissor() {
+        pass.popScissor()
     }
 }

@@ -1,4 +1,4 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
 import com.cozmicgames.utils.lerpAngle

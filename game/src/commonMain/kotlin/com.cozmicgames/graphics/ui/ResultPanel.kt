@@ -13,7 +13,7 @@ import kotlin.math.ceil
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class ResultsPanel(private val results: FightResults) {
+class ResultPanel(private val results: FightResults) {
     enum class ResultState {
         NONE,
         RETRY_EASY,
@@ -24,6 +24,7 @@ class ResultsPanel(private val results: FightResults) {
 
     private var animationTime = 0.0.seconds
     private var isAnimationFinished = false
+    private var resultState = ResultState.NONE
 
     var width = 600.0f
     val height = 500.0f
@@ -42,16 +43,16 @@ class ResultsPanel(private val results: FightResults) {
         messageLabel.startAnimation()
     }
     private val returnButton = ReturnButton {
-        //TODO: Implement return button
+        resultState = ResultState.RETURN
     }
     private val playEasyButton = PlayButton(Difficulty.EASY) {
-        //TODO: Implement play easy button
+        resultState = ResultState.RETRY_EASY
     }
     private val playNormalButton = PlayButton(Difficulty.NORMAL) {
-
+        resultState = ResultState.RETRY_NORMAL
     }
     private val playHardButton = PlayButton(Difficulty.HARD) {
-
+        resultState = ResultState.RETRY_HARD
     }
 
     init {
@@ -146,6 +147,6 @@ class ResultsPanel(private val results: FightResults) {
         if (isAnimationFinished)
             messageLabel.render(delta, renderer)
 
-        return ResultState.NONE
+        return resultState
     }
 }

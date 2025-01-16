@@ -1,14 +1,16 @@
 package com.cozmicgames.states
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.Boss
+import com.cozmicgames.bosses.BossDesc
+import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.PlayerCamera
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
-import com.cozmicgames.graphics.Background
+import com.cozmicgames.graphics.ui.FightStartMessage
 import com.cozmicgames.graphics.ui.GUICamera
-import com.cozmicgames.graphics.ui.ResultsPanel
+import com.cozmicgames.graphics.ui.ResultPanel
 import com.cozmicgames.input.InputFrame
-import com.cozmicgames.states.boss1.Boss1
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.littlekt.math.Vec2f
@@ -19,15 +21,16 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
+class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState {
     private lateinit var playerCamera: PlayerCamera
     private lateinit var guiCamera: GUICamera
     private lateinit var background: Background
-    private lateinit var boss: Boss1
-    private lateinit var resultsPanel: ResultsPanel
+    private lateinit var boss: Boss
+    private lateinit var resultPanel: ResultPanel
+    private var fightStartMessage: FightStartMessage? = FightStartMessage()
 
     private var fightDuration = 0.0.seconds
-    private var fightStarted = false //TODO: Use
+    private var fightStarted = false
     private var showResults = false
     private var returnState: GameState = this
 
@@ -44,7 +47,7 @@ class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
 
         background = Background(Game.resources.boss1background)
 
-        boss = Boss1(difficulty)
+        boss = desc.createBoss(difficulty)
         boss.addToWorld()
         boss.addToPhysics()
 
@@ -60,6 +63,14 @@ class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
             p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y)
             p.ship.addToWorld()
             p.ship.addToPhysics()
+        }
+
+        Game.world.shouldUpdate = false
+
+        fightStartMessage?.startAnimation {
+            fightStartMessage = null
+            fightStarted = true
+            Game.world.shouldUpdate = true
         }
     }
 
@@ -99,24 +110,23 @@ class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
         }
 
         boss.update(delta)
-        playerCamera.update(cameraTargetX, cameraTargetY, delta)
         Game.world.update(delta)
+        playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
         if (!showResults)
             fightDuration += delta
 
         if (!showResults && (boss.isDead || Game.players.players.all { it.ship.isDead })) {
             showResults = true
+            Game.world.shouldUpdate = false
 
             if (!boss.isDead)
                 boss.movementController.onFailFight()
 
             val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
-            val results = FightResults(fightDuration, difficulty, Boss1.FULL_HEALTH, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
+            val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
 
-            println(results.message)
-
-            resultsPanel = ResultsPanel(results)
+            resultPanel = ResultPanel(results)
         }
 
         val pass = Game.graphics.beginMainRenderPass()
@@ -135,11 +145,16 @@ class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
             }
         }
 
+        if (!fightStarted)
+            pass.render(guiCamera.camera) { renderer: Renderer ->
+                fightStartMessage?.render(delta, renderer)
+            }
+
         //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
         //    boss.drawDebug(renderer)
         //}
 
-        if (!showResults)
+        if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
                 renderer.submit(RenderLayers.UI_BEGIN) {
                     repeat(difficulty.basePlayerHealth) { health ->
@@ -155,11 +170,11 @@ class Boss1State(val difficulty: Difficulty = Difficulty.NORMAL) : GameState {
             }
         else {
             pass.render(guiCamera.camera) { renderer: Renderer ->
-                when (resultsPanel.renderAndGetResultState(delta, renderer)) {
-                    ResultsPanel.ResultState.RETURN -> returnState = MenuState()
-                    ResultsPanel.ResultState.RETRY_EASY -> returnState = Boss1State(Difficulty.EASY)
-                    ResultsPanel.ResultState.RETRY_NORMAL -> returnState = Boss1State(Difficulty.NORMAL)
-                    ResultsPanel.ResultState.RETRY_HARD -> returnState = Boss1State(Difficulty.HARD)
+                when (resultPanel.renderAndGetResultState(delta, renderer)) {
+                    ResultPanel.ResultState.RETURN -> returnState = BossSelectionState()
+                    ResultPanel.ResultState.RETRY_EASY -> returnState = BossFightState(desc, Difficulty.EASY)
+                    ResultPanel.ResultState.RETRY_NORMAL -> returnState = BossFightState(desc, Difficulty.NORMAL)
+                    ResultPanel.ResultState.RETRY_HARD -> returnState = BossFightState(desc, Difficulty.HARD)
                     else -> {}
                 }
             }

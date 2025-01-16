@@ -1,6 +1,7 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.Boss
 import com.cozmicgames.entities.Entity
 import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
@@ -17,7 +18,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffectSource {
+class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffectSource, Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -85,20 +86,18 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
 
     override var health = FULL_HEALTH
 
-    val isDead get() = health <= 0
-
     override val effectSourceX get() = beak.x
     override val effectSourceY get() = beak.y
+
+    override var x = 0.0f
+    override var y = 0.0f
+    override var rotation = 0.0.degrees
+
+    override val movementController = Boss1MovementController(this)
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
     val isParalyzed get() = isParalyzedTimer > 0.0.seconds
-
-    var x = 0.0f
-    var y = 0.0f
-    var rotation = 0.0.degrees
-
-    val movementController = MovementController(this)
 
     private val head = Head(this, HEAD_SIZE, HEAD_LAYER)
     private val tentacles: List<Tentacle>
@@ -118,7 +117,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         this.tentacles = tentacles
     }
 
-    fun addToWorld() {
+    override fun addToWorld() {
         Game.world.add(head)
 
         tentacles.forEach { tentacle ->
@@ -130,7 +129,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         Game.world.add(heart)
     }
 
-    fun removeFromWorld() {
+    override fun removeFromWorld() {
         Game.world.remove(head)
 
         tentacles.forEach { tentacle ->
@@ -142,7 +141,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         Game.world.remove(heart)
     }
 
-    fun addToPhysics() {
+    override fun addToPhysics() {
         Game.physics.addCollider(head.collider)
         Game.physics.addHittable(head)
 
@@ -158,7 +157,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         Game.physics.addHittable(heart)
     }
 
-    fun removeFromPhysics() {
+    override fun removeFromPhysics() {
         Game.physics.removeCollider(head.collider)
         Game.physics.removeHittable(head)
 
@@ -174,7 +173,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         Game.physics.removeHittable(heart)
     }
 
-    fun update(delta: Duration) {
+    override fun update(delta: Duration) {
         if (Game.players.isHost) {
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)

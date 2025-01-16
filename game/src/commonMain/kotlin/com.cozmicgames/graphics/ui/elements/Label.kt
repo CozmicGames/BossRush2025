@@ -37,8 +37,28 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
             updateLayoutAndCache()
         }
 
+    var shadowOffsetX = 0.0f
+        set(value) {
+            field = value
+            updateLayoutAndCache()
+        }
+
+    var shadowOffsetY = 0.0f
+        set(value) {
+            field = value
+            updateLayoutAndCache()
+        }
+
+    var shadowColor = Color.BLACK
+        set(value) {
+            field = value
+            updateLayoutAndCache()
+        }
+
     private val layout = GlyphLayout()
     private val cache = BitmapFontCache(Game.resources.font)
+    private val shadowLayout = GlyphLayout()
+    private val shadowCache = BitmapFontCache(Game.resources.font)
     private var textX = 0.0f
     private var textY = 0.0f
 
@@ -51,6 +71,9 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
     }
 
     private fun updateLayoutAndCache() {
+        if (fontSize == 0.0f)
+            return
+
         layout.setText(Game.resources.font, text, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize)
 
         textX = when (hAlign) {
@@ -66,13 +89,24 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
         } + layout.height * 0.2f
 
         cache.setText(layout, textX, textY, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize, color = color)
+
+        if (shadowOffsetX != 0.0f || shadowOffsetY != 0.0f) {
+            shadowLayout.setText(Game.resources.font, text, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize)
+            shadowCache.setText(shadowLayout, textX + shadowOffsetX, textY + shadowOffsetY, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize, color = shadowColor)
+        }
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         if (alwaysUpdateLayoutAndCache)
             updateLayoutAndCache()
 
+        if (fontSize == 0.0f)
+            return
+
         renderer.submit(layer) {
+            if (shadowOffsetX != 0.0f || shadowOffsetY != 0.0f)
+                shadowCache.draw(it)
+
             cache.draw(it)
         }
     }

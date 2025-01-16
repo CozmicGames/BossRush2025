@@ -8,14 +8,16 @@ import com.littlekt.graphics.Texture
 import kotlin.time.Duration
 
 open class IconButton(val texture: Texture, val color: Color, var scale: Float = 1.0f, var onClick: () -> Unit = {}) : GUIElement() {
+    var isEnabled = true
+
     override fun renderElement(delta: Duration, renderer: Renderer) {
         val minX = x
         val minY = y
         val maxX = x + width
         val maxY = y + height
 
-        val isHovered = Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
-        val isClicked = Game.input.justTouched && isHovered
+        val isHovered = isEnabled && Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
+        val isClicked = isEnabled && Game.input.justTouched && isHovered
 
         if (isClicked)
             onClick()

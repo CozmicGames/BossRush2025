@@ -1,4 +1,4 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
 import com.littlekt.util.seconds
@@ -9,14 +9,14 @@ import kotlin.time.Duration.Companion.seconds
 abstract class BossStage {
     abstract val nextStage: BossStage?
 
-    abstract fun update(delta: Duration, controller: MovementController): BossStage
+    abstract fun update(delta: Duration, controller: Boss1MovementController): BossStage
 }
 
 class TransitionStage(override val nextStage: BossStage) : BossStage() {
     private var timer = 0.0.seconds
     private var isFirstUpdate = true
 
-    override fun update(delta: Duration, controller: MovementController): BossStage {
+    override fun update(delta: Duration, controller: Boss1MovementController): BossStage {
         if (isFirstUpdate) {
             controller.tentacleMovement = StretchOutTentacleMovement(0.3f)
             controller.bossMovement = ShakeBossMovement { 1.0f - timer.seconds / 2.0f }
@@ -40,9 +40,9 @@ abstract class FightStage : BossStage() {
     var nextBossMovementDecisionTime = 1.0.seconds
     private var nextAttackDecisionTime = 2.0.seconds
 
-    protected abstract fun decideBossMovement(boss: Boss1, controller: MovementController)
+    protected abstract fun decideBossMovement(boss: Boss1, controller: Boss1MovementController)
 
-    private fun decideAttack(boss: Boss1, controller: MovementController) {
+    private fun decideAttack(boss: Boss1, controller: Boss1MovementController) {
         if (controller.isAttacking)
             return
 
@@ -61,7 +61,7 @@ abstract class FightStage : BossStage() {
         }
     }
 
-    override fun update(delta: Duration, controller: MovementController): BossStage {
+    override fun update(delta: Duration, controller: Boss1MovementController): BossStage {
         if (controller.boss.isParalyzed)
             return this
 
@@ -87,7 +87,7 @@ class FightStage1 : FightStage() {
         StageAttack(FlyAttack(), 0.2f, 1.0.seconds)
     )
 
-    override fun decideBossMovement(boss: Boss1, controller: MovementController) {
+    override fun decideBossMovement(boss: Boss1, controller: Boss1MovementController) {
         if (controller.isAttacking)
             return
 
@@ -124,7 +124,7 @@ class FightStage2 : FightStage() {
         StageAttack(ScreamAttack(), 0.6f, 4.0.seconds)
     )
 
-    override fun decideBossMovement(boss: Boss1, controller: MovementController) {
+    override fun decideBossMovement(boss: Boss1, controller: Boss1MovementController) {
         if (controller.isAttacking)
             return
 
@@ -162,7 +162,7 @@ class FightStage3 : FightStage() {
         StageAttack(SpinAttack(), 0.2f, 4.0.seconds)
     )
 
-    override fun decideBossMovement(boss: Boss1, controller: MovementController) {
+    override fun decideBossMovement(boss: Boss1, controller: Boss1MovementController) {
         if (controller.isAttacking)
             return
 
@@ -192,7 +192,7 @@ class FightStage3 : FightStage() {
 class EndStage : BossStage() {
     override val nextStage: BossStage? = null
 
-    override fun update(delta: Duration, controller: MovementController): BossStage {
+    override fun update(delta: Duration, controller: Boss1MovementController): BossStage {
         return this
     }
 }

@@ -1,11 +1,12 @@
-package com.cozmicgames.states.boss1
+package com.cozmicgames.bosses.boss1
 
+import com.cozmicgames.bosses.BossMovementController
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.shortDistanceTo
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
-class MovementController(val boss: Boss1) {
+class Boss1MovementController(val boss: Boss1) : BossMovementController {
     companion object {
         private const val MOVEMENT_SPEED = 0.5f
         private const val ROTATION_SPEED = 3.0f
@@ -88,7 +89,7 @@ class MovementController(val boss: Boss1) {
         boss.rotation += dr * ROTATION_SPEED * delta.seconds * transform.rotationSpeedModifier
     }
 
-    fun onFailFight() {
+    override fun onFailFight() {
         currentStage = EndStage()
 
         tentacleMovement = CompoundTentacleMovement().also {

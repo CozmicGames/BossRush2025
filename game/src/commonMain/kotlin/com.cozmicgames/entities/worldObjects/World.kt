@@ -6,6 +6,8 @@ import kotlin.time.Duration
 class World {
     private val objects = arrayListOf<WorldObject>()
 
+    var shouldUpdate = false
+
     fun add(worldObject: WorldObject) {
         objects += worldObject
         worldObject.onAddToWorld()
@@ -17,6 +19,9 @@ class World {
     }
 
     fun update(delta: Duration) {
+        if (!shouldUpdate)
+            return
+
         for (entity in objects) {
             entity.update(delta)
         }
