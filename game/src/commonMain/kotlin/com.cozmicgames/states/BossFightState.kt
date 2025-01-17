@@ -14,7 +14,10 @@ import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.littlekt.math.Vec2f
+import com.littlekt.math.geom.degrees
+import com.littlekt.math.geom.radians
 import com.littlekt.math.isFuzzyZero
+import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.sqrt
@@ -60,7 +63,8 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
 
         Game.players.players.forEachIndexed { index, p ->
             val spawnPosition = spawnPositions[index]
-            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y)
+            val spawnRotation = atan2(spawnPosition.y - boss.y, spawnPosition.x - boss.x).radians + 180.0.degrees
+            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y, spawnRotation)
             p.ship.addToWorld()
             p.ship.addToPhysics()
         }
@@ -109,8 +113,10 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
 
-        boss.update(delta)
-        Game.world.update(delta)
+        if (fightStarted)
+            boss.update(delta)
+
+        Game.world.update(delta, fightStarted)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
         if (!showResults)
@@ -171,7 +177,7 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
         else {
             pass.render(guiCamera.camera) { renderer: Renderer ->
                 when (resultPanel.renderAndGetResultState(delta, renderer)) {
-                    ResultPanel.ResultState.RETURN -> returnState = BossSelectionState()
+                    ResultPanel.ResultState.RETURN -> returnState = BayState()
                     ResultPanel.ResultState.RETRY_EASY -> returnState = BossFightState(desc, Difficulty.EASY)
                     ResultPanel.ResultState.RETRY_NORMAL -> returnState = BossFightState(desc, Difficulty.NORMAL)
                     ResultPanel.ResultState.RETRY_HARD -> returnState = BossFightState(desc, Difficulty.HARD)

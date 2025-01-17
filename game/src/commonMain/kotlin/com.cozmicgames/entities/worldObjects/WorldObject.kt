@@ -20,7 +20,7 @@ abstract class WorldObject(val id: String) {
     val color = MutableColor(Color.WHITE)
     var scale = 1.0f
 
-    fun update(delta: Duration) {
+    fun update(delta: Duration, fightStarted: Boolean) {
         val animationsToRemove = arrayListOf<WorldObjectAnimation>()
 
         animations.forEach {
@@ -46,10 +46,10 @@ abstract class WorldObject(val id: String) {
             scale = 1.0f
         }
 
-        updateWorldObject(delta)
+        updateWorldObject(delta, fightStarted)
     }
 
-    protected abstract fun updateWorldObject(delta: Duration)
+    protected abstract fun updateWorldObject(delta: Duration, fightStarted: Boolean)
 
     abstract fun render(renderer: Renderer)
 

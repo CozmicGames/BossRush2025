@@ -27,7 +27,7 @@ class ResultPanel(private val results: FightResults) {
     private var resultState = ResultState.NONE
 
     var width = 600.0f
-    val height = 500.0f
+    val height = 600.0f
     val x = (Game.graphics.width - width) * 0.5f
     var y = (Game.graphics.height - height) * 0.5f
 
@@ -42,6 +42,8 @@ class ResultPanel(private val results: FightResults) {
         isAnimationFinished = true
         messageLabel.startAnimation()
     }
+    private val returnLabel = Label("Return", 32.0f)
+    private val retryLabel = Label("Retry", 32.0f)
     private val returnButton = ReturnButton {
         resultState = ResultState.RETURN
     }
@@ -56,6 +58,9 @@ class ResultPanel(private val results: FightResults) {
     }
 
     init {
+        titleLabel.shadowOffsetX = 3.0f
+        titleLabel.shadowOffsetY = -3.0f
+
         titleLabel.getX = { x + (width - titleLabel.width) * 0.5f }
         titleLabel.getY = { y + height * 0.87f }
         titleLabel.getWidth = { width * 0.9f }
@@ -72,46 +77,56 @@ class ResultPanel(private val results: FightResults) {
         durationLabel.getHeight = { height * 0.1f }
 
         damageResultLabel.getX = { x + (width - damageResultLabel.width) * 0.5f }
-        damageResultLabel.getY = { y + height * 0.63f }
+        damageResultLabel.getY = { y + height * 0.65f }
         damageResultLabel.getWidth = { width * 0.65f }
         damageResultLabel.getHeight = { height * 0.1f }
 
         healthResultLabel.getX = { x + (width - healthResultLabel.width) * 0.5f }
-        healthResultLabel.getY = { y + height * 0.53f }
+        healthResultLabel.getY = { y + height * 0.57f }
         healthResultLabel.getWidth = { width * 0.65f }
         healthResultLabel.getHeight = { height * 0.1f }
 
         accuracyResultLabel.getX = { x + (width - accuracyResultLabel.width) * 0.5f }
-        accuracyResultLabel.getY = { y + height * 0.43f }
+        accuracyResultLabel.getY = { y + height * 0.49f }
         accuracyResultLabel.getWidth = { width * 0.65f }
         accuracyResultLabel.getHeight = { height * 0.1f }
 
         ratingBanner.getX = { x + (width - ratingBanner.width) * 0.5f }
-        ratingBanner.getY = { y + height * 0.2f }
+        ratingBanner.getY = { y + height * 0.3f }
 
         messageLabel.getX = { x + (width - messageLabel.width) * 0.5f }
-        messageLabel.getY = { y + height * 0.2f }
+        messageLabel.getY = { y + height * 0.28f }
         messageLabel.getWidth = { width * 0.8f }
 
-        returnButton.getX = { x + (width - (64.0f * 4 + 64.0f * 0.5f * 2 + 64.0f * 1.5f)) * 0.5f }
+        returnLabel.getX = { x + width * 0.18f }
+        returnLabel.getY = { y + 75.0f }
+        returnLabel.getWidth = { 100.0f }
+        returnLabel.getHeight = { 40.0f }
+
+        retryLabel.getX = { x + width * 0.51f }
+        retryLabel.getY = { y + 75.0f }
+        retryLabel.getWidth = { 100.0f }
+        retryLabel.getHeight = { 40.0f }
+
+        returnButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f }
         returnButton.getY = { y + 17.0f }
-        returnButton.getWidth = { 64.0f }
-        returnButton.getHeight = { 64.0f }
+        returnButton.getWidth = { 56.0f }
+        returnButton.getHeight = { 56.0f }
 
-        playEasyButton.getX = { x + (width - (64.0f * 4 + 64.0f * 0.5f * 2 + 64.0f * 1.5f)) * 0.5f + 64.0f * 2.5f }
+        playEasyButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f }
         playEasyButton.getY = { y + 17.0f }
-        playEasyButton.getWidth = { 64.0f }
-        playEasyButton.getHeight = { 64.0f }
+        playEasyButton.getWidth = { 56.0f }
+        playEasyButton.getHeight = { 56.0f }
 
-        playNormalButton.getX = { x + (width - (64.0f * 4 + 64.0f * 0.5f * 2 + 64.0f * 1.5f)) * 0.5f + 64.0f * 2.5f + 64.0f * 1.5f }
+        playNormalButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f + 56.0f * 1.2f }
         playNormalButton.getY = { y + 17.0f }
-        playNormalButton.getWidth = { 64.0f }
-        playNormalButton.getHeight = { 64.0f }
+        playNormalButton.getWidth = { 56.0f }
+        playNormalButton.getHeight = { 56.0f }
 
-        playHardButton.getX = { x + (width - (64.0f * 4 + 64.0f * 0.5f * 2 + 64.0f * 1.5f)) * 0.5f + 64.0f * 2.5f + 64.0f * 1.5f * 2 }
+        playHardButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f + 56.0f * 1.2f * 2 }
         playHardButton.getY = { y + 17.0f }
-        playHardButton.getWidth = { 64.0f }
-        playHardButton.getHeight = { 64.0f }
+        playHardButton.getWidth = { 56.0f }
+        playHardButton.getHeight = { 56.0f }
     }
 
     fun renderAndGetResultState(delta: Duration, renderer: Renderer): ResultState {
@@ -130,6 +145,7 @@ class ResultPanel(private val results: FightResults) {
 
         renderer.submit(RenderLayers.UI_BEGIN) {
             Game.resources.resultBackgroundNinePatch.draw(it, x, y, width, height)
+            Game.resources.ratingBackgroundNinePatch.draw(it, x + width * 0.1f, y + height * 0.5f, width * 0.8f, height * 0.315f)
         }
 
         titleLabel.render(delta, renderer)
@@ -139,6 +155,8 @@ class ResultPanel(private val results: FightResults) {
         healthResultLabel.render(delta, renderer)
         accuracyResultLabel.render(delta, renderer)
         ratingBanner.render(delta, renderer)
+        returnLabel.render(delta, renderer)
+        retryLabel.render(delta, renderer)
         returnButton.render(delta, renderer)
         playEasyButton.render(delta, renderer)
         playNormalButton.render(delta, renderer)

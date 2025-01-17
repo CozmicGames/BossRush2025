@@ -43,6 +43,7 @@ class ProjectileManager {
             }
 
             var distance = projectile.speed * delta.seconds
+            projectile.speed *= 1.0f - projectile.speedFalloff * delta.seconds
 
             val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromWorldObject }
 
@@ -109,11 +110,11 @@ class ProjectileManager {
         projectiles.removeAll { it.fromWorldObject == fromWorldObject && it.type == ProjectileType.ENERGY_BEAM }
     }
 
-    fun spawnProjectile(fromWorldObject: WorldObject, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float) {
+    fun spawnProjectile(fromWorldObject: WorldObject, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float, speedFalloff: Float) {
         if (!Game.players.isHost)
             return
 
-        projectiles += Projectile(fromWorldObject, type, x, y, direction, speed)
+        projectiles += Projectile(fromWorldObject, type, x, y, direction, speed, speedFalloff)
     }
 
     fun render(batch: SpriteBatch) {

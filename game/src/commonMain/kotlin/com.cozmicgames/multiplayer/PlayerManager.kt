@@ -12,6 +12,8 @@ import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
     val shootStatistics = ShootStatistics()
+    var wallet = 1000
+        private set
 
     private val playersInternal = arrayListOf<Player>()
 
@@ -47,15 +49,16 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 val spawnProjectileY = player.state.getState<Float>("spawnProjectileY")
                 val spawnProjectileCount = player.state.getState<Int>("spawnProjectileCount")
                 val spawnProjectileSpeed = player.state.getState<Float>("spawnProjectileSpeed")
+                val spawnProjectileSpeedFalloff = player.state.getState<Float>("spawnProjectileSpeedFalloff")
 
-                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileCount != null && spawnProjectileSpeed != null) {
+                if (spawnProjectileType != null && spawnProjectileX != null && spawnProjectileY != null && spawnProjectileCount != null && spawnProjectileSpeed != null && spawnProjectileSpeedFalloff != null) {
                     val directions = Array(spawnProjectileCount) {
                         player.state.getState<Float>("spawnProjectileDirection$it")?.degrees
                     }
 
                     if (directions.all { it != null })
                         directions.forEach {
-                            Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, it!!, spawnProjectileSpeed)
+                            Game.projectiles.spawnProjectile(player.ship, spawnProjectileType, spawnProjectileX, spawnProjectileY, it!!, spawnProjectileSpeed, spawnProjectileSpeedFalloff)
                         }
 
                     player.state.setState("spawnProjectileType", null)
@@ -66,6 +69,7 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                         player.state.setState("spawnProjectileDirection$it", null)
                     }
                     player.state.setState("spawnProjectileSpeed", null)
+                    player.state.setState("spawnProjectileSpeedFalloff", null)
 
                     shootStatistics.shotsFired += spawnProjectileCount
                 }
@@ -111,6 +115,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 Game.events.sendProcessEvents(player.state)
 
             Game.events.clearProcessEvents()
+
+            setGlobalState("credits", wallet)
         }
 
         for (player in playersInternal) {
@@ -118,6 +124,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
             player.state.getState<Float>("y")?.let { player.ship.y = it }
             player.state.getState<Float>("rotation")?.let { player.ship.rotation = it.degrees }
         }
+
+        wallet = getGlobalState("credits") ?: 0
     }
 
     fun getMyPlayerState() = multiplayer.getMyPlayerState()
@@ -127,4 +135,20 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     fun <T : Any> getGlobalState(name: String) = multiplayer.getState<T>(name)
 
     fun <T : Any> setGlobalState(name: String, value: T) = multiplayer.setState(name, value)
+
+    fun gainCredits(amount: Int) {
+        if (!isHost)
+            return
+
+        wallet += amount
+        setGlobalState("wallet", wallet)
+    }
+
+    fun spendCredits(amount: Int) {
+        if (!isHost)
+            return
+
+        wallet -= amount
+        setGlobalState("wallet", wallet)
+    }
 }

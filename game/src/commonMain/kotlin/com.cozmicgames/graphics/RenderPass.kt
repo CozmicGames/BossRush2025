@@ -11,7 +11,7 @@ import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.graphics.webgpu.*
 
 class RenderPass(device: Device, context: Context, preferredFormat: TextureFormat) : Releasable {
-    private val batch = SpriteBatch(device, context.graphics, preferredFormat, cameraDynamicSize = 100)
+    private val batch = SpriteBatch(device, context.graphics, preferredFormat, cameraDynamicSize = 256)
     private val shapeRenderer by lazy { ShapeRenderer(batch) }
     private var renderPassEncoder: RenderPassEncoder? = null
     private val renderer = Renderer(this)

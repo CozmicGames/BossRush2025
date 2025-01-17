@@ -25,6 +25,8 @@ class Resources : Releasable {
     lateinit var starEmpty: Texture
     lateinit var resultBackground: Texture
     lateinit var resultBackgroundNinePatch: NinePatch
+    lateinit var ratingBackground: Texture
+    lateinit var ratingBackgroundNinePatch: NinePatch
     lateinit var resultBanner: Texture
     lateinit var returnIcon: Texture
     lateinit var playIcon: Texture
@@ -35,7 +37,21 @@ class Resources : Releasable {
     lateinit var lockBody: Texture
     lateinit var lockShackle: Texture
     lateinit var todoPreview: Texture
-
+    lateinit var weaponBackground: Texture
+    lateinit var weaponBackgroundNinePatch: NinePatch
+    lateinit var weaponBackgroundHovered: Texture
+    lateinit var weaponBackgroundHoveredNinePatch: NinePatch
+    lateinit var weaponSelected: Texture
+    lateinit var weaponSelectedNinePatch: NinePatch
+    lateinit var weaponMask: Texture
+    lateinit var weaponMaskNinePatch: NinePatch
+    lateinit var shopBackground: Texture
+    lateinit var shopBackgroundNinePatch: NinePatch
+    lateinit var reelgunPreview: Texture
+    lateinit var hyperHarpoonPreview: Texture
+    lateinit var scattergunPreview: Texture
+    lateinit var baitblasterPreview: Texture
+    lateinit var currencyIcon: Texture
 
     lateinit var debug: Texture
     lateinit var debugNinePatch: NinePatch
@@ -45,6 +61,7 @@ class Resources : Releasable {
      */
     lateinit var energyBall: Texture
     lateinit var energyBeam: Texture
+    lateinit var baitBall: Texture
     lateinit var shockwave0: Texture
     lateinit var shockwave1: Texture
     lateinit var shockwave2: Texture
@@ -90,6 +107,8 @@ class Resources : Releasable {
         starEmpty = context.resourcesVfs["textures/ui/star_empty.png"].readTexture()
         resultBackground = context.resourcesVfs["textures/ui/result_background.png"].readTexture()
         resultBackgroundNinePatch = NinePatch(resultBackground, 32, 32, 32, 32)
+        ratingBackground = context.resourcesVfs["textures/ui/rating_background.png"].readTexture()
+        ratingBackgroundNinePatch = NinePatch(ratingBackground, 16, 16, 16, 16)
         resultBanner = context.resourcesVfs["textures/ui/result_banner.png"].readTexture()
         returnIcon = context.resourcesVfs["textures/ui/return_icon.png"].readTexture()
         playIcon = context.resourcesVfs["textures/ui/play_icon.png"].readTexture()
@@ -100,12 +119,28 @@ class Resources : Releasable {
         lockBody = context.resourcesVfs["textures/ui/lock_body.png"].readTexture()
         lockShackle = context.resourcesVfs["textures/ui/lock_shackle.png"].readTexture()
         todoPreview = context.resourcesVfs["textures/todo_preview.png"].readTexture()
+        weaponBackground = context.resourcesVfs["textures/ui/weapon_background.png"].readTexture()
+        weaponBackgroundNinePatch = NinePatch(weaponBackground, 32, 32, 32, 32)
+        weaponBackgroundHovered = context.resourcesVfs["textures/ui/weapon_background_hovered.png"].readTexture()
+        weaponBackgroundHoveredNinePatch = NinePatch(weaponBackgroundHovered, 32, 32, 32, 32)
+        weaponSelected = context.resourcesVfs["textures/ui/weapon_selected.png"].readTexture()
+        weaponSelectedNinePatch = NinePatch(weaponSelected, 32, 32, 32, 32)
+        weaponMask = context.resourcesVfs["textures/ui/weapon_mask.png"].readTexture()
+        weaponMaskNinePatch = NinePatch(weaponMask, 32, 32, 32, 32)
+        shopBackground = context.resourcesVfs["textures/ui/shop_background.png"].readTexture()
+        shopBackgroundNinePatch = NinePatch(shopBackground, 32, 32, 32, 32)
+        reelgunPreview = context.resourcesVfs["textures/weapons/reelgun_preview.png"].readTexture()
+        hyperHarpoonPreview = context.resourcesVfs["textures/weapons/hyper_harpoon_preview.png"].readTexture()
+        scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
+        baitblasterPreview = context.resourcesVfs["textures/weapons/baitblaster_preview.png"].readTexture()
+        currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
 
         debug = context.resourcesVfs["textures/ui/debug.png"].readTexture()
         debugNinePatch = NinePatch(debug, 4, 4, 4, 4)
 
         energyBall = context.resourcesVfs["textures/projectiles/energy_ball.png"].readTexture()
         energyBeam = context.resourcesVfs["textures/projectiles/energy_beam.png"].readTexture()
+        baitBall = context.resourcesVfs["textures/projectiles/bait_ball.png"].readTexture()
         shockwave0 = context.resourcesVfs["textures/projectiles/shockwave0.png"].readTexture()
         shockwave1 = context.resourcesVfs["textures/projectiles/shockwave1.png"].readTexture()
         shockwave2 = context.resourcesVfs["textures/projectiles/shockwave2.png"].readTexture()
@@ -138,6 +173,7 @@ class Resources : Releasable {
         starFull.release()
         starEmpty.release()
         resultBackground.release()
+        ratingBackground.release()
         resultBanner.release()
         returnIcon.release()
         playIcon.release()
@@ -146,11 +182,22 @@ class Resources : Releasable {
         lockBody.release()
         lockShackle.release()
         todoPreview.release()
+        weaponBackground.release()
+        weaponBackgroundHovered.release()
+        weaponSelected.release()
+        weaponMask.release()
+        shopBackground.release()
+        reelgunPreview.release()
+        hyperHarpoonPreview.release()
+        scattergunPreview.release()
+        baitblasterPreview.release()
+        currencyIcon.release()
 
         debug.release()
 
         energyBall.release()
         energyBeam.release()
+        baitBall.release()
         shockwave0.release()
         shockwave1.release()
         shockwave2.release()

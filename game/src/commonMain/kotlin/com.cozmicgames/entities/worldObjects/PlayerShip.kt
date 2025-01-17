@@ -13,6 +13,7 @@ import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.*
 import com.littlekt.graphics.*
+import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -37,8 +38,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     val isInvulnerable get() = invulnerabilityTimer > 0.0.seconds
 
-    var primaryWeapon: Weapon? = Weapons.ENERGY_GUN
-    var secondaryWeapon: Weapon? = Weapons.ENERGY_GUN
+    var primaryWeapon: Weapon? = Weapons.REELGUN
+    var secondaryWeapon: Weapon? = Weapons.REELGUN
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
@@ -72,7 +73,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     private var isBeamProjectileFiring = false
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         invulnerabilityTimer -= delta
         if (invulnerabilityTimer < 0.0.seconds)
             invulnerabilityTimer = 0.0.seconds
@@ -90,35 +91,37 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         if (impulseY.isFuzzyZero())
             impulseY = 0.0f
 
-        player.state.getState<Float>("inputX")?.let {
-            deltaX += it
-        }
+        if (fightStarted) {
+            player.state.getState<Float>("inputX")?.let {
+                deltaX += it
+            }
 
-        player.state.getState<Float>("inputY")?.let {
-            deltaY += it
-        }
+            player.state.getState<Float>("inputY")?.let {
+                deltaY += it
+            }
 
-        player.state.getState<Float>("inputRotation")?.let {
-            deltaRotation = it
-        }
+            player.state.getState<Float>("inputRotation")?.let {
+                deltaRotation = it
+            }
 
-        player.state.getState<Boolean>("inputUsePrimary")?.let {
-            if (firePrimaryCooldown <= 0.0.seconds)
-                primaryWeapon?.let { weapon ->
-                    if (it)
-                        fireWeapon(weapon) { firePrimaryCooldown = it }
-                    else
-                        stopFiringWeapon(weapon) { firePrimaryCooldown = it }
-                }
-        }
+            player.state.getState<Boolean>("inputUsePrimary")?.let {
+                if (firePrimaryCooldown <= 0.0.seconds)
+                    primaryWeapon?.let { weapon ->
+                        if (it)
+                            fireWeapon(weapon) { firePrimaryCooldown = it }
+                        else
+                            stopFiringWeapon(weapon) { firePrimaryCooldown = it }
+                    }
+            }
 
-        player.state.getState<Boolean>("inputUseSecondary")?.let {
-            if (fireSecondaryCooldown <= 0.0.seconds) {
-                secondaryWeapon?.let { weapon ->
-                    if (it)
-                        fireWeapon(weapon) { fireSecondaryCooldown = it }
-                    else
-                        stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+            player.state.getState<Boolean>("inputUseSecondary")?.let {
+                if (fireSecondaryCooldown <= 0.0.seconds) {
+                    secondaryWeapon?.let { weapon ->
+                        if (it)
+                            fireWeapon(weapon) { fireSecondaryCooldown = it }
+                        else
+                            stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+                    }
                 }
             }
         }
@@ -248,6 +251,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         }
 
         state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
+        state.setState("spawnProjectileSpeedFalloff", weapon.projectileSpeedFalloff)
 
         if (weapon.projectileType.baseType is BulletProjectileType)
             setCooldown(weapon.fireRate)
@@ -304,11 +308,15 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         Game.physics.removeHittable(this)
     }
 
-    fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float) {
+    fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float, spawnRotation: Angle) {
         health = difficulty.basePlayerHealth
         x = spawnX
         y = spawnY
-        rotation = 0.0.degrees
+        rotation = spawnRotation
+        (collider.shape as RectangleCollisionShape).angle = rotation
+        Game.physics.updatePlayerCollider(collider, x, y)
+        x = collider.x
+        y = collider.y
 
         primaryWeapon = player.primaryWeapon
         secondaryWeapon = player.secondaryWeapon

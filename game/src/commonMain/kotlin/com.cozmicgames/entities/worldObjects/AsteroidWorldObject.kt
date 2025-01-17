@@ -23,7 +23,7 @@ class AsteroidWorldObject(index: Int, private val directionX: Float, private val
 
     override val collider = Collider(CircleCollisionShape(size), this)
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         rotation += rotationSpeed.degrees * delta.seconds
 
         x += directionX * speed * delta.seconds

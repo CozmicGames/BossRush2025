@@ -22,7 +22,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
     override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f), beak)
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
         val pivotY = beak.y
 

@@ -18,12 +18,12 @@ class World {
         worldObject.onRemoveFromWorld()
     }
 
-    fun update(delta: Duration) {
+    fun update(delta: Duration, fightStarted: Boolean) {
         if (!shouldUpdate)
             return
 
         for (entity in objects) {
-            entity.update(delta)
+            entity.update(delta, fightStarted)
         }
     }
 

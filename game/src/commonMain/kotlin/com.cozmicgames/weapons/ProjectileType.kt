@@ -10,7 +10,8 @@ import kotlin.math.sqrt
 
 enum class ProjectileType(val baseType: ProjectileBaseType) {
     ENERGY_BALL(BulletProjectileType({ Game.resources.energyBall }, 16.0f)),
-    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.energyBeam })
+    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.energyBeam }),
+    BAIT_BALL(BulletProjectileType({ Game.resources.baitBall }, 24.0f))
 }
 
 sealed interface ProjectileBaseType

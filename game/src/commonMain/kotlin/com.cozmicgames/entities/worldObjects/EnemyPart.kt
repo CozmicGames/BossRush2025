@@ -21,7 +21,7 @@ abstract class EnemyPart(id: String) : SingleLayerWorldObject(id) {
 
     protected fun getCircleCollisionShape(scale: Float = 1.0f) = CircleCollisionShape(max(width, height) * 0.5f * scale)
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         collider?.let {
             (it.shape as? RectangleCollisionShape)?.angle = rotation
             it.update(x, y)

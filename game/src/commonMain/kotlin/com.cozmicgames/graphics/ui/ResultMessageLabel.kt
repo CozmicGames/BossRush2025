@@ -11,13 +11,18 @@ class ResultMessageLabel(text: String) : Label(text, 0.0f) {
     private var animationTime = 0.0.seconds
     private var isAnimationStarted = false
 
+    init {
+        shadowOffsetX = 2.0f
+        shadowOffsetY = -2.0f
+    }
+
     fun startAnimation() {
         isAnimationStarted = true
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         if (isAnimationStarted) {
-            fontSize = 32.0f + sin(animationTime.seconds * 4.0f) * 2.0f
+            fontSize = 40.0f + sin(animationTime.seconds * 4.0f) * 2.0f
             animationTime += delta
         }
 

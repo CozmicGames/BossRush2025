@@ -5,13 +5,11 @@ import com.cozmicgames.Game
 import com.cozmicgames.bosses.TodoBossDesc
 import com.cozmicgames.bosses.boss1.Boss1Desc
 import com.cozmicgames.graphics.Renderer
-import com.cozmicgames.graphics.ui.GUICamera
-import com.cozmicgames.graphics.ui.MessageBanner
-import com.cozmicgames.graphics.ui.SelectionPoster
+import com.cozmicgames.graphics.ui.*
 import com.littlekt.input.Key
 import kotlin.time.Duration
 
-class BossSelectionState : GameState {
+class BayState : GameState {
     companion object {
         private val bossDescriptors = arrayOf(
             Boss1Desc(),
@@ -28,9 +26,11 @@ class BossSelectionState : GameState {
 
     private val messageBanner = MessageBanner()
 
-    private val posters = Array(6) {
+    private val selectionPosters = List(6) {
         SelectionPoster(bossDescriptors[it], it == 0) { returnState = it }
     }
+
+    private val shop = ShopUI()
 
     override fun begin() {
         guiCamera = GUICamera()
@@ -46,12 +46,15 @@ class BossSelectionState : GameState {
             repeat(3) { xIndex ->
                 val posterX = 20.0f + xIndex * (Constants.BOSS_SELECTION_POSTER_WIDTH + 25.0f)
 
-                posters[yIndex * 3 + xIndex].apply {
+                selectionPosters[yIndex * 3 + xIndex].apply {
                     x = posterX
                     y = posterY
                 }
             }
         }
+
+        shop.getX = { Game.graphics.width - shop.width }
+        shop.getY = { 0.0f }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -59,8 +62,8 @@ class BossSelectionState : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        if (Game.input.isKeyJustPressed(Key.U))
-            posters[2].unlock()
+        if (Game.input.isKeyJustPressed(Key.U)) //TODO: Remove
+            selectionPosters[2].unlock()
 
 
         val pass = Game.graphics.beginMainRenderPass()
@@ -68,9 +71,11 @@ class BossSelectionState : GameState {
         pass.render(guiCamera.camera) { renderer: Renderer ->
             messageBanner.render(delta, renderer)
 
-            posters.forEach {
+            selectionPosters.forEach {
                 it.render(delta, renderer)
             }
+
+            shop.render(delta, renderer)
         }
 
         pass.end()

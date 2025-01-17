@@ -29,7 +29,7 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
 
     var tentacleRotation = 0.0.degrees
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         if (Game.players.isHost) {
             val tentacleRotation = if (flip) -tentacleRotation else tentacleRotation
 

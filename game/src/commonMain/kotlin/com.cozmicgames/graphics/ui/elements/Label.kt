@@ -55,6 +55,9 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
             updateLayoutAndCache()
         }
 
+    val textWidth get() = layout.width
+    val textHeight get() = layout.height
+
     private val layout = GlyphLayout()
     private val cache = BitmapFontCache(Game.resources.font)
     private val shadowLayout = GlyphLayout()

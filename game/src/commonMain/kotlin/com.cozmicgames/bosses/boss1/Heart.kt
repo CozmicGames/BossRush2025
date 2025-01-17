@@ -31,7 +31,7 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, Pl
     private var size = 1.0f
     private var timer = 0.0.seconds
 
-    override fun updateWorldObject(delta: Duration) {
+    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         timer += delta
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f

@@ -6,21 +6,68 @@ import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.utils.Easing
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
-import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.VAlign
+import com.littlekt.math.clamp
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class FightStartMessage : GUIElement() {
-    companion object {
-        private val DURATION_0 = 1.5.seconds
-        private val DURATION_1 = 0.4.seconds
-        private val DURATION_2 = 0.8.seconds
-        private val DURATION_3 = 0.3.seconds
+    private interface Stage {
+        fun update(delta: Duration): Stage?
+    }
+
+    private inner class Stage0 : Stage {
+        var timer = 0.0.seconds
+
+        override fun update(delta: Duration): Stage {
+            val factor = (timer / 1.3.seconds).toFloat().clamp(0.0f, 1.0f)
+            label.fontSize = 140.0f * (1.0f - Easing.QUAD_IN(factor))
+
+            timer += delta
+
+            return if (timer > 1.3.seconds) Stage1() else this
+        }
+    }
+
+    private inner class Stage1 : Stage {
+        var timer = 0.0.seconds
+
+        override fun update(delta: Duration): Stage {
+            timer += delta
+
+            return if (timer > 0.4.seconds) Stage2() else this
+        }
+    }
+
+    private inner class Stage2 : Stage {
+        var timer = 0.0.seconds
+
+        init {
+            label.text = "Haul!"
+        }
+
+        override fun update(delta: Duration): Stage {
+            val factor = (timer / 0.8.seconds).toFloat().clamp(0.0f, 1.0f)
+            label.fontSize = 140.0f * Easing.QUAD_IN(factor)
+
+            timer += delta
+
+            return if (timer > 0.8.seconds) Stage3() else this
+        }
+    }
+
+    private inner class Stage3 : Stage {
+        var timer = 0.0.seconds
+
+        override fun update(delta: Duration): Stage? {
+            timer += delta
+
+            return if (timer > 0.3.seconds) null else this
+        }
     }
 
     private val label = Label("Ready?", 0.1f, Color(1.0f, 1.0f, 1.0f, 0.7f))
-    private var timer = 0.0.seconds
+    private var stage: Stage? = Stage0()
     private var onFinish: () -> Unit = {}
     private var isAnimationStarted = false
     private var isAnimationFinished = false
@@ -43,27 +90,13 @@ class FightStartMessage : GUIElement() {
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         if (isAnimationStarted && !isAnimationFinished) {
-            timer += delta
-
-            if (timer < DURATION_0) {
-                val factor = (timer / DURATION_0).toFloat()
-                label.fontSize = 128.0f * Easing.QUAD_IN(factor)
-            }
-
-            if (timer >= DURATION_0 && timer < DURATION_0 + DURATION_1) {
-                label.fontSize = 0.0f
-                label.text = "Catch!"
-            }
-
-            if (timer >= DURATION_1 && timer < DURATION_0 + DURATION_1 + DURATION_2) {
-                val factor = ((timer - (DURATION_1 + DURATION_0)) / DURATION_2).toFloat()
-                label.fontSize = 128.0f * Easing.QUAD_IN(factor)
-            }
-
-            if (timer > DURATION_0 + DURATION_1 + DURATION_2 + DURATION_3) {
-                onFinish()
+            val newStage = stage?.update(delta)
+            if (newStage == null) {
                 isAnimationFinished = true
+                onFinish()
             }
+
+            stage = newStage
         }
 
         if (label.fontSize > 0.0f)
