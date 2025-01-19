@@ -1,4 +1,4 @@
-package com.cozmicgames.bosses.boss1
+package com.cozmicgames.bosses
 
 import com.littlekt.math.geom.degrees
 

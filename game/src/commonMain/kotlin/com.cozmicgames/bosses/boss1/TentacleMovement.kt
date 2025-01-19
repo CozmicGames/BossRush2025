@@ -158,7 +158,7 @@ class DefendTentacleMovement(val defendFactor: Float = 0.1f) : TentacleMovement 
     }
 }
 
-class CompoundTentacleMovement(movements: List<TentacleMovement> = emptyList()) : TentacleMovement {
+open class CompoundTentacleMovement(movements: List<TentacleMovement> = emptyList()) : TentacleMovement {
     private val movements = movements.toMutableList()
 
     fun addMovement(movement: TentacleMovement) {
@@ -178,7 +178,7 @@ class CompoundTentacleMovement(movements: List<TentacleMovement> = emptyList()) 
     }
 }
 
-class SequenceTentacleMovement(private val durationPerMovement: Duration, private val movements: List<TentacleMovement>) : TentacleMovement {
+open class SequenceTentacleMovement(private val durationPerMovement: Duration, private val movements: List<TentacleMovement>) : TentacleMovement {
     private var timer = 0.0.seconds
     private var currentMovementIndex = 0
 
@@ -198,3 +198,11 @@ class SequenceTentacleMovement(private val durationPerMovement: Duration, privat
         movements.forEach { it.reset() }
     }
 }
+
+class IdleTentacleMovement : CompoundTentacleMovement(
+    listOf(
+        SwayTentacleMovement(15.0.degrees, 0.1f, 0.2f),
+        HangTentacleMovement(),
+        WaveTentacleMovement(10.0.degrees, 0.3f, 0.2f)
+    )
+)

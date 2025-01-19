@@ -67,7 +67,7 @@ class Resources : Releasable {
     lateinit var shockwave0: Texture
     lateinit var shockwave1: Texture
     lateinit var shockwave2: Texture
-
+    lateinit var shield: Texture
 
     /**
      * World
@@ -103,7 +103,6 @@ class Resources : Releasable {
     lateinit var boss2preview: Texture
     lateinit var boss2head: Texture
     lateinit var boss2sword: Texture
-    lateinit var boss2mouth: Texture
     lateinit var boss2fin: Texture
     lateinit var boss2body: Texture
     lateinit var boss2bodySlices: Array<TextureSlice>
@@ -160,6 +159,7 @@ class Resources : Releasable {
         shockwave0 = context.resourcesVfs["textures/projectiles/shockwave0.png"].readTexture()
         shockwave1 = context.resourcesVfs["textures/projectiles/shockwave1.png"].readTexture()
         shockwave2 = context.resourcesVfs["textures/projectiles/shockwave2.png"].readTexture()
+        shield = context.resourcesVfs["textures/projectiles/shield.png"].readTexture()
 
         background = context.resourcesVfs["textures/background.png"].readTexture()
         asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
@@ -183,7 +183,6 @@ class Resources : Releasable {
         //boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
         boss2head = context.resourcesVfs["textures/boss2/head.png"].readTexture()
         boss2sword = context.resourcesVfs["textures/boss2/sword.png"].readTexture()
-        boss2mouth = context.resourcesVfs["textures/boss2/mouth.png"].readTexture()
         boss2fin = context.resourcesVfs["textures/boss2/fin.png"].readTexture()
         boss2body = context.resourcesVfs["textures/boss2/body.png"].readTexture()
         boss2bodySlices = boss2body.slice(boss2body.width / Constants.BOSS2_BODY_PARTS, boss2body.height)[0]
@@ -227,6 +226,7 @@ class Resources : Releasable {
         shockwave0.release()
         shockwave1.release()
         shockwave2.release()
+        shield.release()
 
         background.release()
         asteroid0.release()
@@ -249,7 +249,6 @@ class Resources : Releasable {
         //boss2background.release()
         boss2head.release()
         boss2sword.release()
-        boss2mouth.release()
         boss2fin.release()
         boss2body.release()
         boss2tail.release()

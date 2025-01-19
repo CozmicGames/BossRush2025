@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1(val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Boss {
+class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -96,7 +96,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Bos
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
-    val isParalyzed get() = isParalyzedTimer > 0.0.seconds
+    override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
     private val head = Head(this, HEAD_SIZE, HEAD_LAYER)
     private val tentacles: List<Tentacle>
@@ -184,9 +184,9 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Bos
 
             movementController.update(delta)
             tentacles.forEach {
-                it.update(delta, movementController.tentacleMovement)
+                it.update(delta, movementController.movement.tentacleMovement)
             }
-            beak.update(delta, movementController.beakMovement)
+            beak.update(delta, movementController.movement.beakMovement)
 
             val cos = rotation.cosine
             val sin = rotation.sine

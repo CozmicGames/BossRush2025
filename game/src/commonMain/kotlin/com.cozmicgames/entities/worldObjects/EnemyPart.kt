@@ -2,6 +2,8 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.RectangleCollisionShape
+import com.littlekt.graphics.Color
+import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.math.geom.Angle
@@ -13,6 +15,7 @@ abstract class EnemyPart(id: String) : SingleLayerWorldObject(id) {
     abstract val width: Float
     abstract val height: Float
     abstract val texture: TextureSlice
+    open val mixColor: Color? = null
 
     open val flipX: Boolean = false
     open val flipY: Boolean = false
@@ -29,6 +32,11 @@ abstract class EnemyPart(id: String) : SingleLayerWorldObject(id) {
     }
 
     override fun render(batch: SpriteBatch) {
+        val color = if (mixColor != null)
+            MutableColor(color).mul(mixColor!!)
+        else
+            color
+
         batch.draw(texture, x, y, originX = width * 0.5f, originY = height * 0.5f, rotation = rotation, width = width, height = height, scaleX = scale, scaleY = scale, color = color, flipX = flipX, flipY = flipY)
     }
 }

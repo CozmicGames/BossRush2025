@@ -10,7 +10,6 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.input.Key
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -18,7 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss2(difficulty: Difficulty) : Boss {
+class Boss2(override val difficulty: Difficulty) : Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -27,14 +26,14 @@ class Boss2(difficulty: Difficulty) : Boss {
 
         private const val HEAD_SCALE = 2.0f
         private const val SWORD_SCALE = 2.0f
-        private const val MOUTH_SCALE = 2.0f
+        private const val SHIELD_SCALE = 4.0f
         private const val BODY_SCALE = 2.0f
         private const val FIN_SCALE = 2.0f
         private const val TAIL_SCALE = 2.0f
 
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 20
         private const val SWORD_LAYER = RenderLayers.ENEMY_BEGIN + 9
-        private const val MOUTH_LAYER = RenderLayers.ENEMY_BEGIN + 7
+        private const val SHIELD_LAYER = RenderLayers.ENEMY_BEGIN + 7
         private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 5
         private const val BODY_LAYER = RenderLayers.ENEMY_BEGIN + 10
         private const val DORSAL_FIN_LAYER = RenderLayers.ENEMY_BEGIN + 5
@@ -53,13 +52,13 @@ class Boss2(difficulty: Difficulty) : Boss {
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
-    val isParalyzed get() = isParalyzedTimer > 0.0.seconds
+    override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
     var flip = false
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val sword = Sword(this, SWORD_SCALE, SWORD_LAYER)
-    private val mouth = Mouth(this, MOUTH_SCALE, MOUTH_LAYER)
+    private val shield = Shield(this, SHIELD_SCALE, SHIELD_LAYER)
     private val heart = Heart(this, HEART_LAYER)
     private val body = Body(this, BODY_SCALE, BODY_LAYER)
     private val dorsalFin = Fin(this, false, FIN_SCALE, DORSAL_FIN_LAYER)
@@ -73,7 +72,7 @@ class Boss2(difficulty: Difficulty) : Boss {
     override fun addToWorld() {
         Game.world.add(head)
         Game.world.add(sword)
-        Game.world.add(mouth)
+        Game.world.add(shield)
         Game.world.add(heart)
         body.parts.forEach(Game.world::add)
         Game.world.add(dorsalFin)
@@ -84,7 +83,7 @@ class Boss2(difficulty: Difficulty) : Boss {
     override fun removeFromWorld() {
         Game.world.remove(head)
         Game.world.remove(sword)
-        Game.world.remove(mouth)
+        Game.world.remove(shield)
         Game.world.remove(heart)
         body.parts.forEach(Game.world::remove)
         Game.world.remove(dorsalFin)
@@ -97,7 +96,7 @@ class Boss2(difficulty: Difficulty) : Boss {
         Game.physics.addHittable(head)
 
         Game.physics.addCollider(sword.collider)
-        Game.physics.addCollider(mouth.collider)
+        Game.physics.addCollider(shield.collider)
 
         Game.physics.addCollider(heart.collider)
         Game.physics.addHittable(heart)
@@ -118,7 +117,7 @@ class Boss2(difficulty: Difficulty) : Boss {
         Game.physics.removeHittable(head)
 
         Game.physics.removeCollider(sword.collider)
-        Game.physics.removeCollider(mouth.collider)
+        Game.physics.removeCollider(shield.collider)
 
         Game.physics.removeCollider(heart.collider)
         Game.physics.removeHittable(heart)
@@ -135,8 +134,6 @@ class Boss2(difficulty: Difficulty) : Boss {
     }
 
     override fun update(delta: Duration) {
-        flip = Game.input.isKeyPressed(Key.F)
-
         if (Game.players.isHost) {
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
@@ -146,8 +143,13 @@ class Boss2(difficulty: Difficulty) : Boss {
             if (isParalyzedTimer <= 0.0.seconds)
                 isParalyzedTimer = 0.0.seconds
 
+            body.x = x
+            body.y = y
+            body.rotation = rotation
+
             movementController.update(delta)
-            body.update(delta, movementController.bodyMovement)
+            body.update(delta, movementController.movement.bodyMovement)
+            shield.update(delta, movementController.movement.shieldMovement)
 
             val cos = rotation.cosine
             val sin = rotation.sine
@@ -167,22 +169,20 @@ class Boss2(difficulty: Difficulty) : Boss {
             (sword.collider.shape as RectangleCollisionShape).angle = rotation
             sword.collider.update(sword.x, sword.y)
 
-            val mouthOffsetX = if (flip) head.width * 0.25f else -head.width * 0.25f
-            val mouthOffsetY = -head.height * 0.35f
+            val shieldOffsetX = if (flip) head.width * 0.25f else -head.width * 0.25f
+            val shieldOffsetY = -head.height * 0.35f
 
-            mouth.x = x + cos * mouthOffsetX - sin * mouthOffsetY
-            mouth.y = y + sin * mouthOffsetX + cos * mouthOffsetY
-            mouth.rotation = rotation + mouth.mouthAngle
-            (mouth.collider.shape as RectangleCollisionShape).angle = rotation
-            mouth.collider.update(mouth.x, mouth.y)
+            shield.x = x + cos * shieldOffsetX - sin * shieldOffsetY
+            shield.y = y + sin * shieldOffsetX + cos * shieldOffsetY
+            shield.rotation = rotation
+            shield.collider.update(shield.x, shield.y)
 
             val heartOffsetX = if (flip) head.width * 0.25f else -head.width * 0.25f
-            val heartOffsetY = -head.height * 0.25f
+            val heartOffsetY = -head.height * 0.35f
 
             heart.x = x + cos * heartOffsetX - sin * heartOffsetY
             heart.y = y + sin * heartOffsetX + cos * heartOffsetY
             heart.rotation = rotation
-            heart.collider.update(heart.x, heart.y)
 
             val dorsalFinBodyPart = body.parts[DORSAL_FIN_BODY_PART_INDEX]
             val dorsalFinOffsetX = dorsalFinBodyPart.width * 0.1f
@@ -231,9 +231,13 @@ class Boss2(difficulty: Difficulty) : Boss {
             Game.players.setGlobalState("boss2swordY", sword.y)
             Game.players.setGlobalState("boss2swordRotation", sword.rotation)
 
-            Game.players.setGlobalState("boss2mouthX", mouth.x)
-            Game.players.setGlobalState("boss2mouthY", mouth.y)
-            Game.players.setGlobalState("boss2mouthRotation", mouth.rotation)
+            Game.players.setGlobalState("boss2shieldX", shield.x)
+            Game.players.setGlobalState("boss2shieldY", shield.y)
+            Game.players.setGlobalState("boss2shieldRotation", shield.rotation)
+
+            Game.players.setGlobalState("boss2heartX", heart.x)
+            Game.players.setGlobalState("boss2heartY", heart.y)
+            Game.players.setGlobalState("boss2heartRotation", heart.rotation)
 
             Game.players.setGlobalState("boss2dorsalfinX", dorsalFin.x)
             Game.players.setGlobalState("boss2dorsalfinY", dorsalFin.y)
@@ -259,9 +263,13 @@ class Boss2(difficulty: Difficulty) : Boss {
             sword.y = Game.players.getGlobalState("boss2swordY") ?: 0.0f
             sword.rotation = Game.players.getGlobalState("boss2swordRotation") ?: 0.0.degrees
 
-            mouth.x = Game.players.getGlobalState("boss2mouthX") ?: 0.0f
-            mouth.y = Game.players.getGlobalState("boss2mouthY") ?: 0.0f
-            mouth.rotation = Game.players.getGlobalState("boss2mouthRotation") ?: 0.0.degrees
+            shield.x = Game.players.getGlobalState("boss2shieldX") ?: 0.0f
+            shield.y = Game.players.getGlobalState("boss2shieldY") ?: 0.0f
+            shield.rotation = Game.players.getGlobalState("boss2shieldRotation") ?: 0.0.degrees
+
+            heart.x = Game.players.getGlobalState("boss2heartX") ?: 0.0f
+            heart.y = Game.players.getGlobalState("boss2heartY") ?: 0.0f
+            heart.rotation = Game.players.getGlobalState("boss2heartRotation") ?: 0.0.degrees
 
             dorsalFin.x = Game.players.getGlobalState("boss2dorsalfinX") ?: 0.0f
             dorsalFin.y = Game.players.getGlobalState("boss2dorsalfinY") ?: 0.0f
@@ -312,7 +320,7 @@ class Boss2(difficulty: Difficulty) : Boss {
     fun addEntityAnimation(block: () -> WorldObjectAnimation) {
         head.addEntityAnimation(block())
         sword.addEntityAnimation(block())
-        mouth.addEntityAnimation(block())
+        shield.addEntityAnimation(block())
         body.parts.forEach { it.addEntityAnimation(block()) }
         dorsalFin.addEntityAnimation(block())
         sideFin.addEntityAnimation(block())
@@ -326,7 +334,7 @@ class Boss2(difficulty: Difficulty) : Boss {
     fun <T : WorldObjectAnimation> cancelEntityAnimation(type: KClass<T>) {
         head.cancelEntityAnimation(type)
         sword.cancelEntityAnimation(type)
-        mouth.cancelEntityAnimation(type)
+        shield.cancelEntityAnimation(type)
         body.parts.forEach { it.cancelEntityAnimation(type) }
         dorsalFin.cancelEntityAnimation(type)
         sideFin.cancelEntityAnimation(type)
@@ -336,7 +344,8 @@ class Boss2(difficulty: Difficulty) : Boss {
     override fun drawDebug(renderer: ShapeRenderer) {
         head.collider.drawDebug(renderer)
         sword.collider.drawDebug(renderer)
-        mouth.collider.drawDebug(renderer)
+        shield.collider.drawDebug(renderer)
+        heart.collider.drawDebug(renderer)
         body.parts.forEach { it.collider?.drawDebug(renderer) }
         dorsalFin.collider.drawDebug(renderer)
         tail.collider.drawDebug(renderer)

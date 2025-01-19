@@ -17,7 +17,11 @@ class TodoBossDesc: BossDesc {
 
     override fun createBoss(difficulty: Difficulty): Boss {
         return object : Boss {
+            override val difficulty: Difficulty
+                get() = TODO("Not yet implemented")
             override val health: Int
+                get() = TODO("Not yet implemented")
+            override val isParalyzed: Boolean
                 get() = TODO("Not yet implemented")
             override var x: Float
                 get() = TODO("Not yet implemented")

@@ -1,9 +1,11 @@
 package com.cozmicgames.bosses.boss1
 
-import com.cozmicgames.Game
+import com.cozmicgames.bosses.AimBossMovement
+import com.cozmicgames.bosses.Boss
+import com.cozmicgames.bosses.BossMovement
+import com.cozmicgames.bosses.BossTransform
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerp
-import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
 import com.littlekt.util.seconds
@@ -14,37 +16,14 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-interface BossMovement {
-    fun update(delta: Duration, boss: Boss1, transform: BossTransform)
-}
-
-class ShakeBossMovement(val getStrength: () -> Float = { 1.0f }) : BossMovement {
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
-        val amplitude = getStrength() * 10.0f
-        boss.x += Game.random.nextFloat() * amplitude - amplitude * 0.5f
-        boss.y += Game.random.nextFloat() * amplitude - amplitude * 0.5f
-        transform.targetX = boss.x
-        transform.targetY = boss.y
-    }
-}
-
-class ParalyzedBossMovement(val currentAngle: Angle = 0.0.degrees) : BossMovement {
-    private var timer = 0.0.seconds
-
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
-        timer += delta
-        transform.targetRotation = currentAngle + 2.0.degrees * sin(timer.seconds * 2.0)
-    }
-}
-
-class IdleBossMovement : BossMovement {
+class IdleBoss1BossMovement : BossMovement {
     private var timer = 0.0.seconds
 
     private var isFirstUpdate = true
     private var centerX = 0.0f
     private var centerY = 0.0f
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         if (isFirstUpdate) {
             centerX = boss.x
             centerY = boss.y
@@ -58,10 +37,10 @@ class IdleBossMovement : BossMovement {
     }
 }
 
-class WiggleBossMovement : BossMovement {
+class WiggleBoss1BossMovement : BossMovement {
     private var timer = 0.0.seconds
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         timer += delta
         transform.targetRotation = 10.0.degrees * sin(timer.seconds * 2.0)
         transform.targetX = boss.x
@@ -69,19 +48,19 @@ class WiggleBossMovement : BossMovement {
     }
 }
 
-class SpinAttackBossMovement : BossMovement {
+class SpinAttackBoss1BossMovement : BossMovement {
     private var timer = 0.0.seconds
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         timer += delta
         transform.targetRotation = 250.0.degrees * timer.seconds
     }
 }
 
-class GrabAttackMovement(private val ship: PlayerShip) : BossMovement {
+class GrabAttackBoss1BossMovement(private val ship: PlayerShip) : BossMovement {
     private var timer = 0.0.seconds
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         timer += delta
         transform.targetX = ship.x
         transform.targetY = ship.y + 200.0f // Above the ship
@@ -89,14 +68,14 @@ class GrabAttackMovement(private val ship: PlayerShip) : BossMovement {
     }
 }
 
-class FollowPlayerBossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
+class FollowPlayerBoss1BossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
     companion object {
         private const val TARGET_DISTANCE = 500.0f
     }
 
     private var timer = 0.0.seconds
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         val dx = ship.x - boss.x
         val dy = ship.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
@@ -115,16 +94,8 @@ class FollowPlayerBossMovement(private val ship: PlayerShip, private val onReach
     }
 }
 
-class AimBossMovement(private val targetX: Float, private val targetY: Float) : BossMovement {
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
-        val dx = targetX - boss.x
-        val dy = targetY - boss.y
-        transform.targetRotation = atan(dy / dx).radians - 90.0.degrees
-    }
-}
-
-class DestinationBossMovement(private val targetX: Float, private val targetY: Float, private val onReached: () -> Unit = {}) : BossMovement {
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+class DestinationBoss1BossMovement(private val targetX: Float, private val targetY: Float, private val onReached: () -> Unit = {}) : BossMovement {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         val dx = targetX - boss.x
         val dy = targetY - boss.y
         val distance = sqrt(dx * dx + dy * dy)
@@ -137,15 +108,15 @@ class DestinationBossMovement(private val targetX: Float, private val targetY: F
     }
 }
 
-class FlyAttackBossMovement(private val playerX: Float, private val playerY: Float, private val aimTime: Duration = 3.0.seconds, private val onReached: () -> Unit = {}) : BossMovement {
+class FlyAttackBoss1BossMovement(private val playerX: Float, private val playerY: Float, private val aimTime: Duration = 3.0.seconds, private val onReached: () -> Unit = {}) : BossMovement {
     private val aimMovement = AimBossMovement(playerX, playerY)
-    private lateinit var destinationMovement: DestinationBossMovement
+    private lateinit var destinationMovement: DestinationBoss1BossMovement
 
     private var speedModifier = 3.0f
     private var timer = 0.0.seconds
     private var isFirstUpdate = true
 
-    override fun update(delta: Duration, boss: Boss1, transform: BossTransform) {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         if (isFirstUpdate) {
             val dx = playerX - boss.x
             val dy = playerY - boss.y
@@ -153,7 +124,7 @@ class FlyAttackBossMovement(private val playerX: Float, private val playerY: Flo
             val targetX = playerX + dx * 2.0f
             val targetY = playerY + dy * 2.0f
 
-            destinationMovement = DestinationBossMovement(targetX, targetY) {
+            destinationMovement = DestinationBoss1BossMovement(targetX, targetY) {
                 speedModifier = 1.0f
                 onReached()
             }

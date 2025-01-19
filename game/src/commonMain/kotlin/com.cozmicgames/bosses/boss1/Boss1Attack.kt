@@ -1,6 +1,7 @@
 package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.*
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
@@ -9,53 +10,23 @@ import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-abstract class Attack {
-    open val duration: Duration? = null
-
+abstract class Boss1Attack : Attack() {
+    abstract val bossMovement: BossMovement
     abstract val tentacleMovement: TentacleMovement
     abstract val beakMovement: BeakMovement
-    abstract val bossMovement: BossMovement
 
-    private var timer = 0.0.seconds
-    private val afterAttackActions = arrayListOf<() -> Unit>()
-    private var isDone = false
-
-    fun afterAttack(block: () -> Unit) {
-        afterAttackActions += block
+    override fun applyToMovement(movement: Movement) {
+        movement as? Boss1Movement ?: throw IllegalArgumentException("Movement must be a Boss1Movement")
+        movement.bossMovement = bossMovement
+        movement.tentacleMovement = tentacleMovement
+        movement.beakMovement = beakMovement
     }
-
-    fun setDone() {
-        isDone = true
-    }
-
-    fun isDone(delta: Duration): Boolean {
-        timer += delta
-
-        val duration = duration
-
-        if (duration != null && timer >= duration)
-            setDone()
-
-        if (isDone)
-            afterAttackActions.forEach { it() }
-
-        return isDone
-    }
-
-    fun cancel(runAfterAttackListeners: Boolean) {
-        setDone()
-
-        if (!runAfterAttackListeners)
-            afterAttackActions.clear()
-    }
-
-    open fun onStart(boss: Boss1) {}
 }
 
-class StretchAttack(override val duration: Duration = 4.0.seconds) : Attack() {
+class StretchAttack(override val duration: Duration = 4.0.seconds) : Boss1Attack() {
     override val tentacleMovement = CompoundTentacleMovement()
     override val beakMovement = ClosedBeakMovement()
-    override val bossMovement = WiggleBossMovement()
+    override val bossMovement = WiggleBoss1BossMovement()
 
     init {
         tentacleMovement.addMovement(StretchOutTentacleMovement(0.3f))
@@ -63,10 +34,10 @@ class StretchAttack(override val duration: Duration = 4.0.seconds) : Attack() {
     }
 }
 
-class DefendAttack(override val duration: Duration = 2.0.seconds) : Attack() {
+class DefendAttack(override val duration: Duration = 2.0.seconds) : Boss1Attack() {
     override val tentacleMovement = CompoundTentacleMovement()
     override val beakMovement = ClosedBeakMovement()
-    override val bossMovement = IdleBossMovement()
+    override val bossMovement = IdleBoss1BossMovement()
 
     init {
         tentacleMovement.addMovement(DefendTentacleMovement())
@@ -74,7 +45,7 @@ class DefendAttack(override val duration: Duration = 2.0.seconds) : Attack() {
     }
 }
 
-class GrabAttack(ship: PlayerShip = Game.players.players.random().ship) : Attack() {
+class GrabAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss1Attack() {
     override val duration: Duration = 2.0.seconds
 
     override val tentacleMovement = SequenceTentacleMovement(
@@ -84,29 +55,29 @@ class GrabAttack(ship: PlayerShip = Game.players.players.random().ship) : Attack
         )
     )
     override val beakMovement = ScreamBeakMovement()
-    override val bossMovement = GrabAttackMovement(ship)
+    override val bossMovement = GrabAttackBoss1BossMovement(ship)
 }
 
-class FlyAttack(ship: PlayerShip = Game.players.players.random().ship) : Attack() {
+class FlyAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss1Attack() {
     override val tentacleMovement = StretchDownTentacleMovement(0.3f)
     override val beakMovement = ScreamBeakMovement()
-    override val bossMovement = FlyAttackBossMovement(ship.x, ship.y) {
+    override val bossMovement = FlyAttackBoss1BossMovement(ship.x, ship.y) {
         setDone()
     }
 }
 
-class SpinAttack(override val duration: Duration = 4.0.seconds) : Attack() {
+class SpinAttack(override val duration: Duration = 4.0.seconds) : Boss1Attack() {
     override val tentacleMovement = StretchOutTentacleMovement(0.3f)
     override val beakMovement = ScreamBeakMovement()
-    override val bossMovement = SpinAttackBossMovement()
+    override val bossMovement = SpinAttackBoss1BossMovement()
 }
 
-class ScreamAttack(override val duration: Duration = 5.0.seconds) : Attack() {
+class ScreamAttack(override val duration: Duration = 5.0.seconds) : Boss1Attack() {
     override val tentacleMovement = StretchOutTentacleMovement(0.3f)
     override val beakMovement = ScreamBeakMovement()
     override val bossMovement = ShakeBossMovement()
 
-    override fun onStart(boss: Boss1) {
-        Game.areaEffects.spawnEffect(boss, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 64.0f, 70.0f, duration)
+    override fun onStart(boss: Boss) {
+        Game.areaEffects.spawnEffect(boss as Boss1, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 64.0f, 70.0f, duration)
     }
 }

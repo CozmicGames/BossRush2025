@@ -20,7 +20,7 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
 
     val tentacleAngle get() = rotation + baseRotation
     val parts: List<TentaclePart>
-    val isParalyzed get() = paralyzeTimer > 0.0.seconds
+    val isParalyzed get() = paralyzeTimer > 0.0.seconds || boss.isParalyzed
 
     private var paralyzeTimer = 0.0.seconds
 
@@ -47,7 +47,7 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
     }
 
     fun paralyze(duration: Duration = 5.0.seconds, addAnimation: Boolean = true) {
-        if (boss.isParalyzed)
+        if (isParalyzed)
             return
 
         paralyzeTimer = duration

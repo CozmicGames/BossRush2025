@@ -12,7 +12,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2head"), Hittable, PlayerDamageSource {
+class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hittable, PlayerDamageSource {
     override val canHit get() = boss.isParalyzed
 
     override val renderLayer = layer
@@ -38,8 +38,6 @@ class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2head"), Hitt
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f
 
-        collider.x = x
-        collider.y = y
         collider.update(x, y)
     }
 

@@ -4,6 +4,8 @@ import com.littlekt.graphics.Color
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 
 class Collider(var shape: CollisionShape, val userData: Any? = null) {
+    var shouldCollide = true
+
     var x = 0.0f
     var y = 0.0f
 
@@ -50,10 +52,10 @@ class Collider(var shape: CollisionShape, val userData: Any? = null) {
 
     fun drawDebug(renderer: ShapeRenderer) {
         when (val shape = shape) {
-            is CircleCollisionShape -> renderer.circle(x, y, shape.radius, color = Color.RED)
-            is RectangleCollisionShape -> renderer.rectangle(x - shape.width * 0.5f, y - shape.height * 0.5f, shape.width, shape.height, shape.angle, color = Color.RED)
+            is CircleCollisionShape -> renderer.circle(x, y, shape.radius, color = Color.LIME)
+            is RectangleCollisionShape -> renderer.rectangle(x - shape.width * 0.5f, y - shape.height * 0.5f, shape.width, shape.height, shape.angle, color = Color.YELLOW)
         }
 
-        renderer.rectangle(boundsMinX, boundsMinY, boundsWidth, boundsHeight, color = Color.GREEN)
+        renderer.rectangle(boundsMinX, boundsMinY, boundsWidth, boundsHeight, color = Color.LIGHT_BLUE)
     }
 }

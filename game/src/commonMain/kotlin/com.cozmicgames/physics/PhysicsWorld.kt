@@ -89,7 +89,7 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     fun checkCollision(collider: Collider, filter: (Collider) -> Boolean = { true }, callback: (Collider) -> Unit) {
         collidersInternal.forEach {
-            if (it != collider && filter(it) && collider.collidesWith(it))
+            if (it != collider && collider.shouldCollide && filter(it) && collider.collidesWith(it))
                 callback(it)
         }
     }
@@ -114,7 +114,7 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     fun checkLineCollision(x1: Float, y1: Float, x2: Float, y2: Float, filter: (Collider) -> Boolean = { true }, callback: (Collider, Float) -> Unit) {
         collidersInternal.forEach {
-            if (filter(it))
+            if (it.shouldCollide && filter(it))
                 it.collidesWithLine(x1, y1, x2, y2) { t ->
                     callback(it, t)
                 }

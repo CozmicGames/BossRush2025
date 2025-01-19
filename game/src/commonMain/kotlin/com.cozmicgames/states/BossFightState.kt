@@ -13,6 +13,7 @@ import com.cozmicgames.graphics.ui.ResultPanel
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -156,9 +157,9 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
                 fightStartMessage?.render(delta, renderer)
             }
 
-        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-        //    boss.drawDebug(renderer)
-        //}
+        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+            boss.drawDebug(renderer)
+        }
 
         if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
