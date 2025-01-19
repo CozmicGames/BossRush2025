@@ -22,6 +22,11 @@ class ShopUI : GUIElement() {
     private lateinit var weaponSlots: List<WeaponSlot>
     private val walletLabel = object : CurrencyLabel({ Game.players.wallet }, 24.0f) {
         override var layer: Int
+            get() = this@ShopUI.layer + 2
+            set(value) {}
+    }
+    private val walletBackground = object : NinepatchImage(Game.resources.walletBackgroundNinePatch) {
+        override var layer: Int
             get() = this@ShopUI.layer + 1
             set(value) {}
     }
@@ -65,7 +70,7 @@ class ShopUI : GUIElement() {
         repeat(3) {
             val weaponSlot = weaponSlots[it]
             weaponSlot.getX = { x + 10.0f }
-            weaponSlot.getY = { y + 300.0f - (it * (130.0f + 10.0f)) }
+            weaponSlot.getY = { y + 290.0f - (it * (130.0f + 10.0f)) }
             weaponSlot.getWidth = { 130.0f }
             weaponSlot.getHeight = { 130.0f }
         }
@@ -73,16 +78,21 @@ class ShopUI : GUIElement() {
         repeat(3) {
             val weaponSlot = weaponSlots[it + 3]
             weaponSlot.getX = { x + 10.0f + 130.0f + 10.0f }
-            weaponSlot.getY = { y + 300.0f - (it * (130.0f + 10.0f)) }
+            weaponSlot.getY = { y + 290.0f - (it * (130.0f + 10.0f)) }
             weaponSlot.getWidth = { 130.0f }
             weaponSlot.getHeight = { 130.0f }
         }
 
         walletLabel.getX = { x + 180.0f }
-        walletLabel.getY = { y + 440.0f }
+        walletLabel.getY = { y + 443.0f }
+
+        walletBackground.getX = { x + 50.0f }
+        walletBackground.getY = { y + 435.0f }
+        walletBackground.getWidth = { width - 100.0f }
+        walletBackground.getHeight = { 38.0f }
 
         shopLabel.getX = { x + 145.0f }
-        shopLabel.getY = { y + 500.0f }
+        shopLabel.getY = { y + 508.0f }
         shopLabel.shadowOffsetX = 3.0f
         shopLabel.shadowOffsetY = -3.0f
 
@@ -98,6 +108,7 @@ class ShopUI : GUIElement() {
         weaponSlots.forEach {
             it.render(delta, renderer)
         }
+        walletBackground.render(delta, renderer)
         walletLabel.render(delta, renderer)
     }
 }

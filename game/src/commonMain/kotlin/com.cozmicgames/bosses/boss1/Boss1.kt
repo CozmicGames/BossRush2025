@@ -9,7 +9,6 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.utils.Difficulty
-import com.littlekt.Releasable
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
@@ -18,7 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffectSource, Boss {
+class Boss1(val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -184,6 +183,10 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
                 isParalyzedTimer = 0.0.seconds
 
             movementController.update(delta)
+            tentacles.forEach {
+                it.update(delta, movementController.tentacleMovement)
+            }
+            beak.update(delta, movementController.beakMovement)
 
             val cos = rotation.cosine
             val sin = rotation.sine
@@ -248,11 +251,6 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
             heart.y = Game.players.getGlobalState("boss1hearty") ?: 0.0f
             heart.rotation = (Game.players.getGlobalState("boss1heartrotation") ?: 0.0f).degrees
         }
-
-        tentacles.forEach {
-            it.update(delta, movementController.tentacleMovement)
-        }
-        beak.update(delta, movementController.beakMovement)
     }
 
     fun paralyze() {
@@ -329,7 +327,7 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         heart.cancelEntityAnimation(type)
     }
 
-    fun drawDebug(renderer: ShapeRenderer) {
+    override fun drawDebug(renderer: ShapeRenderer) {
         head.collider.drawDebug(renderer)
 
         tentacles.forEach {
@@ -342,8 +340,5 @@ class Boss1(val difficulty: Difficulty) : Entity("boss1"), Releasable, AreaEffec
         beak.rightBeak.collider.drawDebug(renderer)
 
         heart.collider.drawDebug(renderer)
-    }
-
-    override fun release() {
     }
 }

@@ -6,6 +6,8 @@ import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
 class Beak(private val boss: Boss1, layer: Int): PlayerDamageSource {
+    override val id = "boss1beak"
+
     val leftBeak = BeakPart(this, true, layer)
     val rightBeak = BeakPart(this, false, layer)
 

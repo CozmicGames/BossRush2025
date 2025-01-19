@@ -2,6 +2,7 @@ package com.cozmicgames.bosses
 
 import com.cozmicgames.Game
 import com.cozmicgames.utils.Difficulty
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.Angle
 import kotlin.time.Duration
 
@@ -47,6 +48,10 @@ class TodoBossDesc: BossDesc {
             }
 
             override fun update(delta: Duration) {
+                TODO("Not yet implemented")
+            }
+
+            override fun drawDebug(renderer: ShapeRenderer) {
                 TODO("Not yet implemented")
             }
 

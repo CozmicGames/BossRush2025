@@ -4,6 +4,7 @@ import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.TodoBossDesc
 import com.cozmicgames.bosses.boss1.Boss1Desc
+import com.cozmicgames.bosses.boss2.Boss2Desc
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.*
 import com.littlekt.input.Key
@@ -13,7 +14,7 @@ class BayState : GameState {
     companion object {
         private val bossDescriptors = arrayOf(
             Boss1Desc(),
-            TodoBossDesc(),
+            Boss2Desc(),
             TodoBossDesc(),
             TodoBossDesc(),
             TodoBossDesc(),
@@ -63,7 +64,7 @@ class BayState : GameState {
 
     override fun render(delta: Duration): () -> GameState {
         if (Game.input.isKeyJustPressed(Key.U)) //TODO: Remove
-            selectionPosters[2].unlock()
+            selectionPosters[1].unlock()
 
 
         val pass = Game.graphics.beginMainRenderPass()

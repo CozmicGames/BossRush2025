@@ -181,6 +181,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                 } else {
                     invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
 
+                    println(it.userData.id)
+
                     Game.events.addSendEvent(Events.hit(id))
 
                     val impulseX = x - it.userData.damageSourceX

@@ -17,6 +17,7 @@ object Constants {
     const val CAMERA_FOLLOW_ROTATE_SPEED = 0.5f
 
     const val BOSS1_TENTACLE_PARTS = 8
+    const val BOSS2_BODY_PARTS = 12
 
     val INDICATOR_COLOR_BORDER = Color(0.1f, 0.3f, 0.9f, 1.0f)
 

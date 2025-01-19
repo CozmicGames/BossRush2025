@@ -1,5 +1,6 @@
 package com.cozmicgames.bosses
 
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.Angle
 import kotlin.time.Duration
 
@@ -18,4 +19,6 @@ interface Boss {
     fun addToPhysics()
     fun removeFromPhysics()
     fun update(delta: Duration)
+
+    fun drawDebug(renderer: ShapeRenderer)
 }

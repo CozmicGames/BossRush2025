@@ -48,7 +48,7 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
 
-        background = Background(Game.resources.boss1background)
+        background = Background(Game.resources.background)
 
         boss = desc.createBoss(difficulty)
         boss.addToWorld()

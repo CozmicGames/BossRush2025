@@ -47,6 +47,8 @@ class Resources : Releasable {
     lateinit var weaponMaskNinePatch: NinePatch
     lateinit var shopBackground: Texture
     lateinit var shopBackgroundNinePatch: NinePatch
+    lateinit var walletBackground: Texture
+    lateinit var walletBackgroundNinePatch: NinePatch
     lateinit var reelgunPreview: Texture
     lateinit var hyperHarpoonPreview: Texture
     lateinit var scattergunPreview: Texture
@@ -68,8 +70,9 @@ class Resources : Releasable {
 
 
     /**
-     * Asteroids
+     * World
      */
+    lateinit var background: Texture
     lateinit var asteroid0: Texture
 
     /**
@@ -88,12 +91,23 @@ class Resources : Releasable {
      * Boss 1 - Space octopus
      */
     lateinit var boss1preview: Texture
-    lateinit var boss1background: Texture
     lateinit var boss1head: Texture
     lateinit var boss1beak: Texture
     lateinit var boss1heart: Texture
     lateinit var boss1tentacle: Texture
     lateinit var boss1tentacleSlices: Array<TextureSlice>
+
+    /**
+     * Boss 2 - Shark
+     */
+    lateinit var boss2preview: Texture
+    lateinit var boss2head: Texture
+    lateinit var boss2sword: Texture
+    lateinit var boss2mouth: Texture
+    lateinit var boss2fin: Texture
+    lateinit var boss2body: Texture
+    lateinit var boss2bodySlices: Array<TextureSlice>
+    lateinit var boss2tail: Texture
 
     suspend fun load(context: Context) {
         font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
@@ -129,6 +143,8 @@ class Resources : Releasable {
         weaponMaskNinePatch = NinePatch(weaponMask, 32, 32, 32, 32)
         shopBackground = context.resourcesVfs["textures/ui/shop_background.png"].readTexture()
         shopBackgroundNinePatch = NinePatch(shopBackground, 32, 32, 32, 32)
+        walletBackground = context.resourcesVfs["textures/ui/wallet_background.png"].readTexture()
+        walletBackgroundNinePatch = NinePatch(walletBackground, 12, 12, 12, 12)
         reelgunPreview = context.resourcesVfs["textures/weapons/reelgun_preview.png"].readTexture()
         hyperHarpoonPreview = context.resourcesVfs["textures/weapons/hyper_harpoon_preview.png"].readTexture()
         scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
@@ -145,6 +161,7 @@ class Resources : Releasable {
         shockwave1 = context.resourcesVfs["textures/projectiles/shockwave1.png"].readTexture()
         shockwave2 = context.resourcesVfs["textures/projectiles/shockwave2.png"].readTexture()
 
+        background = context.resourcesVfs["textures/background.png"].readTexture()
         asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
 
         playerShipBaseStill = context.resourcesVfs["textures/player/player_ship_base_still.png"].readTexture()
@@ -157,12 +174,20 @@ class Resources : Releasable {
         borderIndicatorNinePatch = NinePatch(borderIndicator, 24, 24, 24, 24)
 
         boss1preview = context.resourcesVfs["textures/boss1/preview.png"].readTexture()
-        boss1background = context.resourcesVfs["textures/boss1/background.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
         boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
         boss1heart = context.resourcesVfs["textures/boss1/heart.png"].readTexture()
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
         boss1tentacleSlices = boss1tentacle.slice(boss1tentacle.width / Constants.BOSS1_TENTACLE_PARTS, boss1tentacle.height)[0]
+
+        //boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
+        boss2head = context.resourcesVfs["textures/boss2/head.png"].readTexture()
+        boss2sword = context.resourcesVfs["textures/boss2/sword.png"].readTexture()
+        boss2mouth = context.resourcesVfs["textures/boss2/mouth.png"].readTexture()
+        boss2fin = context.resourcesVfs["textures/boss2/fin.png"].readTexture()
+        boss2body = context.resourcesVfs["textures/boss2/body.png"].readTexture()
+        boss2bodySlices = boss2body.slice(boss2body.width / Constants.BOSS2_BODY_PARTS, boss2body.height)[0]
+        boss2tail = context.resourcesVfs["textures/boss2/tail.png"].readTexture()
     }
 
     override fun release() {
@@ -187,6 +212,7 @@ class Resources : Releasable {
         weaponSelected.release()
         weaponMask.release()
         shopBackground.release()
+        walletBackground.release()
         reelgunPreview.release()
         hyperHarpoonPreview.release()
         scattergunPreview.release()
@@ -202,6 +228,7 @@ class Resources : Releasable {
         shockwave1.release()
         shockwave2.release()
 
+        background.release()
         asteroid0.release()
 
         playerShipBaseStill.release()
@@ -213,10 +240,18 @@ class Resources : Releasable {
         borderIndicator.release()
 
         boss1preview.release()
-        boss1background.release()
         boss1head.release()
         boss1beak.release()
         boss1heart.release()
         boss1tentacle.release()
+
+        //boss2preview.release()
+        //boss2background.release()
+        boss2head.release()
+        boss2sword.release()
+        boss2mouth.release()
+        boss2fin.release()
+        boss2body.release()
+        boss2tail.release()
     }
 }
