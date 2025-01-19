@@ -6,9 +6,9 @@ import com.littlekt.input.Key
 import kotlin.time.Duration
 
 class Boss2MovementController(boss: Boss2) : BossMovementController(boss, Boss2FightStage1()) {
-    override val movementSpeed = 0.8f
+    override val movementSpeed = 0.5f
 
-    override val rotationSpeed = 5.0f
+    override val rotationSpeed = 4.0f
 
     override val movement = Boss2Movement()
 

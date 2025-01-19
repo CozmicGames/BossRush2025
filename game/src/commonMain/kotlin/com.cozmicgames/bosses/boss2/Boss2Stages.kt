@@ -59,9 +59,56 @@ abstract class Boss2FightStage : FightStage() {
 }
 
 class Boss2FightStage1 : Boss2FightStage() {
-    override val nextStage = TransitionStage(EndStage())
+    override val nextStage = TransitionStage(Boss2FightStage2())
 
     override val maxFollowDistance = 600.0f
 
-    override val stageAttacks = emptyList<StageAttack>()
+    override val stageAttacks = listOf(
+        StageAttack(0.7f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
+        StageAttack(0.4f, 3.0.seconds) { FlyAttack() }
+    )
+}
+
+class Boss2FightStage2 : Boss2FightStage() {
+    override val nextStage = TransitionStage(Boss2FightStage3())
+
+    override val maxFollowDistance = 500.0f
+
+    override val stageAttacks = listOf(
+        StageAttack(0.3f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
+        StageAttack(0.4f, 3.0.seconds) { FlyAttack() },
+        StageAttack(0.4f, 5.0.seconds) { PierceAttack() },
+        StageAttack(0.2f, 4.0.seconds) { ShootAttack() },
+        StageAttack(0.2f, 4.0.seconds) { BeamAttack() },
+    )
+}
+
+class Boss2FightStage3 : Boss2FightStage() {
+    override val nextStage = TransitionStage(Boss2FightStage4())
+
+    override val maxFollowDistance = 400.0f
+
+    override val stageAttacks = listOf(
+        StageAttack(0.2f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.3f, 3.0.seconds) { FlyAttack() },
+        StageAttack(0.3f, 4.0.seconds) { PierceAttack() },
+        StageAttack(0.7f, 3.0.seconds) { ShootAttack() },
+        StageAttack(0.7f, 3.0.seconds) { BeamAttack() },
+    )
+}
+
+class Boss2FightStage4 : Boss2FightStage() {
+    override val nextStage = TransitionStage(EndStage())
+
+    override val maxFollowDistance = 300.0f
+
+    override val stageAttacks = listOf(
+        StageAttack(0.5f, 3.0.seconds) { PierceAttack() },
+        StageAttack(0.3f, 3.0.seconds) { ShootAttack() },
+        StageAttack(0.4f, 3.0.seconds) { BeamAttack() },
+        StageAttack(0.6f, 3.0.seconds) { SpinShootAttack() },
+        StageAttack(0.7f, 3.0.seconds) { SpinBeamAttack() },
+    )
 }

@@ -66,9 +66,9 @@ class Boss1FightStage1 : Boss1FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(StretchAttack(1.0.seconds), 0.7f, 1.5.seconds),
-        StageAttack(DefendAttack(2.0.seconds), 0.5f, 2.0.seconds),
-        StageAttack(FlyAttack(), 0.2f, 1.0.seconds)
+        StageAttack(0.7f, 1.5.seconds) { StretchAttack(1.0.seconds) },
+        StageAttack(0.5f, 2.0.seconds) { DefendAttack(2.0.seconds) },
+        StageAttack(0.2f, 1.0.seconds) { FlyAttack() }
     )
 }
 
@@ -78,10 +78,10 @@ class Boss1FightStage2 : Boss1FightStage() {
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(StretchAttack(1.0.seconds), 0.7f, 1.5.seconds),
-        StageAttack(DefendAttack(2.0.seconds), 0.5f, 2.0.seconds),
-        StageAttack(FlyAttack(), 0.3f, 1.0.seconds),
-        StageAttack(ScreamAttack(), 0.6f, 4.0.seconds)
+        StageAttack(0.7f, 1.5.seconds) { StretchAttack(1.0.seconds) },
+        StageAttack(0.5f, 2.0.seconds) { DefendAttack(2.0.seconds) },
+        StageAttack(0.3f, 1.0.seconds) { FlyAttack() },
+        StageAttack(0.6f, 4.0.seconds) { ScreamAttack() }
     )
 }
 
@@ -91,10 +91,10 @@ class Boss1FightStage3 : Boss1FightStage() {
     override val maxFollowDistance = 400.0f
 
     override val stageAttacks = listOf(
-        StageAttack(StretchAttack(1.0.seconds), 0.5f, 1.5.seconds),
-        StageAttack(DefendAttack(2.0.seconds), 0.4f, 2.0.seconds),
-        StageAttack(FlyAttack(), 0.4f, 1.0.seconds),
-        StageAttack(ScreamAttack(), 0.5f, 4.0.seconds),
-        StageAttack(SpinAttack(), 0.2f, 4.0.seconds)
+        StageAttack(0.5f, 1.5.seconds) { StretchAttack(1.0.seconds) },
+        StageAttack(0.4f, 2.0.seconds) { DefendAttack(2.0.seconds) },
+        StageAttack(0.4f, 1.0.seconds) { FlyAttack() },
+        StageAttack(0.5f, 4.0.seconds) { ScreamAttack() },
+        StageAttack(0.2f, 4.0.seconds) { SpinAttack() }
     )
 }

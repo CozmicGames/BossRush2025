@@ -1,12 +1,15 @@
 package com.cozmicgames.bosses
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.boss2.Body
+import com.cozmicgames.bosses.boss2.BodyMovement
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
 import com.littlekt.util.seconds
 import kotlin.math.atan
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -33,10 +36,46 @@ class ParalyzedBossMovement(val currentAngle: Angle = 0.0.degrees) : BossMovemen
     }
 }
 
+class DestinationBossMovement(private val targetX: Float, private val targetY: Float, private val onReached: () -> Unit = {}) : BossMovement {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        val dx = targetX - boss.x
+        val dy = targetY - boss.y
+        val distance = sqrt(dx * dx + dy * dy)
+
+        if (distance < 20.0f)
+            onReached()
+
+        transform.targetX = targetX
+        transform.targetY = targetY
+    }
+}
+
 class AimBossMovement(private val targetX: Float, private val targetY: Float) : BossMovement {
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         val dx = targetX - boss.x
         val dy = targetY - boss.y
         transform.targetRotation = atan(dy / dx).radians - 90.0.degrees
+    }
+}
+
+class SpinBossMovement(private val speed: Float = 90.0f) : BossMovement {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        transform.targetRotation += speed.degrees * delta.seconds
+    }
+}
+
+open class SequenceBossMovement(private val durationPerMovement: Duration, private val movements: List<BossMovement>) : BossMovement {
+    private var timer = 0.0.seconds
+    private var currentMovementIndex = 0
+
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        timer += delta
+
+        if (timer >= durationPerMovement) {
+            timer = 0.0.seconds
+            currentMovementIndex = (currentMovementIndex + 1) % movements.size
+        }
+
+        movements[currentMovementIndex].update(delta, boss, transform)
     }
 }

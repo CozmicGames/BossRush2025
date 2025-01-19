@@ -26,10 +26,10 @@ class ProjectileManager {
         for (projectile in projectiles) {
             var projectileAngle = projectile.direction
 
-            if (projectile.fromWorldObject is ProjectileSource && projectile.type.baseType is BeamProjectileType) {
-                projectile.startX = projectile.fromWorldObject.muzzleX
-                projectile.startY = projectile.fromWorldObject.muzzleY
-                projectileAngle += projectile.fromWorldObject.muzzleRotation
+            if (projectile.type.baseType is BeamProjectileType) {
+                projectile.startX = projectile.fromSource.muzzleX
+                projectile.startY = projectile.fromSource.muzzleY
+                projectileAngle += projectile.fromSource.muzzleRotation
             }
 
             val projectileDirectionX = projectileAngle.cosine
@@ -45,7 +45,9 @@ class ProjectileManager {
             var distance = projectile.speed * delta.seconds
             projectile.speed *= 1.0f - projectile.speedFalloff * delta.seconds
 
-            val filter = { checkCollider: Collider -> checkCollider.userData != projectile.fromWorldObject }
+            val filter = { checkCollider: Collider ->
+                checkCollider.userData != projectile.fromSource && (checkCollider.userData as? ProjectileSource)?.projectileSourceId != projectile.fromSource.projectileSourceId
+            }
 
             val nearestCollider = when (projectile.type.baseType) {
                 is BulletProjectileType -> Game.physics.getNearestLineCollision(projectile.currentX, projectile.currentY, projectile.currentX + projectileDirectionX * distance, projectile.currentY + projectileDirectionY * distance, filter) { collisionDistance ->
@@ -61,7 +63,7 @@ class ProjectileManager {
                 if (nearestCollider.userData is Hittable && nearestCollider.userData.canHit)
                     Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
 
-                if (projectile.fromWorldObject is PlayerShip)
+                if (projectile.fromSource is PlayerShip)
                     Game.players.shootStatistics.shotsHit++
 
                 projectilesToRemove += projectile
@@ -103,18 +105,18 @@ class ProjectileManager {
         }
     }
 
-    fun stopBeamProjectile(fromWorldObject: WorldObject) {
+    fun stopBeamProjectile(fromSource: ProjectileSource) {
         if (!Game.players.isHost)
             return
 
-        projectiles.removeAll { it.fromWorldObject == fromWorldObject && it.type == ProjectileType.ENERGY_BEAM }
+        projectiles.removeAll { it.fromSource == fromSource && it.type == ProjectileType.ENERGY_BEAM }
     }
 
-    fun spawnProjectile(fromWorldObject: WorldObject, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float, speedFalloff: Float) {
+    fun spawnProjectile(fromSource: ProjectileSource, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float, speedFalloff: Float) {
         if (!Game.players.isHost)
             return
 
-        projectiles += Projectile(fromWorldObject, type, x, y, direction, speed, speedFalloff)
+        projectiles += Projectile(fromSource, type, x, y, direction, speed, speedFalloff)
     }
 
     fun render(batch: SpriteBatch) {

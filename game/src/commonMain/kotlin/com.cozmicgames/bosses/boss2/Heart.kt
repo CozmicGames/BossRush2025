@@ -3,6 +3,7 @@ package com.cozmicgames.bosses.boss2
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
@@ -12,7 +13,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hittable, PlayerDamageSource {
+class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hittable, PlayerDamageSource, ProjectileSource {
     override val canHit get() = boss.isParalyzed
 
     override val renderLayer = layer
@@ -21,7 +22,7 @@ class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hit
 
     override val height get() = Game.resources.boss1heart.height * 2.0f * size
 
-    override val flipX get() = boss.flip
+    override val flipX get() = boss.isFlipped
 
     override val collider = Collider(CircleCollisionShape(Game.resources.boss1heart.width * 1.5f), this)
 
@@ -45,4 +46,13 @@ class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hit
         if (!boss.isInvulnerable)
             boss.hit()
     }
+
+
+    override val projectileSourceId = "boss2"
+
+    override val muzzleX get() = boss.muzzleX
+
+    override val muzzleY get() = boss.muzzleY
+
+    override val muzzleRotation get() = boss.muzzleRotation
 }

@@ -11,15 +11,15 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 abstract class Boss1Attack : Attack() {
-    abstract val bossMovement: BossMovement
-    abstract val tentacleMovement: TentacleMovement
-    abstract val beakMovement: BeakMovement
+    abstract val bossMovement: BossMovement?
+    abstract val tentacleMovement: TentacleMovement?
+    abstract val beakMovement: BeakMovement?
 
     override fun applyToMovement(movement: Movement) {
         movement as? Boss1Movement ?: throw IllegalArgumentException("Movement must be a Boss1Movement")
-        movement.bossMovement = bossMovement
-        movement.tentacleMovement = tentacleMovement
-        movement.beakMovement = beakMovement
+        bossMovement?.let { movement.bossMovement = it }
+        tentacleMovement?.let { movement.tentacleMovement = it }
+        beakMovement?.let { movement.beakMovement = it }
     }
 }
 

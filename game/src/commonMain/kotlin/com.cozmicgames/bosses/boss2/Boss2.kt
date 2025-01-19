@@ -3,6 +3,8 @@ package com.cozmicgames.bosses.boss2
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
+import com.cozmicgames.entities.worldObjects.PlayerShip
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
@@ -17,9 +19,9 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss2(override val difficulty: Difficulty) : Boss {
+class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
     companion object {
-        const val FULL_HEALTH = 3
+        const val FULL_HEALTH = 4
 
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds
@@ -45,6 +47,11 @@ class Boss2(override val difficulty: Difficulty) : Boss {
         private const val TAIL_BODY_PART_INDEX = Constants.BOSS2_BODY_PARTS - 1
     }
 
+    override val projectileSourceId = "boss2"
+    override val muzzleX get() = sword.x //TODO: Fix this
+    override val muzzleY get() = sword.y
+    override val muzzleRotation get() = sword.rotation
+
     override var health = FULL_HEALTH
     override var x = 0.0f
     override var y = 0.0f
@@ -54,7 +61,8 @@ class Boss2(override val difficulty: Difficulty) : Boss {
 
     override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
-    var flip = false
+    var isFlipped = false
+        private set
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val sword = Sword(this, SWORD_SCALE, SWORD_LAYER)
@@ -68,6 +76,19 @@ class Boss2(override val difficulty: Difficulty) : Boss {
     private var isParalyzedTimer = 0.0.seconds
 
     override val movementController = Boss2MovementController(this)
+
+    fun flip() {
+        isFlipped = !isFlipped
+    }
+
+    fun getFilteredPlayerShips(): List<PlayerShip> {
+        val players = Game.players.players
+        val filteredPlayers = mutableListOf<PlayerShip>()
+        for (player in players)
+            if (!isFlipped && player.ship.x < x || isFlipped && player.ship.x > x)
+                filteredPlayers += player.ship
+        return filteredPlayers
+    }
 
     override fun addToWorld() {
         Game.world.add(head)
@@ -143,6 +164,9 @@ class Boss2(override val difficulty: Difficulty) : Boss {
             if (isParalyzedTimer <= 0.0.seconds)
                 isParalyzedTimer = 0.0.seconds
 
+            if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
+                flip()
+
             body.x = x
             body.y = y
             body.rotation = rotation
@@ -154,14 +178,14 @@ class Boss2(override val difficulty: Difficulty) : Boss {
             val cos = rotation.cosine
             val sin = rotation.sine
 
-            val headOffsetX = if (flip) head.width * 0.5f else -head.width * 0.5f
+            val headOffsetX = if (isFlipped) head.width * 0.5f else -head.width * 0.5f
 
             head.x = x + cos * headOffsetX
             head.y = y + sin * headOffsetX
             head.rotation = rotation
             head.collider.update(head.x, head.y)
 
-            val swordOffsetX = if (flip) head.width * 0.78f + sword.width * 0.5f else -(head.width * 0.78f + sword.width * 0.5f)
+            val swordOffsetX = if (isFlipped) head.width * 0.78f + sword.width * 0.5f else -(head.width * 0.78f + sword.width * 0.5f)
 
             sword.x = x + cos * swordOffsetX
             sword.y = y + sin * swordOffsetX
@@ -169,7 +193,7 @@ class Boss2(override val difficulty: Difficulty) : Boss {
             (sword.collider.shape as RectangleCollisionShape).angle = rotation
             sword.collider.update(sword.x, sword.y)
 
-            val shieldOffsetX = if (flip) head.width * 0.25f else -head.width * 0.25f
+            val shieldOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
             val shieldOffsetY = -head.height * 0.35f
 
             shield.x = x + cos * shieldOffsetX - sin * shieldOffsetY
@@ -177,7 +201,7 @@ class Boss2(override val difficulty: Difficulty) : Boss {
             shield.rotation = rotation
             shield.collider.update(shield.x, shield.y)
 
-            val heartOffsetX = if (flip) head.width * 0.25f else -head.width * 0.25f
+            val heartOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
             val heartOffsetY = -head.height * 0.35f
 
             heart.x = x + cos * heartOffsetX - sin * heartOffsetY
@@ -194,7 +218,7 @@ class Boss2(override val difficulty: Difficulty) : Boss {
 
             dorsalFin.x = dorsalFinBodyPart.x + dorsalFinCos * dorsalFinOffsetX - dorsalFinSin * dorsalFinOffsetY
             dorsalFin.y = dorsalFinBodyPart.y + dorsalFinSin * dorsalFinOffsetX + dorsalFinCos * dorsalFinOffsetY
-            dorsalFin.rotation = dorsalFinAngle - (if (flip) -(10.0).degrees else 10.0.degrees)
+            dorsalFin.rotation = dorsalFinAngle - (if (isFlipped) -(10.0).degrees else 10.0.degrees)
 
             val sideFinBodyPart = body.parts[SIDE_FIN_BODY_PART_INDEX]
             val sideFinOffsetX = sideFinBodyPart.width * -0.1f
@@ -206,10 +230,10 @@ class Boss2(override val difficulty: Difficulty) : Boss {
 
             sideFin.x = sideFinBodyPart.x + sideFinCos * sideFinOffsetX - sideFinSin * sideFinOffsetY
             sideFin.y = sideFinBodyPart.y + sideFinSin * sideFinOffsetX + sideFinCos * sideFinOffsetY
-            sideFin.rotation = sideFinAngle - (if (flip) -(8.0).degrees else 8.0.degrees)
+            sideFin.rotation = sideFinAngle - (if (isFlipped) -(8.0).degrees else 8.0.degrees)
 
             val tailBodyPart = body.parts[TAIL_BODY_PART_INDEX]
-            val tailOffsetX = if (flip) tailBodyPart.width * 0.4f else -tailBodyPart.width * 0.4f
+            val tailOffsetX = if (isFlipped) tailBodyPart.width * 0.4f else -tailBodyPart.width * 0.4f
             val tailAngle = tailBodyPart.rotation
 
             val tailCos = tailAngle.cosine
@@ -294,6 +318,7 @@ class Boss2(override val difficulty: Difficulty) : Boss {
         if (Game.players.isHost) {
             movementController.onParalyze()
             isParalyzedTimer = PARALYZED_TIME
+            shield.intensity = 0.0f
         }
     }
 

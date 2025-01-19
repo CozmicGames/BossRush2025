@@ -1,9 +1,6 @@
 package com.cozmicgames.bosses.boss1
 
-import com.cozmicgames.bosses.AimBossMovement
-import com.cozmicgames.bosses.Boss
-import com.cozmicgames.bosses.BossMovement
-import com.cozmicgames.bosses.BossTransform
+import com.cozmicgames.bosses.*
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerp
 import com.littlekt.math.geom.degrees
@@ -94,23 +91,9 @@ class FollowPlayerBoss1BossMovement(private val ship: PlayerShip, private val on
     }
 }
 
-class DestinationBoss1BossMovement(private val targetX: Float, private val targetY: Float, private val onReached: () -> Unit = {}) : BossMovement {
-    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
-        val dx = targetX - boss.x
-        val dy = targetY - boss.y
-        val distance = sqrt(dx * dx + dy * dy)
-
-        if (distance < 20.0f)
-            onReached()
-
-        transform.targetX = targetX
-        transform.targetY = targetY
-    }
-}
-
 class FlyAttackBoss1BossMovement(private val playerX: Float, private val playerY: Float, private val aimTime: Duration = 3.0.seconds, private val onReached: () -> Unit = {}) : BossMovement {
     private val aimMovement = AimBossMovement(playerX, playerY)
-    private lateinit var destinationMovement: DestinationBoss1BossMovement
+    private lateinit var destinationMovement: DestinationBossMovement
 
     private var speedModifier = 3.0f
     private var timer = 0.0.seconds
@@ -124,7 +107,7 @@ class FlyAttackBoss1BossMovement(private val playerX: Float, private val playerY
             val targetX = playerX + dx * 2.0f
             val targetY = playerY + dy * 2.0f
 
-            destinationMovement = DestinationBoss1BossMovement(targetX, targetY) {
+            destinationMovement = DestinationBossMovement(targetX, targetY) {
                 speedModifier = 1.0f
                 onReached()
             }

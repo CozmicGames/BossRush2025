@@ -30,6 +30,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         private val PLAYER_SHIP_INVULNERABILITY_TIME = 2.0.seconds
     }
 
+    override val projectileSourceId get() = player.state.id
+
     var health = 0
     val isDead get() = health <= 0
 
@@ -177,18 +179,18 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
                 if (health <= 0) {
                     health = 0
-                    Game.events.addSendEvent(Events.playerDeath(id))
+                    Game.events.addSendEvent(Events.playerDeath(projectileSourceId))
                 } else {
                     invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
 
                     println(it.userData.id)
 
-                    Game.events.addSendEvent(Events.hit(id))
+                    Game.events.addSendEvent(Events.hit(projectileSourceId))
 
                     val impulseX = x - it.userData.damageSourceX
                     val impulseY = y - it.userData.damageSourceY
 
-                    Game.events.addSendEvent(Events.impulseHit(id, impulseX, impulseY, 20.0f))
+                    Game.events.addSendEvent(Events.impulseHit(projectileSourceId, impulseX, impulseY, 20.0f))
                 }
             }
         }

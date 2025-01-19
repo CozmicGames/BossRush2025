@@ -52,7 +52,7 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
 
     override val height get() = Game.resources.boss2body.height * body.scale
 
-    override val flipX get() = body.boss.flip
+    override val flipX get() = body.boss.isFlipped
 
     private val halfWidth get() = width * 0.5f
 
@@ -62,7 +62,7 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         if (Game.players.isHost) {
-            val partRotation = if (body.boss.flip) -partRotation else partRotation
+            val partRotation = if (body.boss.isFlipped) -partRotation else partRotation
 
             val parentRotation = parent?.rotation ?: body.rotation
             val parentCos = parentRotation.cosine
@@ -73,7 +73,7 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
             val xOffset: Float
             val yOffset: Float
 
-            if (body.boss.flip) {
+            if (body.boss.isFlipped) {
                 xOffset = -halfWidth
 
                 if (partRotation.degrees >= 0.0f) {

@@ -1,11 +1,14 @@
 package com.cozmicgames.bosses.boss2
 
+import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerpAngle
 import com.littlekt.math.PI_F
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
+import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.time.Duration
@@ -56,6 +59,34 @@ open class WaveBodyMovement(val maxAngle: Angle, val frequency: Float, val smoot
 
     override fun reset() {
         time = 0.0.seconds
+    }
+}
+
+open class CurlBodyMovement(val maxAngle: Angle, val smoothFactor: Float) : BodyMovement {
+    override fun updateParts(delta: Duration, body: Body) {
+        body.parts.forEach {
+            it.partRotation = lerpAngle(it.partRotation, maxAngle, if (body.boss.isParalyzed) smoothFactor * BODY_PARALYZED_FACTOR else smoothFactor)
+        }
+    }
+}
+
+open class StretchBodyMovement(smoothFactor: Float) : CurlBodyMovement(0.0.degrees, smoothFactor)
+
+open class HitBodyMovement(val playerShip: PlayerShip, val smoothFactor: Float) : BodyMovement {
+    private var targetAngle = 0.0.degrees
+    private var isInitialized = false
+
+    override fun updateParts(delta: Duration, body: Body) {
+        if (!isInitialized) {
+            targetAngle = atan2(playerShip.y - body.y, playerShip.x - body.x).degrees
+            isInitialized = false
+        }
+
+        val partAngle = targetAngle / Constants.BOSS2_BODY_PARTS
+
+        body.parts.forEach {
+            it.partRotation = lerpAngle(it.partRotation, partAngle, smoothFactor)
+        }
     }
 }
 
