@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.weapons.Weapon
+import com.cozmicgames.weapons.Weapons
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 import com.littlekt.input.Pointer
@@ -114,6 +115,7 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
             if (isClicked && !isUnlocking) {
                 if (Game.players.wallet >= weapon.price) {
                     Game.players.spendCredits(weapon.price)
+                    Game.players.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
                     isUnlocking = true
                     lock?.startUnlockAnimation {
                         isUnlocked = true

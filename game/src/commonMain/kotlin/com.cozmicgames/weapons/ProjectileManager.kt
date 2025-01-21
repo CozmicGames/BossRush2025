@@ -2,7 +2,6 @@ package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.PlayerShip
-import com.cozmicgames.entities.worldObjects.WorldObject
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.events.Events
 import com.cozmicgames.physics.Collider
@@ -24,14 +23,13 @@ class ProjectileManager {
         val projectilesToRemove = arrayListOf<Projectile>()
 
         for (projectile in projectiles) {
-            var projectileAngle = projectile.direction
-
             if (projectile.type.baseType is BeamProjectileType) {
                 projectile.startX = projectile.fromSource.muzzleX
                 projectile.startY = projectile.fromSource.muzzleY
-                projectileAngle += projectile.fromSource.muzzleRotation
+                projectile.direction = projectile.fromSource.muzzleRotation
             }
 
+            val projectileAngle = projectile.direction
             val projectileDirectionX = projectileAngle.cosine
             val projectileDirectionY = projectileAngle.sine
 

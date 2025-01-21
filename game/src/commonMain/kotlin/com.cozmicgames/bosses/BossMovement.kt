@@ -1,8 +1,6 @@
 package com.cozmicgames.bosses
 
 import com.cozmicgames.Game
-import com.cozmicgames.bosses.boss2.Body
-import com.cozmicgames.bosses.boss2.BodyMovement
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -61,6 +59,22 @@ class AimBossMovement(private val targetX: Float, private val targetY: Float) : 
 class SpinBossMovement(private val speed: Float = 90.0f) : BossMovement {
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         transform.targetRotation += speed.degrees * delta.seconds
+    }
+}
+
+open class CompoundBodyMovement(movements: List<BossMovement> = emptyList()) : BossMovement {
+    private val movements = movements.toMutableList()
+
+    fun addMovement(movement: BossMovement) {
+        movements.add(movement)
+    }
+
+    fun removeMovement(movement: BossMovement) {
+        movements.remove(movement)
+    }
+
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        movements.forEach { it.update(delta, boss, transform) }
     }
 }
 

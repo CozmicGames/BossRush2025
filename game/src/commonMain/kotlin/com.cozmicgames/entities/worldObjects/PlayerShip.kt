@@ -66,7 +66,6 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     override var muzzleRotation = 0.0.degrees
         private set
 
-
     override var effectSourceX = 0.0f
         private set
 
@@ -288,8 +287,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     }
 
     fun onDeath() {
-        removeFromWorld()
-        removeFromPhysics()
+        //removeFromWorld()
+        //removeFromPhysics()
 
         //TODO: Play death animation
     }

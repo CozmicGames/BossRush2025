@@ -13,7 +13,6 @@ import com.cozmicgames.graphics.ui.ResultPanel
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
-import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -25,13 +24,15 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState {
+class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState {
+    private val fightId = Game.random.nextLong()
+
     private lateinit var playerCamera: PlayerCamera
     private lateinit var guiCamera: GUICamera
     private lateinit var background: Background
     private lateinit var boss: Boss
-    private lateinit var resultPanel: ResultPanel
-    private var fightStartMessage: FightStartMessage? = FightStartMessage()
+    private var resultPanel: ResultPanel? = null
+    private var fightStartMessage: FightStartMessage? = null
 
     private var fightDuration = 0.0.seconds
     private var fightStarted = false
@@ -40,16 +41,26 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
 
     override fun begin() {
         val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+        playerCamera = PlayerCamera(player.camera)
+        guiCamera = GUICamera()
+        background = Background(Game.resources.background)
+
+        startFight(difficulty)
+    }
+
+    private fun startFight(difficulty: Difficulty) {
+        this.difficulty = difficulty
+        fightDuration = 0.0.seconds
+        resultPanel = null
+        fightStarted = false
+        showResults = false
 
         Game.players.shootStatistics.reset()
 
+        Game.world.clear()
         Game.physics.clear()
         Game.physics.width = 2500.0f
         Game.physics.height = 2500.0f
-        playerCamera = PlayerCamera(player.camera)
-        guiCamera = GUICamera()
-
-        background = Background(Game.resources.background)
 
         boss = desc.createBoss(difficulty)
         boss.addToWorld()
@@ -72,6 +83,7 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
 
         Game.world.shouldUpdate = false
 
+        fightStartMessage = FightStartMessage()
         fightStartMessage?.startAnimation {
             fightStartMessage = null
             fightStarted = true
@@ -129,6 +141,8 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
 
             if (!boss.isDead)
                 boss.movementController.onFailFight()
+            else
+                Game.players.newlyUnlockedBossIndex = desc.unlockedBossIndex
 
             val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
             val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
@@ -177,11 +191,11 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
             }
         else {
             pass.render(guiCamera.camera) { renderer: Renderer ->
-                when (resultPanel.renderAndGetResultState(delta, renderer)) {
+                when (resultPanel?.renderAndGetResultState(delta, renderer)) {
                     ResultPanel.ResultState.RETURN -> returnState = BayState()
-                    ResultPanel.ResultState.RETRY_EASY -> returnState = BossFightState(desc, Difficulty.EASY)
-                    ResultPanel.ResultState.RETRY_NORMAL -> returnState = BossFightState(desc, Difficulty.NORMAL)
-                    ResultPanel.ResultState.RETRY_HARD -> returnState = BossFightState(desc, Difficulty.HARD)
+                    ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY)
+                    ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL)
+                    ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD)
                     else -> {}
                 }
             }
@@ -200,5 +214,22 @@ class BossFightState(val desc: BossDesc, val difficulty: Difficulty) : GameState
             it.ship.removeFromPhysics()
             it.ship.removeFromWorld()
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BossFightState) return false
+
+        if (desc != other.desc) return false
+        if (difficulty != other.difficulty) return false
+
+        return fightId == other.fightId
+    }
+
+    override fun hashCode(): Int {
+        var result = desc.hashCode()
+        result = 31 * result + difficulty.hashCode()
+        result = 31 * result + fightId.hashCode()
+        return result
     }
 }

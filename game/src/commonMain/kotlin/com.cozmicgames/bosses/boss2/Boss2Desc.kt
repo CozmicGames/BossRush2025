@@ -14,6 +14,8 @@ class Boss2Desc : BossDesc {
 
     override val fullHealth get() = Boss2.FULL_HEALTH
 
+    override val unlockedBossIndex = 2
+
     override fun createBoss(difficulty: Difficulty): Boss {
         return Boss2(difficulty)
     }

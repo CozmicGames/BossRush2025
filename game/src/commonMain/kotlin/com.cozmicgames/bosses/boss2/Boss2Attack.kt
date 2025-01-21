@@ -22,8 +22,8 @@ abstract class Boss2Attack : Attack() {
 class HitPlayerAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss2Attack() {
     override val duration = 2.0.seconds
 
-    override val bossMovement = AimBoss2BossMovement(ship.x, ship.y)
-    override val bodyMovement = HitBodyMovement(ship, 0.1f)
+    override val bossMovement = AimBoss2BossMovement(ship.x, ship.y, false)
+    override val bodyMovement = HitBodyMovement(ship, 0.3f)
     override val shieldMovement: ShieldMovement = IdleShieldMovement()
 }
 
@@ -33,7 +33,7 @@ class SpinAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss2A
     override val bossMovement: BossMovement = SequenceBossMovement(
         duration / 2,
         listOf(
-            AimBoss2BossMovement(ship.x, ship.y),
+            AimBoss2BossMovement(ship.x, ship.y, false),
             SpinBossMovement(90.0f)
         )
     )
@@ -68,7 +68,7 @@ class PierceAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss
 class ShootAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss2Attack() {
     override val duration = 3.0.seconds
 
-    override val bossMovement: BossMovement = AimBoss2BossMovement(ship.x, ship.y)
+    override val bossMovement: BossMovement = AimBoss2BossMovement(ship.x, ship.y, false)
 
     override val bodyMovement: BodyMovement = CurlBodyMovement((-1.0).degrees, 0.4f)
 
@@ -78,7 +78,7 @@ class ShootAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss2
 class BeamAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss2Attack() {
     override val duration = 3.0.seconds
 
-    override val bossMovement: BossMovement = AimBoss2BossMovement(ship.x, ship.y)
+    override val bossMovement: BossMovement = AimBoss2BossMovement(ship.x, ship.y, false)
 
     override val bodyMovement: BodyMovement = CurlBodyMovement((-1.0).degrees, 0.4f)
 

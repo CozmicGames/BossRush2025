@@ -32,4 +32,8 @@ class World {
             entity.render(renderer)
         }
     }
+
+    fun clear() {
+        objects.clear()
+    }
 }

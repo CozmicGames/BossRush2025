@@ -3,7 +3,6 @@ package com.cozmicgames.bosses.boss2
 import com.cozmicgames.Game
 import com.cozmicgames.utils.lerp
 import com.cozmicgames.weapons.ProjectileType
-import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -18,12 +17,6 @@ class IdleShieldMovement : ShieldMovement {
     }
 }
 
-class DeactivatedShieldMovement : ShieldMovement {
-    override fun updateShield(delta: Duration, shield: Shield) {
-        shield.intensity = lerp(shield.intensity, 0.0f, 0.1f)
-    }
-}
-
 class ShootShieldMovement(private val shootTime: Duration = 0.3.seconds) : ShieldMovement {
     private var timer = 0.0.seconds
 
@@ -32,8 +25,10 @@ class ShootShieldMovement(private val shootTime: Duration = 0.3.seconds) : Shiel
 
         shield.intensity = lerp(shield.intensity, 1.0f, 0.1f * if (shield.boss.isParalyzed) 0.01f else 1.0f)
 
-        if (timer >= shootTime)
-            Game.projectiles.spawnProjectile(shield.boss, ProjectileType.ENERGY_BALL, shield.boss.muzzleX, shield.boss.muzzleY, shield.boss.muzzleRotation, 400.0f, 0.0f)
+        if (timer >= shootTime) {
+            Game.projectiles.spawnProjectile(shield.boss, ProjectileType.ENERGY_BALL, shield.boss.muzzleX, shield.boss.muzzleY, shield.boss.muzzleRotation, 500.0f, 0.0f)
+            timer = 0.0.seconds
+        }
     }
 }
 

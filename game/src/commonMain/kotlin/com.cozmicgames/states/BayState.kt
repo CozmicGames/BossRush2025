@@ -7,8 +7,8 @@ import com.cozmicgames.bosses.boss1.Boss1Desc
 import com.cozmicgames.bosses.boss2.Boss2Desc
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.*
-import com.littlekt.input.Key
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class BayState : GameState {
     companion object {
@@ -16,19 +16,18 @@ class BayState : GameState {
             Boss1Desc(),
             Boss2Desc(),
             TodoBossDesc(),
-            TodoBossDesc(),
-            TodoBossDesc(),
             TodoBossDesc()
         )
     }
 
     private lateinit var guiCamera: GUICamera
     private var returnState: GameState = this
+    private var timer = 0.0.seconds
 
     private val messageBanner = MessageBanner()
 
-    private val selectionPosters = List(6) {
-        SelectionPoster(bossDescriptors[it], it == 0) { returnState = it }
+    private val selectionPosters = List(4) {
+        SelectionPoster(bossDescriptors[it], it in Game.players.unlockedBossIndices) { returnState = it }
     }
 
     private val shop = ShopUI()
@@ -44,10 +43,10 @@ class BayState : GameState {
         repeat(2) { yIndex ->
             val posterY = 20.0f + (1 - yIndex) * (Constants.BOSS_SELECTION_POSTER_HEIGHT + 25.0f)
 
-            repeat(3) { xIndex ->
+            repeat(2) { xIndex ->
                 val posterX = 20.0f + xIndex * (Constants.BOSS_SELECTION_POSTER_WIDTH + 25.0f)
 
-                selectionPosters[yIndex * 3 + xIndex].apply {
+                selectionPosters[yIndex * 2 + xIndex].apply {
                     x = posterX
                     y = posterY
                 }
@@ -63,9 +62,13 @@ class BayState : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        if (Game.input.isKeyJustPressed(Key.U)) //TODO: Remove
-            selectionPosters[1].unlock()
-
+        if (timer > 1.0.seconds) {
+            if (Game.players.newlyUnlockedBossIndex >= 0) {
+                selectionPosters[Game.players.newlyUnlockedBossIndex].unlock()
+                Game.players.unlockedBossIndices += Game.players.newlyUnlockedBossIndex
+                Game.players.newlyUnlockedBossIndex = -1
+            }
+        }
 
         val pass = Game.graphics.beginMainRenderPass()
 
@@ -80,6 +83,8 @@ class BayState : GameState {
         }
 
         pass.end()
+
+        timer += delta
 
         return { returnState }
     }

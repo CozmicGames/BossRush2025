@@ -3,7 +3,7 @@ package com.cozmicgames.bosses.boss1
 import com.cozmicgames.bosses.*
 
 class Boss1MovementController(boss: Boss1) : BossMovementController(boss, Boss1FightStage1()) {
-    override val movementSpeed = 0.5f
+    override val movementSpeed = 0.3f
 
     override val rotationSpeed = 3.0f
 

@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
+import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.math.sqrt
 import kotlin.time.Duration
@@ -14,7 +15,12 @@ class TransitionStage(override val nextStage: BossStage) : BossStage() {
     override fun update(delta: Duration, controller: BossMovementController): BossStage {
         if (isFirstUpdate) {
             val movement = controller.movement as? Boss2Movement ?: throw IllegalStateException("Invalid movement type")
-            movement.bossMovement = ShakeBossMovement { 1.0f - timer.seconds / 2.0f }
+            movement.bossMovement = CompoundBodyMovement(listOf(
+                ShakeBossMovement { 1.0f - timer.seconds / 2.0f },
+                SpinBossMovement()
+            ))
+            movement.bodyMovement = CurlBodyMovement(4.0.degrees, 0.4f)
+            movement.shieldMovement = IdleShieldMovement()
         }
 
         timer += delta

@@ -8,7 +8,6 @@ enum class Weapons : Weapon {
     REELGUN {
         override val previewTexture get() = Game.resources.reelgunPreview
         override val price = 0
-        override val isUnlockedByDefault = true
         override val displayName = "Reelgun"
         override val fireRate = 0.2.seconds
         override val canContinoousFire = true
@@ -22,7 +21,6 @@ enum class Weapons : Weapon {
     HYPER_HARPOON {
         override val previewTexture get() = Game.resources.hyperHarpoonPreview
         override val price = 500
-        override val isUnlockedByDefault = false
         override val displayName = "Hyper\nHarpoon"
         override val fireRate = 0.5.seconds
         override val canContinoousFire = true
@@ -36,7 +34,6 @@ enum class Weapons : Weapon {
     SCATTERGUN {
         override val previewTexture get() = Game.resources.scattergunPreview
         override val price = 600
-        override val isUnlockedByDefault = false
         override val displayName = "Scattergun"
         override val fireRate = 0.8.seconds
         override val canContinoousFire = true
@@ -50,7 +47,6 @@ enum class Weapons : Weapon {
     BAITBLASTER {
         override val previewTexture get() = Game.resources.baitblasterPreview
         override val price = 1000
-        override val isUnlockedByDefault = false
         override val displayName = "Baitblaster"
         override val fireRate = 10.seconds
         override val canContinoousFire = false
@@ -64,7 +60,6 @@ enum class Weapons : Weapon {
     TODO0 {
         override val previewTexture get() = Game.resources.baitblasterPreview
         override val price = 1000
-        override val isUnlockedByDefault = false
         override val displayName = "Gravinet"
         override val fireRate = 10.seconds
         override val canContinoousFire = false
@@ -78,7 +73,6 @@ enum class Weapons : Weapon {
     TODO1 {
         override val previewTexture get() = Game.resources.baitblasterPreview
         override val price = 1000
-        override val isUnlockedByDefault = false
         override val displayName = "Shock Charge"
         override val fireRate = 10.seconds
         override val canContinoousFire = false

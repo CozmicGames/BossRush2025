@@ -23,14 +23,21 @@ class IdleBoss2BossMovement : BossMovement {
     }
 }
 
-class AimBoss2BossMovement(private val targetX: Float, private val targetY: Float) : BossMovement {
+class AimBoss2BossMovement(private val targetX: Float, private val targetY: Float, private val flipped: Boolean) : BossMovement {
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         boss as? Boss2 ?: throw IllegalArgumentException("Boss must be a Boss2")
 
-        if (!boss.isFlipped && boss.x > targetX)
-            boss.flip()
-        else if (boss.isFlipped && boss.x < targetX)
-            boss.flip()
+        if (flipped) {
+            if (!boss.isFlipped && boss.x < targetX)
+                boss.flip()
+            else if (boss.isFlipped && boss.x > targetX)
+                boss.flip()
+        } else {
+            if (!boss.isFlipped && boss.x > targetX)
+                boss.flip()
+            else if (boss.isFlipped && boss.x < targetX)
+                boss.flip()
+        }
 
         val dx = targetX - boss.x
         val dy = targetY - boss.y
@@ -66,7 +73,7 @@ class FollowPlayerBoss2BossMovement(private val ship: PlayerShip, private val on
 }
 
 open class FlyAttackBoss2BossMovement(private val playerX: Float, private val playerY: Float, private val aimTime: Duration = 3.0.seconds, private val onReached: () -> Unit = {}) : BossMovement {
-    private val aimMovement = AimBoss2BossMovement(playerX, playerY)
+    private val aimMovement = AimBoss2BossMovement(playerX, playerY, false)
     private lateinit var destinationMovement: DestinationBossMovement
 
     private var speedModifier = 3.0f

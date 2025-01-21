@@ -9,6 +9,7 @@ interface BossDesc {
     val reward: Int
     val preview: Texture
     val fullHealth: Int
+    val unlockedBossIndex: Int
 
     fun createFightGameState(difficulty: Difficulty): BossFightState = BossFightState(this, difficulty)
 

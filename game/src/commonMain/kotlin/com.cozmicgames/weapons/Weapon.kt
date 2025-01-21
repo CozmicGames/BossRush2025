@@ -7,7 +7,6 @@ import kotlin.time.Duration
 interface Weapon {
     val previewTexture: Texture
     val price: Int
-    val isUnlockedByDefault: Boolean
     val displayName: String
     val fireRate: Duration
     val canContinoousFire: Boolean

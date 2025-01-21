@@ -15,6 +15,9 @@ class TodoBossDesc: BossDesc {
 
     override val fullHealth get() = 4
 
+    override val unlockedBossIndex: Int
+        get() = -1
+
     override fun createBoss(difficulty: Difficulty): Boss {
         return object : Boss {
             override val difficulty: Difficulty

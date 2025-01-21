@@ -80,18 +80,9 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             players.update(delta)
             events.sendEvents()
 
-            if (newState != currentGameState) {
-                if (newState !is SuspendGameState)
-                    currentGameState.end()
-                else
-                    if (currentGameState is SuspendableGameState)
-                        (currentGameState as SuspendableGameState).suspend()
-
-                if (currentGameState is SuspendGameState && newState is SuspendableGameState)
-                    newState.resumeFromSuspension()
-
+            if (newState !== currentGameState) {
+                currentGameState.end()
                 currentGameState = newState
-
                 currentGameState.begin()
             }
         }

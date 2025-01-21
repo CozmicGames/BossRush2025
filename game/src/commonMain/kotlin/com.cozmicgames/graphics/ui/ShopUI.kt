@@ -35,9 +35,9 @@ class ShopUI : GUIElement() {
         getWidth = { 290.0f }
         getHeight = { 550.0f }
 
-        weaponSlots = Weapons.entries.map { weapon ->
+        weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
             lateinit var slot: WeaponSlot
-            slot = WeaponSlot(weapon, weapon.isUnlockedByDefault) { selectionState ->
+            slot = WeaponSlot(weapon, index in Game.players.unlockedWeaponIndices) { selectionState ->
                 val player = Game.players.getMyPlayer() ?: throw IllegalStateException("Player not found")
 
                 weaponSlots.forEach {

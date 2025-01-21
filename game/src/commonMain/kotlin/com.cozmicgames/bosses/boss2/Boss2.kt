@@ -11,6 +11,7 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.utils.Difficulty
+import com.cozmicgames.weapons.ProjectileType
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
@@ -48,9 +49,24 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
     }
 
     override val projectileSourceId = "boss2"
-    override val muzzleX get() = sword.x //TODO: Fix this
-    override val muzzleY get() = sword.y
-    override val muzzleRotation get() = sword.rotation
+    override val muzzleX: Float
+        get() {
+            val xOffset = if (isFlipped) -sword.width * 0.4f else sword.width * 0.4f
+            val yOffset = 0.0f
+            val cos = rotation.cosine
+            val sin = rotation.sine
+            return sword.x + cos * xOffset - sin * yOffset
+        }
+
+    override val muzzleY: Float
+        get() {
+            val xOffset = if (isFlipped) -sword.width * 0.4f else sword.width * 0.4f
+            val yOffset = 0.0f
+            val cos = rotation.cosine
+            val sin = rotation.sine
+            return sword.y + sin * xOffset + cos * yOffset
+        }
+    override val muzzleRotation get() = if (isFlipped) rotation else rotation + 180.0.degrees
 
     override var health = FULL_HEALTH
     override var x = 0.0f
@@ -167,13 +183,13 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
             if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
                 flip()
 
-            body.x = x
-            body.y = y
-            body.rotation = rotation
-
             movementController.update(delta)
             body.update(delta, movementController.movement.bodyMovement)
             shield.update(delta, movementController.movement.shieldMovement)
+
+            body.x = x
+            body.y = y
+            body.rotation = rotation
 
             val cos = rotation.cosine
             val sin = rotation.sine
@@ -318,6 +334,21 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
         if (Game.players.isHost) {
             movementController.onParalyze()
             isParalyzedTimer = PARALYZED_TIME
+
+            if (shield.intensity > 0.5f) {
+                val shots = 7
+
+                for (i in 0 until shots) {
+                    val angle = (if (isFlipped) muzzleRotation - 135.0.degrees else muzzleRotation + 45.0.degrees) + 90.0.degrees / (shots - 1) * i
+                    val cos = angle.cosine
+                    val sin = angle.sine
+                    val radius = shield.width * 0.5f
+                    val x = shield.x + cos * radius
+                    val y = shield.y + sin * radius
+                    Game.projectiles.spawnProjectile(this, ProjectileType.ENERGY_BALL, x, y, angle, 500.0f, 0.0f)
+                }
+            }
+
             shield.intensity = 0.0f
         }
     }

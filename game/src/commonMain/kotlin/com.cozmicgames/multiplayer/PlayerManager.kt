@@ -15,6 +15,12 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     var wallet = 1000
         private set
 
+    val unlockedBossIndices = hashSetOf(0)
+
+    val unlockedWeaponIndices = hashSetOf(0)
+
+    var newlyUnlockedBossIndex = -1
+
     private val playersInternal = arrayListOf<Player>()
 
     val players get() = playersInternal as List<Player>
