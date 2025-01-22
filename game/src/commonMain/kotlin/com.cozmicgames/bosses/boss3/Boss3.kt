@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
+import com.cozmicgames.bosses.boss1.Boss1
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
@@ -23,21 +24,21 @@ class Boss3(override val difficulty: Difficulty) : Boss {
         private val PARALYZED_TIME = 5.0.seconds
 
         private val LEG_OFFSETS = arrayOf(
-            0.67f to -0.45f,
-            0.62f to -0.56f,
-            0.57f to -0.7f,
-            -0.67f to -0.45f,
-            -0.62f to -0.56f,
-            -0.57f to -0.7f,
+            0.58f to -0.45f,
+            0.53f to -0.56f,
+            0.45f to -0.7f,
+            -0.58f to -0.45f,
+            -0.53f to -0.56f,
+            -0.45f to -0.7f,
         )
 
         private val LEG_ANGLES = arrayOf(
-            15.0.degrees,
-            0.0.degrees,
-            (-15.0).degrees,
-            (-15.0).degrees,
-            0.0.degrees,
-            15.0.degrees,
+            (-25.0).degrees,
+            (-35.0).degrees,
+            (-50.0).degrees,
+            25.0.degrees,
+            35.0.degrees,
+            50.0.degrees,
         )
 
         private val LEG_SCALES = arrayOf(
@@ -59,13 +60,13 @@ class Boss3(override val difficulty: Difficulty) : Boss {
         )
 
         private val ARM_OFFSETS = arrayOf(
-            0.8f to 0.0f,
-            -0.8f to 0.0f,
+            0.38f to -0.56f,
+            -0.38f to -0.56f,
         )
 
         private val ARM_ANGLES = arrayOf(
-            0.0.degrees,
-            0.0.degrees,
+            (-20.0).degrees,
+            20.0.degrees,
         )
 
         private val ARM_SCALES = arrayOf(
@@ -78,10 +79,15 @@ class Boss3(override val difficulty: Difficulty) : Boss {
             RenderLayers.ENEMY_BEGIN + 50,
         )
 
-        private const val HEAD_SCALE = 2.0f
+        private const val HEAD_SCALE = 3.0f
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 40
-    }
 
+        private const val HEART_SCALE = 1.8f
+        private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 35
+
+        private const val BEAK_SCALE = 1.8f
+        private const val BEAK_LAYER = RenderLayers.ENEMY_BEGIN + 38
+    }
 
     override var health = FULL_HEALTH
     override var x = 0.0f
@@ -100,6 +106,8 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val legs: List<Leg>
     private val arms: List<Arm>
+    private val heart = Heart(this, HEART_SCALE, HEART_LAYER)
+    private val beak = Beak(this, BEAK_SCALE, BEAK_LAYER)
 
     init {
         val legs = arrayListOf<Leg>()
@@ -121,17 +129,34 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     override fun addToWorld() {
         Game.world.add(head)
         legs.forEach { it.parts.forEach(Game.world::add) }
-        arms.forEach { it.parts.forEach(Game.world::add) }
+        arms.forEach {
+            it.parts.forEach(Game.world::add)
+            (it.parts.last() as? Claw)?.let { claw ->
+                Game.world.add(claw.upperClawPart)
+                Game.world.add(claw.lowerClawPart)
+            }
+        }
+        Game.world.add(heart)
+        Game.world.add(beak.leftBeak)
+        Game.world.add(beak.rightBeak)
     }
 
     override fun removeFromWorld() {
         Game.world.remove(head)
         legs.forEach { it.parts.forEach(Game.world::remove) }
-        arms.forEach { it.parts.forEach(Game.world::remove) }
+        arms.forEach {
+            it.parts.forEach(Game.world::remove)
+            (it.parts.last() as? Claw)?.let { claw ->
+                Game.world.remove(claw.upperClawPart)
+                Game.world.remove(claw.lowerClawPart)
+            }
+        }
+        Game.world.remove(heart)
+        Game.world.remove(beak.leftBeak)
+        Game.world.remove(beak.rightBeak)
     }
 
     override fun addToPhysics() {
-
     }
 
     override fun removeFromPhysics() {
@@ -149,6 +174,7 @@ class Boss3(override val difficulty: Difficulty) : Boss {
                 isParalyzedTimer = 0.0.seconds
 
             movementController.update(delta)
+            beak.update(delta, movementController.movement.beakMovement)
 
             val cos = rotation.cosine
             val sin = rotation.sine
@@ -168,9 +194,9 @@ class Boss3(override val difficulty: Difficulty) : Boss {
                 leg.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
                 leg.rotation = rotation
 
-                Game.players.setGlobalState("boss1leg${index}x", leg.x)
-                Game.players.setGlobalState("boss1leg${index}y", leg.y)
-                Game.players.setGlobalState("boss1leg${index}rotation", leg.rotation.degrees)
+                Game.players.setGlobalState("boss3leg${index}x", leg.x)
+                Game.players.setGlobalState("boss3leg${index}y", leg.y)
+                Game.players.setGlobalState("boss3leg${index}rotation", leg.rotation.degrees)
             }
 
             arms.forEachIndexed { index, arm ->
@@ -183,26 +209,56 @@ class Boss3(override val difficulty: Difficulty) : Boss {
                 arm.y = y + sin * armOffsetX + cos * armOffsetY
                 arm.rotation = rotation
 
-                Game.players.setGlobalState("boss1arm${index}x", arm.x)
-                Game.players.setGlobalState("boss1arm${index}y", arm.y)
-                Game.players.setGlobalState("boss1arm${index}rotation", arm.rotation.degrees)
+                Game.players.setGlobalState("boss3arm${index}x", arm.x)
+                Game.players.setGlobalState("boss3arm${index}y", arm.y)
+                Game.players.setGlobalState("boss3arm${index}rotation", arm.rotation.degrees)
             }
+
+            val beakOffsetX = 0.0f
+            val beakOffsetY = -0.4f * head.height
+
+            beak.x = x + cos * beakOffsetX - sin * beakOffsetY
+            beak.y = y + sin * beakOffsetX + cos * beakOffsetY
+            beak.rotation = rotation
+
+            Game.players.setGlobalState("boss3beakx", beak.x)
+            Game.players.setGlobalState("boss3beaky", beak.y)
+            Game.players.setGlobalState("boss3beakrotation", beak.rotation.degrees)
+
+            val heartOffsetX = 0.0f
+            val heartOffsetY = -0.4f * head.height
+
+            heart.x = x + cos * heartOffsetX - sin * heartOffsetY
+            heart.y = y + sin * heartOffsetX + cos * heartOffsetY
+            heart.rotation = rotation
+
+            Game.players.setGlobalState("boss3heartx", heart.x)
+            Game.players.setGlobalState("boss3hearty", heart.y)
+            Game.players.setGlobalState("boss3heartrotation", heart.rotation.degrees)
         } else {
-            x = Game.players.getGlobalState("boss1x") ?: head.x
-            y = Game.players.getGlobalState("boss1y") ?: head.y
-            rotation = (Game.players.getGlobalState("boss1rotation") ?: 0.0f).degrees
+            x = Game.players.getGlobalState("boss3x") ?: head.x
+            y = Game.players.getGlobalState("boss3y") ?: head.y
+            rotation = (Game.players.getGlobalState("boss3rotation") ?: 0.0f).degrees
 
             legs.forEachIndexed { index, tentacle ->
-                tentacle.x = Game.players.getGlobalState("boss1leg${index}x") ?: 0.0f
-                tentacle.y = Game.players.getGlobalState("boss1leg${index}y") ?: 0.0f
-                tentacle.rotation = (Game.players.getGlobalState("boss1leg${index}rotation") ?: 0.0f).degrees
+                tentacle.x = Game.players.getGlobalState("boss3leg${index}x") ?: 0.0f
+                tentacle.y = Game.players.getGlobalState("boss3leg${index}y") ?: 0.0f
+                tentacle.rotation = (Game.players.getGlobalState("boss3leg${index}rotation") ?: 0.0f).degrees
             }
 
             arms.forEachIndexed { index, arm ->
-                arm.x = Game.players.getGlobalState("boss1arm${index}x") ?: 0.0f
-                arm.y = Game.players.getGlobalState("boss1arm${index}y") ?: 0.0f
-                arm.rotation = (Game.players.getGlobalState("boss1arm${index}rotation") ?: 0.0f).degrees
+                arm.x = Game.players.getGlobalState("boss3arm${index}x") ?: 0.0f
+                arm.y = Game.players.getGlobalState("boss3arm${index}y") ?: 0.0f
+                arm.rotation = (Game.players.getGlobalState("boss3arm${index}rotation") ?: 0.0f).degrees
             }
+
+            beak.x = Game.players.getGlobalState("boss3beakx") ?: 0.0f
+            beak.y = Game.players.getGlobalState("boss3beaky") ?: 0.0f
+            beak.rotation = (Game.players.getGlobalState("boss3beakrotation") ?: 0.0f).degrees
+
+            heart.x = Game.players.getGlobalState("boss3heartx") ?: 0.0f
+            heart.y = Game.players.getGlobalState("boss3hearty") ?: 0.0f
+            heart.rotation = (Game.players.getGlobalState("boss3heartrotation") ?: 0.0f).degrees
         }
     }
 

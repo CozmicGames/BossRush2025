@@ -30,7 +30,7 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
         val parts = arrayListOf<ArmPart>()
 
         parts.add(ArmPart(this, null, flip, 0, Game.resources.boss3arm, scale, layer))
-        parts.add(Claw(this, parts[0], flip, 0, scale, layer))
+        parts.add(Claw(this, parts[0], flip, 0, scale * 1.5f, layer))
 
         this.parts = parts
     }

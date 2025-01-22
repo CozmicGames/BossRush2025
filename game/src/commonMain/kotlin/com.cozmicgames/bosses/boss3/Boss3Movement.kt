@@ -5,9 +5,11 @@ import com.cozmicgames.bosses.Movement
 
 class Boss3Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss3BossMovement()
+    var beakMovement: BeakMovement = IdleBeakMovement()
 
     override fun set(movement: Movement) {
         movement as? Boss3Movement ?: throw IllegalStateException("Invalid movement type")
         bossMovement = movement.bossMovement
+        beakMovement = movement.beakMovement
     }
 }

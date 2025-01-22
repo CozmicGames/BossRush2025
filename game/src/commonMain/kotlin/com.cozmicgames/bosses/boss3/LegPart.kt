@@ -16,9 +16,9 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
 
     override val texture = texture.slice()
 
-    override val width get() = texture.texture.width * partScale
+    override val width get() = texture.width * partScale
 
-    override val height get() = texture.texture.height * partScale
+    override val height get() = texture.height * partScale
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), leg)
 
