@@ -7,16 +7,11 @@ import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.multiplayer.Player
-import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
-import com.cozmicgames.physics.RectangleCollisionShape
+import com.cozmicgames.physics.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.*
 import com.littlekt.graphics.*
-import com.littlekt.math.geom.Angle
-import com.littlekt.math.geom.cosine
-import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.sine
+import com.littlekt.math.geom.*
 import com.littlekt.math.isFuzzyZero
 import com.littlekt.util.seconds
 import kotlin.math.absoluteValue
@@ -25,7 +20,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class PlayerShip(private val player: Player) : WorldObject(player.state.id), ProjectileSource, AreaEffectSource, Hittable {
+class PlayerShip(private val player: Player) : WorldObject(player.state.id), ProjectileSource, AreaEffectSource, Hittable, Grabbable {
     companion object {
         private val PLAYER_SHIP_INVULNERABILITY_TIME = 2.0.seconds
     }
@@ -38,12 +33,16 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     var movementSpeed = 1.0f
     var rotationSpeed = 1.0f
 
-    val isInvulnerable get() = invulnerabilityTimer > 0.0.seconds
+    val isInvulnerable get() = invulnerabilityTimer > 0.0.seconds || isGrabbed
 
     var primaryWeapon: Weapon? = Weapons.REELGUN
     var secondaryWeapon: Weapon? = Weapons.REELGUN
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
+
+    private var isGrabbed = false
+    private var grabbedBy: GrabbingObject? = null
+    private var grabRotation = 0.0.degrees
 
     private var firePrimaryCooldown = 0.0.seconds
     private var fireSecondaryCooldown = 0.0.seconds
@@ -92,7 +91,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         if (impulseY.isFuzzyZero())
             impulseY = 0.0f
 
-        if (fightStarted) {
+        if (fightStarted && !isGrabbed) {
             player.state.getState<Float>("inputX")?.let {
                 deltaX += it
             }
@@ -142,6 +141,14 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         y += moveY
         rotation += moveRotation
 
+        if (isGrabbed) {
+            grabbedBy?.let {
+                x = it.grabX
+                y = it.grabY
+                rotation = it.grabRotation + grabRotation
+            }
+        }
+
         flySpeed = sqrt(moveX * moveX + moveY * moveY) + (moveRotation.degrees).absoluteValue
 
         (collider.shape as RectangleCollisionShape).angle = rotation
@@ -181,8 +188,6 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                     Game.events.addSendEvent(Events.playerDeath(projectileSourceId))
                 } else {
                     invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
-
-                    println(it.userData.id)
 
                     Game.events.addSendEvent(Events.hit(projectileSourceId))
 
@@ -284,6 +289,21 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         impulseX = x / distance * strength * 0.15f
         impulseY = y / distance * strength * 0.15f
+    }
+
+    override fun onGrabbed(id: String) {
+        val grabbingObject = Game.physics.grabbingObjects[id] ?: return
+
+        isGrabbed = true
+        grabbedBy = grabbingObject
+        grabRotation = rotation.shortDistanceTo(grabbingObject.grabRotation)
+    }
+
+    override fun onReleased(impulseX: Float, impulseY: Float) {
+        isGrabbed = false
+        invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
+        this.impulseX = impulseX
+        this.impulseY = impulseY
     }
 
     fun onDeath() {

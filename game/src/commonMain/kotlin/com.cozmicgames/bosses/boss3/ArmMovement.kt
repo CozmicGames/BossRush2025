@@ -116,7 +116,6 @@ open class SequenceArmMovement(private val durationPerMovement: Duration, privat
 class IdleArmMovement : CompoundArmMovement(
     listOf(
         SwayArmMovement(15.0.degrees, 0.1f, 0.2f),
-        //IdleClawMovement(0.2f, 0.2f)
-        ShootClawMovement(0.5.seconds, 3, 30.0.degrees)
+        IdleClawMovement(0.2f, 0.2f)
     )
 )

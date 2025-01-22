@@ -188,6 +188,7 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
             }
 
             Game.physics.addHittable(it)
+            Game.physics.addGrabbingObject(it.claw)
         }
     }
 
@@ -216,6 +217,7 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
             }
 
             Game.physics.removeHittable(it)
+            Game.physics.removeGrabbingObject(it.claw)
         }
     }
 
@@ -415,6 +417,8 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
             it.parts.forEach { part ->
                 part.collider.drawDebug(renderer)
             }
+
+            it.claw.grabCollider.drawDebug(renderer)
         }
     }
 }

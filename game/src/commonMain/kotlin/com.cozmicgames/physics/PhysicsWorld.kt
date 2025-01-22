@@ -8,9 +8,13 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     val hittables get() = hittablesInternal as Map<String, Hittable>
 
+    val grabbingObjects get() = grabbingObjectsInternal as Map<String, GrabbingObject>
+
     private val collidersInternal = arrayListOf<Collider>()
 
     private val hittablesInternal = hashMapOf<String, Hittable>()
+
+    private val grabbingObjectsInternal = hashMapOf<String, GrabbingObject>()
 
     val minX get() = -width * 0.5f
     val minY get() = -height * 0.5f
@@ -37,6 +41,18 @@ class PhysicsWorld(var width: Float, var height: Float) {
 
     fun removeHittable(hittable: Hittable) {
         removeHittable(hittable.id)
+    }
+
+    fun addGrabbingObject(grabbingObject: GrabbingObject) {
+        grabbingObjectsInternal[grabbingObject.grabbingId] = grabbingObject
+    }
+
+    fun removeGrabbingObject(grabbingObject: GrabbingObject) {
+        removeGrabbingObject(grabbingObject.grabbingId)
+    }
+
+    fun removeGrabbingObject(name: String) {
+        grabbingObjectsInternal.remove(name)
     }
 
     fun clear() {
