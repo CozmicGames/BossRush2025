@@ -49,7 +49,7 @@ class FightStartMessage : GUIElement() {
         override fun update(delta: Duration): Stage {
             val factor = (timer / 0.8.seconds).toFloat().clamp(0.0f, 1.0f)
             label.fontSize = 600.0f * Easing.QUAD_IN(factor)
-            color.a = 0.7f * (1.0f - factor)
+            color.a = 0.85f * (1.0f - factor)
 
             timer += delta
 

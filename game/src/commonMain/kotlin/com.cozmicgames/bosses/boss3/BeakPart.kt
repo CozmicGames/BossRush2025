@@ -2,14 +2,16 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
+import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPart("boss3beak${if (left) "left" else "right"}") {
+class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPart("boss3beak${if (left) "left" else "right"}"), ProjectileSource {
     override val renderLayer = layer
 
     override val texture = Game.resources.boss1beak.slice()
@@ -21,6 +23,11 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
     override val flipX get() = !left
 
     override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f), beak)
+
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f

@@ -3,12 +3,14 @@ package com.cozmicgames.bosses.boss3
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.bosses.boss1.Boss1
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
+import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -16,7 +18,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss3(override val difficulty: Difficulty) : Boss {
+class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
     companion object {
         const val FULL_HEALTH = 4
 
@@ -24,21 +26,21 @@ class Boss3(override val difficulty: Difficulty) : Boss {
         private val PARALYZED_TIME = 5.0.seconds
 
         private val LEG_OFFSETS = arrayOf(
-            0.58f to -0.45f,
-            0.53f to -0.56f,
+            0.54f to -0.45f,
+            0.51f to -0.56f,
             0.45f to -0.7f,
-            -0.58f to -0.45f,
-            -0.53f to -0.56f,
+            -0.54f to -0.45f,
+            -0.51f to -0.56f,
             -0.45f to -0.7f,
         )
 
         private val LEG_ANGLES = arrayOf(
-            (-25.0).degrees,
-            (-35.0).degrees,
-            (-50.0).degrees,
-            25.0.degrees,
-            35.0.degrees,
-            50.0.degrees,
+            (10.0).degrees,
+            (-5.0).degrees,
+            (-20.0).degrees,
+            -(10.0).degrees,
+            5.0.degrees,
+            20.0.degrees,
         )
 
         private val LEG_SCALES = arrayOf(
@@ -60,8 +62,8 @@ class Boss3(override val difficulty: Difficulty) : Boss {
         )
 
         private val ARM_OFFSETS = arrayOf(
-            0.38f to -0.56f,
-            -0.38f to -0.56f,
+            0.6f to -0.37f,
+            -0.6f to -0.37f,
         )
 
         private val ARM_ANGLES = arrayOf(
@@ -70,8 +72,8 @@ class Boss3(override val difficulty: Difficulty) : Boss {
         )
 
         private val ARM_SCALES = arrayOf(
-            2.0f,
-            2.0f,
+            2.5f,
+            2.5f,
         )
 
         private val ARM_LAYERS = arrayOf(
@@ -93,6 +95,11 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     override var x = 0.0f
     override var y = 0.0f
     override var rotation = 0.0.degrees
+
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
@@ -157,10 +164,59 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     }
 
     override fun addToPhysics() {
+        Game.physics.addCollider(head.collider)
+        Game.physics.addCollider(head.blockingCollider)
+        Game.physics.addHittable(head)
+
+        Game.physics.addCollider(beak.leftBeak.collider)
+        Game.physics.addCollider(beak.rightBeak.collider)
+
+        Game.physics.addCollider(heart.collider)
+        Game.physics.addHittable(heart)
+
+        legs.forEach {
+            it.parts.forEach { part ->
+                Game.physics.addCollider(part.collider)
+            }
+
+            Game.physics.addHittable(it)
+        }
+
+        arms.forEach {
+            it.parts.forEach { part ->
+                Game.physics.addCollider(part.collider)
+            }
+
+            Game.physics.addHittable(it)
+        }
     }
 
     override fun removeFromPhysics() {
+        Game.physics.removeCollider(head.collider)
+        Game.physics.removeCollider(head.blockingCollider)
+        Game.physics.removeHittable(head)
 
+        Game.physics.removeCollider(beak.leftBeak.collider)
+        Game.physics.removeCollider(beak.rightBeak.collider)
+
+        Game.physics.removeCollider(heart.collider)
+        Game.physics.removeHittable(heart)
+
+        legs.forEach {
+            it.parts.forEach { part ->
+                Game.physics.removeCollider(part.collider)
+            }
+
+            Game.physics.removeHittable(it)
+        }
+
+        arms.forEach {
+            it.parts.forEach { part ->
+                Game.physics.removeCollider(part.collider)
+            }
+
+            Game.physics.removeHittable(it)
+        }
     }
 
     override fun update(delta: Duration) {
@@ -175,6 +231,12 @@ class Boss3(override val difficulty: Difficulty) : Boss {
 
             movementController.update(delta)
             beak.update(delta, movementController.movement.beakMovement)
+            legs.forEach {
+                it.update(delta, movementController.movement.legMovement)
+            }
+            arms.forEach {
+                it.update(delta, movementController.movement.armMovement)
+            }
 
             val cos = rotation.cosine
             val sin = rotation.sine
@@ -295,7 +357,21 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     }
 
     fun addEntityAnimation(block: () -> WorldObjectAnimation) {
+        head.addEntityAnimation(block())
 
+        legs.forEach {
+            it.parts.forEach { part ->
+                part.addEntityAnimation(block())
+            }
+        }
+
+        arms.forEach {
+            it.parts.forEach { part ->
+                part.addEntityAnimation(block())
+            }
+
+            it.claw.addEntityAnimation(block())
+        }
     }
 
     inline fun <reified T : WorldObjectAnimation> cancelEntityAnimation() {
@@ -303,10 +379,42 @@ class Boss3(override val difficulty: Difficulty) : Boss {
     }
 
     fun <T : WorldObjectAnimation> cancelEntityAnimation(type: KClass<T>) {
+        head.cancelEntityAnimation(type)
 
+        legs.forEach {
+            it.parts.forEach { part ->
+                part.cancelEntityAnimation(type)
+            }
+        }
+
+        arms.forEach {
+            it.parts.forEach { part ->
+                part.cancelEntityAnimation(type)
+            }
+
+            it.claw.cancelEntityAnimation(type)
+        }
     }
 
     override fun drawDebug(renderer: ShapeRenderer) {
+        head.collider.drawDebug(renderer)
+        head.blockingCollider.drawDebug(renderer)
 
+        beak.leftBeak.collider.drawDebug(renderer)
+        beak.rightBeak.collider.drawDebug(renderer)
+
+        heart.collider.drawDebug(renderer)
+
+        legs.forEach {
+            it.parts.forEach { part ->
+                part.collider.drawDebug(renderer)
+            }
+        }
+
+        arms.forEach {
+            it.parts.forEach { part ->
+                part.collider.drawDebug(renderer)
+            }
+        }
     }
 }

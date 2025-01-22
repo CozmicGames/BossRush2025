@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.Texture
@@ -11,7 +12,7 @@ import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean, val index: Int, texture: Texture, val partScale: Float, layer: Int) : EnemyPart("boss3arm${index}") {
+open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean, val index: Int, texture: Texture, val partScale: Float, layer: Int) : EnemyPart("boss3arm${index}"), ProjectileSource {
     override val renderLayer = layer
 
     override val texture = texture.slice()
@@ -23,6 +24,11 @@ open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean,
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), arm)
 
     override val flipX get() = !flip
+
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
     private val halfWidth get() = width * 0.5f
 

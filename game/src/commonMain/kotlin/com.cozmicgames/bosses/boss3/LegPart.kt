@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.Texture
@@ -11,7 +12,7 @@ import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val index: Int, texture: Texture, val partScale: Float, layer: Int) : EnemyPart("boss3leg${index}") {
+class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val index: Int, texture: Texture, val partScale: Float, layer: Int) : EnemyPart("boss3leg${index}"), ProjectileSource {
     override val renderLayer = layer
 
     override val texture = texture.slice()
@@ -24,9 +25,14 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
 
     override val flipX get() = !flip
 
-    private val halfWidth get() = width * 0.5f
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
-    private val halfHeight get() = height * 0.5f
+    val halfWidth get() = width * 0.5f
+
+    val halfHeight get() = height * 0.5f
 
     var legRotation = 0.0.degrees
 
@@ -48,9 +54,9 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
 
                 if (legRotation.degrees >= 0.0f) {
                     if (parent != null) {
-                        pivotX = parent.x + (parentCos * -halfWidth - parentSin * halfHeight) // Lower corner
-                        pivotY = parent.y + (parentSin * -halfWidth + parentCos * halfHeight)
-                        yOffset = -halfHeight
+                        pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * parent.halfHeight) // Lower corner
+                        pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * parent.halfHeight)
+                        yOffset = -parent.halfHeight
                     } else {
                         pivotX = leg.x
                         pivotY = leg.y
@@ -58,9 +64,9 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
                     }
                 } else {
                     if (parent != null) {
-                        pivotX = parent.x + (parentCos * -halfWidth - parentSin * -halfHeight) // Upper corner
-                        pivotY = parent.y + (parentSin * -halfWidth + parentCos * -halfHeight)
-                        yOffset = halfHeight
+                        pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * -parent.halfHeight) // Upper corner
+                        pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * -parent.halfHeight)
+                        yOffset = parent.halfHeight
                     } else {
                         pivotX = leg.x
                         pivotY = leg.y
@@ -72,9 +78,9 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
 
                 if (legRotation.degrees >= 0.0f) {
                     if (parent != null) {
-                        pivotX = parent.x + (parentCos * halfWidth - parentSin * -halfHeight) // Lower corner
-                        pivotY = parent.y + (parentSin * halfWidth + parentCos * -halfHeight)
-                        yOffset = halfHeight
+                        pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * -parent.halfHeight) // Lower corner
+                        pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * -parent.halfHeight)
+                        yOffset = parent.halfHeight
                     } else {
                         pivotX = leg.x
                         pivotY = leg.y
@@ -82,9 +88,9 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
                     }
                 } else {
                     if (parent != null) {
-                        pivotX = parent.x + (parentCos * halfWidth - parentSin * halfHeight) // Upper corner
-                        pivotY = parent.y + (parentSin * halfWidth + parentCos * halfHeight)
-                        yOffset = -halfHeight
+                        pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * parent.halfHeight) // Upper corner
+                        pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * parent.halfHeight)
+                        yOffset = -parent.halfHeight
                     } else {
                         pivotX = leg.x
                         pivotY = leg.y

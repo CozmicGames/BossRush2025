@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.Angle
@@ -10,7 +11,7 @@ import kotlin.math.pow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource {
+class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource, ProjectileSource {
     override val id = "boss3arm$index"
 
     var x = 0.0f
@@ -25,6 +26,13 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
+
+    val claw get() = parts[1] as Claw
+
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
     init {
         val parts = arrayListOf<ArmPart>()

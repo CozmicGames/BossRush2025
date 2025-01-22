@@ -3,16 +3,18 @@ package com.cozmicgames.bosses.boss3
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
+import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
+import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(val boss: Boss3, private val heartScale: Float, layer: Int) : EnemyPart("boss3heart"), Hittable, PlayerDamageSource {
+class Heart(val boss: Boss3, private val heartScale: Float, layer: Int) : EnemyPart("boss3heart"), Hittable, PlayerDamageSource, ProjectileSource {
     override val canHit get() = boss.isParalyzed
 
     override val renderLayer = layer
@@ -27,6 +29,11 @@ class Heart(val boss: Boss3, private val heartScale: Float, layer: Int) : EnemyP
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
+
+    override val muzzleX = 0.0f
+    override val muzzleY = 0.0f
+    override val muzzleRotation = 0.0.degrees
+    override val projectileSourceId = "boss3"
 
     private var size = 1.0f
     private var timer = 0.0.seconds
