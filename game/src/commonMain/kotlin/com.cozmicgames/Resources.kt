@@ -108,6 +108,19 @@ class Resources : Releasable {
     lateinit var boss2bodySlices: Array<TextureSlice>
     lateinit var boss2tail: Texture
 
+    /*
+    * Boss 3 - Crab
+     */
+    lateinit var boss3preview: Texture
+    lateinit var boss3head: Texture
+    lateinit var boss3arm: Texture
+    lateinit var boss3clawBase: Texture
+    lateinit var boss3clawUpper: Texture
+    lateinit var boss3clawLower: Texture
+    lateinit var boss3legUpper: Texture
+    lateinit var boss3legLower: Texture
+    lateinit var boss3foot: Texture
+
     suspend fun load(context: Context) {
         font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
         buttonNormal = context.resourcesVfs["textures/ui/button_normal.png"].readTexture()
@@ -180,13 +193,23 @@ class Resources : Releasable {
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
         boss1tentacleSlices = boss1tentacle.slice(boss1tentacle.width / Constants.BOSS1_TENTACLE_PARTS, boss1tentacle.height)[0]
 
-        //boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
+        boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
         boss2head = context.resourcesVfs["textures/boss2/head.png"].readTexture()
         boss2sword = context.resourcesVfs["textures/boss2/sword.png"].readTexture()
         boss2fin = context.resourcesVfs["textures/boss2/fin.png"].readTexture()
         boss2body = context.resourcesVfs["textures/boss2/body.png"].readTexture()
         boss2bodySlices = boss2body.slice(boss2body.width / Constants.BOSS2_BODY_PARTS, boss2body.height)[0]
         boss2tail = context.resourcesVfs["textures/boss2/tail.png"].readTexture()
+
+        boss3preview = context.resourcesVfs["textures/boss3/preview.png"].readTexture()
+        boss3head = context.resourcesVfs["textures/boss3/head.png"].readTexture()
+        boss3arm = context.resourcesVfs["textures/boss3/arm.png"].readTexture()
+        boss3clawBase = context.resourcesVfs["textures/boss3/claw_base.png"].readTexture()
+        boss3clawUpper = context.resourcesVfs["textures/boss3/claw_upper.png"].readTexture()
+        boss3clawLower = context.resourcesVfs["textures/boss3/claw_lower.png"].readTexture()
+        boss3legUpper = context.resourcesVfs["textures/boss3/leg_upper.png"].readTexture()
+        boss3legLower = context.resourcesVfs["textures/boss3/leg_lower.png"].readTexture()
+        boss3foot = context.resourcesVfs["textures/boss3/foot.png"].readTexture()
     }
 
     override fun release() {
@@ -245,12 +268,21 @@ class Resources : Releasable {
         boss1heart.release()
         boss1tentacle.release()
 
-        //boss2preview.release()
-        //boss2background.release()
+        boss2preview.release()
         boss2head.release()
         boss2sword.release()
         boss2fin.release()
         boss2body.release()
         boss2tail.release()
+
+        boss3preview.release()
+        boss3head.release()
+        boss3arm.release()
+        boss3clawBase.release()
+        boss3clawUpper.release()
+        boss3clawLower.release()
+        boss3legUpper.release()
+        boss3legLower.release()
+        boss3foot.release()
     }
 }

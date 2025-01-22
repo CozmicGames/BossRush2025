@@ -8,7 +8,7 @@ import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 
-class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("enemy2head"), Hittable, PlayerDamageSource, ProjectileSource {
+class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2head"), Hittable, PlayerDamageSource, ProjectileSource {
     override val canHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer

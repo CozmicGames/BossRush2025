@@ -13,7 +13,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(private val boss: Boss2, layer: Int) : EnemyPart("enemy2heart"), Hittable, PlayerDamageSource, ProjectileSource {
+class Heart(private val boss: Boss2, layer: Int) : EnemyPart("boss2heart"), Hittable, PlayerDamageSource, ProjectileSource {
     override val canHit get() = boss.isParalyzed
 
     override val renderLayer = layer

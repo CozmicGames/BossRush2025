@@ -4,8 +4,8 @@ import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.utils.Easing
-import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
+import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.VAlign
 import com.littlekt.math.clamp
 import kotlin.time.Duration
@@ -48,7 +48,8 @@ class FightStartMessage : GUIElement() {
 
         override fun update(delta: Duration): Stage {
             val factor = (timer / 0.8.seconds).toFloat().clamp(0.0f, 1.0f)
-            label.fontSize = 140.0f * Easing.QUAD_IN(factor)
+            label.fontSize = 600.0f * Easing.QUAD_IN(factor)
+            color.a = 0.7f * (1.0f - factor)
 
             timer += delta
 
@@ -66,7 +67,8 @@ class FightStartMessage : GUIElement() {
         }
     }
 
-    private val label = Label("Ready?", 0.1f, Color(1.0f, 1.0f, 1.0f, 0.7f))
+    private val color = MutableColor(1.0f, 1.0f, 1.0f, 0.7f)
+    private val label = Label("Ready?", 0.1f, color)
     private var stage: Stage? = Stage0()
     private var onFinish: () -> Unit = {}
     private var isAnimationStarted = false

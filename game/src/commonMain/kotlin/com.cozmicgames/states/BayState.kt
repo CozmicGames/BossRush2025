@@ -5,6 +5,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.bosses.TodoBossDesc
 import com.cozmicgames.bosses.boss1.Boss1Desc
 import com.cozmicgames.bosses.boss2.Boss2Desc
+import com.cozmicgames.bosses.boss3.Boss3Desc
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.*
 import kotlin.time.Duration
@@ -15,7 +16,7 @@ class BayState : GameState {
         private val bossDescriptors = arrayOf(
             Boss1Desc(),
             Boss2Desc(),
-            TodoBossDesc(),
+            Boss3Desc(),
             TodoBossDesc()
         )
     }

@@ -109,7 +109,7 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         val tentacles = arrayListOf<Tentacle>()
 
         repeat(8) {
-            val tentacle = Tentacle(this, it, it > 3, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it], TENTACLE_SCALES[it] * 0.8f)
+            val tentacle = Tentacle(this, it, it >= 4, TENTACLE_LAYERS[it], TENTACLE_ANGLES[it], TENTACLE_SCALES[it] * 0.8f)
             tentacles += tentacle
         }
 

@@ -7,7 +7,7 @@ import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.littlekt.graphics.slice
 
-class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("enemy2sword"), PlayerDamageSource, ProjectileSource {
+class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2sword"), PlayerDamageSource, ProjectileSource {
     override val renderLayer = layer
 
     override val width = Game.resources.boss2sword.width * scale
