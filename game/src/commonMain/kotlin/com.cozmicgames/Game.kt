@@ -17,9 +17,11 @@ import com.littlekt.log.Logger
 import com.littlekt.util.seconds
 import kotlin.js.Date
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 class Game(players: PlayerManager, context: Context) : ContextListener(context) {
     companion object {
+        var upTime = 0.0.seconds
         lateinit var context: Context
         lateinit var logger: Logger
         lateinit var players: PlayerManager
@@ -55,13 +57,15 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             g.resize(width, height)
         }
 
-        currentGameState = StartState()
+        currentGameState = SplashScreenState()
 
         var isFirstUpdate = true
 
         newSingleThreadAsyncContext()
 
         onUpdate { delta ->
+            upTime += delta
+
             events.processEvents()
 
             projectiles.update(delta)

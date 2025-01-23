@@ -22,7 +22,11 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
         SECONDARY
     }
 
-    var selectionState = SelectionState.UNSELECTED
+    var selectionState = when {
+        Game.players.getMyPlayer()?.primaryWeapon == weapon -> SelectionState.PRIMARY
+        Game.players.getMyPlayer()?.secondaryWeapon == weapon -> SelectionState.SECONDARY
+        else -> SelectionState.UNSELECTED
+    }
         set(value) {
             field = value
             if (value != SelectionState.UNSELECTED)

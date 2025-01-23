@@ -1,6 +1,8 @@
 package com.cozmicgames.graphics.ui
 
+import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.ui.elements.Image
 import com.cozmicgames.graphics.ui.elements.Label
 import com.littlekt.util.seconds
 import kotlin.time.Duration
@@ -22,15 +24,22 @@ class MessageBanner : GUIElement() {
             "Captain Fish Hook reporting for duty!",
             "Fishy business ahead!",
             "Fishy fishy fishy fish!",
-            "In the beginning, there were fish, now there are space fish!"
+            "In the beginning, there were fish, now there are space fish!",
+            "You spin me right round, space fish right round!"
         )
     }
 
+    private val background = Image(Game.resources.messageBannerBackground)
     private val messageLabel = Label("Welcome to the bay!", 32.0f)
     private var messageX = 0.0f
     private val possibleMessages = arrayListOf<String>()
 
     init {
+        background.getX = { x }
+        background.getY = { y }
+        background.getWidth = { width }
+        background.getHeight = { height }
+
         messageLabel.shadowOffsetX = 4.0f
         messageLabel.shadowOffsetY = -4.0f
         messageLabel.getX = { messageX }
@@ -50,6 +59,7 @@ class MessageBanner : GUIElement() {
             messageLabel.text = possibleMessages.removeAt(possibleMessages.indices.random())
         }
 
+        background.render(delta, renderer)
         renderer.pushScissor(x, y, width, height)
         messageLabel.render(delta, renderer)
         renderer.popScissor()

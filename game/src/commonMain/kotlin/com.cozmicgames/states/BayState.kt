@@ -9,6 +9,7 @@ import com.cozmicgames.bosses.boss3.Boss3Desc
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.*
+import com.cozmicgames.graphics.ui.elements.Label
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -28,6 +29,8 @@ class BayState : GameState {
 
     private val messageBanner = MessageBanner()
 
+    private val selectionLabel = Label("Select your trip!", 54.0f)
+
     private val selectionPosters = List(4) {
         SelectionPoster(bossDescriptors[it], it in Game.players.unlockedBossIndices) { returnState = it }
     }
@@ -40,21 +43,22 @@ class BayState : GameState {
         guiCamera = GUICamera()
 
         messageBanner.getX = { Game.graphics.width * 0.5f - messageBanner.width * 0.5f }
-        messageBanner.getY = { Game.graphics.height - 40.0f }
-        messageBanner.getWidth = { Game.graphics.width - 40.0f }
+        messageBanner.getY = { Game.graphics.height - 45.0f }
+        messageBanner.getWidth = { Game.graphics.width.toFloat() }
         messageBanner.getHeight = { 40.0f }
 
-        repeat(2) { yIndex ->
-            val posterY = 20.0f + (1 - yIndex) * (Constants.BOSS_SELECTION_POSTER_HEIGHT + 25.0f)
+        selectionLabel.getX = { Game.graphics.width * 0.5f - selectionLabel.width * 0.5f }
+        selectionLabel.getY = { 510.0f }
+        selectionLabel.getWidth = { Game.graphics.width.toFloat() }
+        selectionLabel.getHeight = { 54.0f }
+        selectionLabel.shadowOffsetX = 3.0f
+        selectionLabel.shadowOffsetY = -3.0f
 
-            repeat(2) { xIndex ->
-                val posterX = 20.0f + xIndex * (Constants.BOSS_SELECTION_POSTER_WIDTH + 25.0f)
+        val selectionPosterSpacing = (Game.graphics.width - selectionPosters.size * Constants.BOSS_SELECTION_POSTER_WIDTH) / (selectionPosters.size + 1)
 
-                selectionPosters[yIndex * 2 + xIndex].apply {
-                    x = posterX
-                    y = posterY
-                }
-            }
+        selectionPosters.forEachIndexed { index, poster ->
+            poster.getX = { selectionPosterSpacing + index * (Constants.BOSS_SELECTION_POSTER_WIDTH + selectionPosterSpacing) }
+            poster.getY = { 230.0f }
         }
 
         shop.getX = { Game.graphics.width - shop.width }
@@ -80,6 +84,8 @@ class BayState : GameState {
             background.render(delta, renderer)
 
             messageBanner.render(delta, renderer)
+
+            selectionLabel.render(delta, renderer)
 
             selectionPosters.forEach {
                 it.render(delta, renderer)

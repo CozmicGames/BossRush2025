@@ -14,6 +14,7 @@ class Resources : Releasable {
     /**
      * UI
      */
+    lateinit var logo: Texture
     lateinit var font: BitmapFont
     lateinit var buttonNormal: Texture
     lateinit var buttonNormalNinePatch: NinePatch
@@ -123,6 +124,7 @@ class Resources : Releasable {
     lateinit var boss3foot: Texture
 
     suspend fun load(context: Context) {
+        logo = context.resourcesVfs["textures/logo.png"].readTexture()
         font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
         buttonNormal = context.resourcesVfs["textures/ui/button_normal.png"].readTexture()
         buttonNormalNinePatch = NinePatch(buttonNormal, 16, 16, 16, 16)
@@ -215,6 +217,7 @@ class Resources : Releasable {
     }
 
     override fun release() {
+        logo.release()
         font.release()
         buttonNormal.release()
         buttonHovered.release()

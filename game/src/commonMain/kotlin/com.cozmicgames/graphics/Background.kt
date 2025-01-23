@@ -13,17 +13,11 @@ class Background(private val texture: Texture) {
         private const val PARALLAX_FACTOR = 0.3f
     }
 
-    private var scrollX = 0.0f
-    private var scrollY = 0.0f
-
     fun render(delta: Duration, renderer: Renderer) {
         val player = Game.players.getMyPlayer() ?: return
 
-        scrollX += delta.seconds * 25.0f
-        scrollY += delta.seconds * 10.0f
-
-        scrollX %= TILE_SIZE
-        scrollY %= TILE_SIZE
+        val scrollX = (Game.upTime.seconds * 25.0f) % TILE_SIZE
+        val scrollY = (Game.upTime.seconds * 10.0f) % TILE_SIZE
 
         renderer.submit(RenderLayers.BACKGROUND) { batch ->
             val camera = player.camera

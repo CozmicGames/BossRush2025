@@ -1,8 +1,11 @@
-package com.cozmicgames.graphics.ui
+package com.cozmicgames.graphics.ui.old
 
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.ui.CurrencyLabel
+import com.cozmicgames.graphics.ui.GUIElement
+import com.cozmicgames.graphics.ui.WeaponSlot
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.graphics.ui.elements.NinepatchImage
 import com.cozmicgames.weapons.Weapons
@@ -32,6 +35,9 @@ class ShopUI : GUIElement() {
     }
 
     init {
+        getWidth = { 290.0f }
+        getHeight = { 550.0f }
+
         weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
             lateinit var slot: WeaponSlot
             slot = WeaponSlot(weapon, index in Game.players.unlockedWeaponIndices) { selectionState ->
@@ -64,33 +70,39 @@ class ShopUI : GUIElement() {
             slot
         }
 
-        val spacing = (Game.graphics.width - (130.0f * weaponSlots.size)) / (weaponSlots.size + 1)
-
-        weaponSlots.forEachIndexed { index, slot ->
-            slot.getX = { spacing + index * (130.0f + spacing) }
-            slot.getY = { y + 10 }
-            slot.getWidth = { 130.0f }
-            slot.getHeight = { 130.0f }
+        repeat(3) {
+            val weaponSlot = weaponSlots[it]
+            weaponSlot.getX = { x + 10.0f }
+            weaponSlot.getY = { y + 290.0f - (it * (130.0f + 10.0f)) }
+            weaponSlot.getWidth = { 130.0f }
+            weaponSlot.getHeight = { 130.0f }
         }
 
-        walletLabel.getX = { 870.0f }
-        walletLabel.getY = { 160.0f }
+        repeat(3) {
+            val weaponSlot = weaponSlots[it + 3]
+            weaponSlot.getX = { x + 10.0f + 130.0f + 10.0f }
+            weaponSlot.getY = { y + 290.0f - (it * (130.0f + 10.0f)) }
+            weaponSlot.getWidth = { 130.0f }
+            weaponSlot.getHeight = { 130.0f }
+        }
 
-        walletBackground.getX = { 740.0f }
-        walletBackground.getY = { 154.0f }
-        walletBackground.getWidth = { 200.0f }
+        walletLabel.getX = { x + 180.0f }
+        walletLabel.getY = { y + 443.0f }
+
+        walletBackground.getX = { x + 50.0f }
+        walletBackground.getY = { y + 435.0f }
+        walletBackground.getWidth = { width - 100.0f }
         walletBackground.getHeight = { 38.0f }
 
-        shopLabel.getX = { spacing }
-        shopLabel.getY = { 170.0f }
-        shopLabel.getWidth = { 250.0f }
+        shopLabel.getX = { x + 145.0f }
+        shopLabel.getY = { y + 508.0f }
         shopLabel.shadowOffsetX = 3.0f
         shopLabel.shadowOffsetY = -3.0f
 
-        shopBackground.getX = { 0.0f }
-        shopBackground.getY = { 0.0f }
-        shopBackground.getWidth = { Game.graphics.width.toFloat() }
-        shopBackground.getHeight = { 210.0f }
+        shopBackground.getX = { x }
+        shopBackground.getY = { y }
+        shopBackground.getWidth = { 290.0f }
+        shopBackground.getHeight = { 550.0f }
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
