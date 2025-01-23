@@ -6,7 +6,7 @@ import com.cozmicgames.bosses.BossDesc
 import com.cozmicgames.utils.Difficulty
 
 class Boss3Desc : BossDesc {
-    override val name = "Crabulon"
+    override val name = "Gravicrab"
 
     override val reward = 400
 

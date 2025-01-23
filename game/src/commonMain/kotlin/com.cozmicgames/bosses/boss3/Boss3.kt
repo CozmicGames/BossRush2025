@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
+import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
@@ -17,7 +18,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
+class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource, AreaEffectSource {
     companion object {
         const val FULL_HEALTH = 4
 
@@ -99,6 +100,9 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+
+    override val effectSourceX get() = beak.x
+    override val effectSourceY get() = beak.y
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 

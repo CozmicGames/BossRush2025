@@ -69,6 +69,7 @@ class Boss3FightStage1 : Boss3FightStage() {
         StageAttack(0.2f, 3.0.seconds) { SpinAttack() },
         StageAttack(0.4f, 8.0.seconds) { GrabAttack() },
         StageAttack(0.3f, 6.0.seconds) { ShootAttack0() },
+        StageAttack(0.1f, 4.0.seconds) { GravityScreamAttack() },
     )
 }
 
@@ -83,6 +84,7 @@ class Boss3FightStage2 : Boss3FightStage() {
         StageAttack(0.3f, 6.0.seconds) { ShootAttack0() },
         StageAttack(0.2f, 6.0.seconds) { ShootAttack1() },
         StageAttack(0.3f, 5.0.seconds) { SpinShootAttack0() },
+        StageAttack(0.2f, 4.0.seconds) { GravityScreamAttack() },
     )
 }
 
@@ -97,6 +99,7 @@ class Boss3FightStage3 : Boss3FightStage() {
         StageAttack(0.15f, 6.0.seconds) { ShootAttack2() },
         StageAttack(0.3f, 5.0.seconds) { SpinShootAttack0() },
         StageAttack(0.15f, 5.0.seconds) { SpinShootAttack1() },
+        StageAttack(0.2f, 4.0.seconds) { GravityScreamAttack() },
     )
 }
 
@@ -111,5 +114,6 @@ class Boss3FightStage4 : Boss3FightStage() {
         StageAttack(0.3f, 6.0.seconds) { ShootAttack2() },
         StageAttack(0.1f, 5.0.seconds) { SpinShootAttack1() },
         StageAttack(0.3f, 5.0.seconds) { SpinShootAttack2() },
+        StageAttack(0.3f, 4.0.seconds) { GravityScreamAttack() },
     )
 }

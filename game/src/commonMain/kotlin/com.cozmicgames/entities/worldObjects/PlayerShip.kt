@@ -56,6 +56,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     private var impulseX = 0.0f
     private var impulseY = 0.0f
+    private var impulseSpin = 0.0f
 
     override var muzzleX = 0.0f
         private set
@@ -75,6 +76,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     private var isBeamProjectileFiring = false
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+        //TODO: Organize this into what is host only and what not
+
         invulnerabilityTimer -= delta
         if (invulnerabilityTimer < 0.0.seconds)
             invulnerabilityTimer = 0.0.seconds
@@ -85,6 +88,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         impulseX *= 1.0f - delta.seconds
         impulseY *= 1.0f - delta.seconds
+        impulseSpin *= 1.0f - delta.seconds * 1.05f
 
         if (impulseX.isFuzzyZero())
             impulseX = 0.0f
@@ -140,7 +144,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         x += moveX
         y += moveY
-        rotation += moveRotation
+        rotation += moveRotation + impulseSpin.degrees * 5.0f
 
         if (isGrabbed) {
             grabbedBy?.let {
@@ -171,6 +175,9 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         fireSecondaryCooldown -= delta
         if (fireSecondaryCooldown < 0.0.seconds)
             fireSecondaryCooldown = 0.0.seconds
+
+        if (fightStarted)
+            player.ship.checkCollision()
     }
 
     fun checkCollision() {
@@ -290,6 +297,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         impulseX = x / distance * strength * 0.15f
         impulseY = y / distance * strength * 0.15f
+        impulseSpin = strength * 0.15f
     }
 
     override fun onGrabbed(id: String) {
@@ -306,7 +314,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         this.impulseX = impulseX
         this.impulseY = impulseY
 
-        println("Player released with impulse: $impulseX, $impulseY")
+        val distance = sqrt(impulseX * impulseX + impulseY * impulseY)
+        impulseSpin = distance * 0.15f
     }
 
     fun onDeath() {

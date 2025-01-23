@@ -13,8 +13,8 @@ import kotlin.time.Duration.Companion.seconds
 class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource {
     override val id = "boss3leg$index"
 
-    var x = 0.0f
-    var y = 0.0f
+    override var x = 0.0f
+    override var y = 0.0f
     var rotation = 0.0.degrees
 
     val legAngle get() = rotation + baseRotation

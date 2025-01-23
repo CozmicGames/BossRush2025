@@ -30,14 +30,21 @@ class AreaEffectManager {
                 if (it.userData is Hittable) {
                     val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat() * 0.2f
 
+                    val dx = it.x - areaEffect.sourceX
+                    val dy = it.y - areaEffect.sourceY
+
                     when (areaEffect.type) {
-                        AreaEffectType.SHOCKWAVE -> Game.events.addSendEvent(Events.impulseHit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY, strength))
+                        AreaEffectType.SHOCKWAVE -> Game.events.addSendEvent(Events.impulseHit(it.userData.id, dx, dy, strength))
                         AreaEffectType.SHOCKWAVE_WITH_DAMAGE -> {
-                            Game.events.addSendEvent(Events.impulseHit(it.userData.id, it.x - areaEffect.sourceX, it.y - areaEffect.sourceY, strength))
+                            Game.events.addSendEvent(Events.impulseHit(it.userData.id, dx, dy, strength))
                             if (it !in areaEffect.hitColliders) {
                                 Game.events.addSendEvent(Events.hit(it.userData.id))
                                 areaEffect.hitColliders += it
                             }
+                        }
+
+                        AreaEffectType.GRAVITY_WAVE -> {
+                            Game.events.addSendEvent(Events.impulseHit(it.userData.id, -dx, -dy, strength))
                         }
                     }
                 }

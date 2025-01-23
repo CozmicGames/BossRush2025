@@ -13,8 +13,8 @@ import kotlin.time.Duration.Companion.seconds
 class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDamageSource {
     override val id = "boss2body"
 
-    var x = 0.0f
-    var y = 0.0f
+    override var x = 0.0f
+    override var y = 0.0f
     var rotation = 0.0.degrees
 
     val parts: List<BodyPart>

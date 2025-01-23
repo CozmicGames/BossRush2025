@@ -15,7 +15,7 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     var wallet = 1000
         private set
 
-    val unlockedBossIndices = hashSetOf(0, 1, 2, 3)
+    val unlockedBossIndices = hashSetOf(0, 1, 2)
 
     val unlockedWeaponIndices = hashSetOf(0)
 
@@ -44,8 +44,6 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     fun update(delta: Duration) {
         if (multiplayer.isHost) {
             for (player in playersInternal) {
-                player.ship.checkCollision()
-
                 player.state.setState("x", player.ship.x)
                 player.state.setState("y", player.ship.y)
                 player.state.setState("rotation", player.ship.rotation.degrees)

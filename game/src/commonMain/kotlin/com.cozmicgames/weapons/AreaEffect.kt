@@ -29,11 +29,13 @@ class AreaEffect(val fromSource: AreaEffectSource, val type: AreaEffectType, val
             AreaEffectGrowthType.NONE -> {}
             AreaEffectGrowthType.LINEAR -> radius += delta.seconds * growRate
             AreaEffectGrowthType.EXPONENTIAL -> radius += delta.seconds * growRate * radius
+            AreaEffectGrowthType.INVERSE_LINEAR -> radius -= delta.seconds * growRate
+            AreaEffectGrowthType.INVERSE_EXPONENTIAL -> radius -= delta.seconds * growRate * radius
         }
 
         (collider.shape as CircleCollisionShape).radius = radius
         collider.update(sourceX, sourceY)
 
-        return timer >= duration
+        return timer >= duration || radius <= 0.0f
     }
 }

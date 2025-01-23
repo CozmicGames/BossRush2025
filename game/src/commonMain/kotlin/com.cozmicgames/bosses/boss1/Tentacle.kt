@@ -14,8 +14,8 @@ import kotlin.time.Duration.Companion.seconds
 class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource {
     override val id = "boss1tentacle$index"
 
-    var x = 0.0f
-    var y = 0.0f
+    override var x = 0.0f
+    override var y = 0.0f
     var rotation = 0.0.degrees
 
     val tentacleAngle get() = rotation + baseRotation

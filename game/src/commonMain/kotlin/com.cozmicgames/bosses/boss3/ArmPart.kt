@@ -107,7 +107,7 @@ open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean,
             x = pivotX + armCos * xOffset - armSin * yOffset
             y = pivotY + armSin * xOffset + armCos * yOffset
 
-            (collider.shape as RectangleCollisionShape).angle = rotation
+            (collider.shape as? RectangleCollisionShape)?.angle = rotation
             collider.update(x, y)
 
             Game.players.setGlobalState("boss3arm${arm.index}part${index}X", x)

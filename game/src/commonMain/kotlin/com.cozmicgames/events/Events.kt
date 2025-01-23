@@ -1,7 +1,6 @@
 package com.cozmicgames.events
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.physics.Grabbable
 
 object Events {

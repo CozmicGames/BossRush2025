@@ -16,8 +16,8 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
 
     val otherArm get() = boss.arms[(index + 1) % 2]
 
-    var x = 0.0f
-    var y = 0.0f
+    override var x = 0.0f
+    override var y = 0.0f
     var rotation = 0.0.degrees
 
     val armAngle get() = rotation + baseRotation
@@ -29,7 +29,7 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 
-    val claw get() = parts[1] as Claw
+    val claw get() = parts[1] as? Claw ?: throw IllegalStateException("Claw not found")
 
     override val muzzleX = 0.0f
     override val muzzleY = 0.0f

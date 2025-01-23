@@ -3,6 +3,7 @@ package com.cozmicgames.states
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.bosses.BossDesc
+import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.PlayerCamera
 import com.cozmicgames.graphics.RenderLayers
@@ -38,6 +39,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
     private var fightDuration = 0.0.seconds
     private var fightStarted = false
     private var showResults = false
+    private val asteroids = AsteroidManager(difficulty)
     private var returnState: GameState = this
 
     override fun begin() {
@@ -46,10 +48,10 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         guiCamera = GUICamera()
         background = Background(Game.resources.background)
 
-        startFight(difficulty)
+        startFight(difficulty, false)
     }
 
-    private fun startFight(difficulty: Difficulty) {
+    private fun startFight(difficulty: Difficulty, isRetry: Boolean) {
         this.difficulty = difficulty
         fightDuration = 0.0.seconds
         resultPanel = null
@@ -62,6 +64,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         Game.physics.clear()
         Game.physics.width = 2500.0f
         Game.physics.height = 2500.0f
+
+        if (!isRetry)
+            asteroids.initialize()
 
         boss = desc.createBoss(difficulty)
         boss.addToWorld()
@@ -130,6 +135,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         if (fightStarted)
             boss.update(delta)
 
+        asteroids.update(delta, fightStarted)
         Game.world.update(delta, fightStarted)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
@@ -194,9 +200,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             pass.render(guiCamera.camera) { renderer: Renderer ->
                 when (resultPanel?.renderAndGetResultState(delta, renderer)) {
                     ResultPanel.ResultState.RETURN -> returnState = BayState()
-                    ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY)
-                    ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL)
-                    ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD)
+                    ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY, true)
+                    ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL, true)
+                    ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD, true)
                     else -> {}
                 }
             }

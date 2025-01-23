@@ -48,7 +48,7 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
         val blockingColliderX = x + blockingOffsetX * cos - blockingOffsetY * sin
         val blockingColliderY = y + blockingOffsetX * sin + blockingOffsetY * cos
 
-        (blockingCollider.shape as RectangleCollisionShape).angle = rotation
+        (blockingCollider.shape as? RectangleCollisionShape)?.angle = rotation
         blockingCollider.update(blockingColliderX, blockingColliderY)
 
         val colliderOffsetX = 0.0f
@@ -57,7 +57,7 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
         val colliderX = x + colliderOffsetX * cos - colliderOffsetY * sin
         val colliderY = y + colliderOffsetX * sin + colliderOffsetY * cos
 
-        (collider.shape as RectangleCollisionShape).angle = rotation
+        (collider.shape as? RectangleCollisionShape)?.angle = rotation
         collider.update(colliderX, colliderY)
     }
 

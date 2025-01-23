@@ -104,8 +104,8 @@ class FlyAttackBoss1BossMovement(private val playerX: Float, private val playerY
             val dx = playerX - boss.x
             val dy = playerY - boss.y
 
-            val targetX = playerX + dx * 2.0f
-            val targetY = playerY + dy * 2.0f
+            val targetX = playerX + dx * 1.1f
+            val targetY = playerY + dy * 1.1f
 
             destinationMovement = DestinationBossMovement(targetX, targetY) {
                 speedModifier = 1.0f

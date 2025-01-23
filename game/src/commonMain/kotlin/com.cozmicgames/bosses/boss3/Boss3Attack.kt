@@ -2,7 +2,11 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
+import com.cozmicgames.bosses.boss1.Boss1
 import com.cozmicgames.entities.worldObjects.PlayerShip
+import com.cozmicgames.weapons.AreaEffectGrowthType
+import com.cozmicgames.weapons.AreaEffectSourceType
+import com.cozmicgames.weapons.AreaEffectType
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -19,6 +23,19 @@ abstract class Boss3Attack : Attack() {
         legMovement?.let { movement.legMovement = it }
         armMovement?.let { movement.armMovement = it }
         beakMovement?.let { movement.beakMovement = it }
+    }
+}
+
+class GravityScreamAttack(): Boss3Attack() {
+    override val duration = 4.0.seconds
+
+    override val bossMovement = WiggleBoss3BossMovement()
+    override val legMovement = StretchOutLegMovement(0.1f)
+    override val armMovement = StretchOutArmMovement(0.1f)
+    override val beakMovement = ScreamBeakMovement()
+
+    override fun onStart(boss: Boss) {
+        Game.areaEffects.spawnEffect(boss as Boss3, AreaEffectType.GRAVITY_WAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.INVERSE_LINEAR, 600.0f, 70.0f, duration)
     }
 }
 

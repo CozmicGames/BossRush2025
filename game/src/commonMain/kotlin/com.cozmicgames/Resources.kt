@@ -137,7 +137,7 @@ class Resources : Releasable {
         resultBackground = context.resourcesVfs["textures/ui/result_background.png"].readTexture()
         resultBackgroundNinePatch = NinePatch(resultBackground, 32, 32, 32, 32)
         ratingBackground = context.resourcesVfs["textures/ui/rating_background.png"].readTexture()
-        ratingBackgroundNinePatch = NinePatch(ratingBackground, 18, 18, 18, 18)
+        ratingBackgroundNinePatch = NinePatch(ratingBackground, 32, 32, 32, 32)
         resultBanner = context.resourcesVfs["textures/ui/result_banner.png"].readTexture()
         returnIcon = context.resourcesVfs["textures/ui/return_icon.png"].readTexture()
         playIcon = context.resourcesVfs["textures/ui/play_icon.png"].readTexture()
