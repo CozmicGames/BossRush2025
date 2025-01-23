@@ -28,7 +28,7 @@ class AreaEffectManager {
 
             Game.physics.checkCollision(areaEffect.collider, filter) {
                 if (it.userData is Hittable) {
-                    val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat()
+                    val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat() * 0.2f
 
                     when (areaEffect.type) {
                         AreaEffectType.SHOCKWAVE -> Game.events.addSendEvent(Events.impulseHit(it.userData.id, areaEffect.sourceX, areaEffect.sourceY, strength))

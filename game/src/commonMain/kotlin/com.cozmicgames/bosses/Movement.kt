@@ -11,7 +11,7 @@ interface Movement {
 
     fun set(movement: Movement)
 
-    fun resetAfterAttack(boss: Boss) {}
+    fun resetAfterAttack(boss: Boss, attack: Attack) {}
 
     fun setToFail(boss: Boss) {}
 

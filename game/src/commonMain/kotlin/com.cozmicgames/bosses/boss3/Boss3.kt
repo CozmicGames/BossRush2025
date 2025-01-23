@@ -2,7 +2,6 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
-import com.cozmicgames.bosses.boss1.Boss1
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
@@ -10,7 +9,7 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.math.geom.Angle
+import com.littlekt.input.Key
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -110,11 +109,11 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
 
     override val movementController = Boss3MovementController(this)
 
-    private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
-    private val legs: List<Leg>
-    private val arms: List<Arm>
-    private val heart = Heart(this, HEART_SCALE, HEART_LAYER)
-    private val beak = Beak(this, BEAK_SCALE, BEAK_LAYER)
+    val head = Head(this, HEAD_SCALE, HEAD_LAYER)
+    val legs: List<Leg>
+    val arms: List<Arm>
+    val heart = Heart(this, HEART_SCALE, HEART_LAYER)
+    val beak = Beak(this, BEAK_SCALE, BEAK_LAYER)
 
     init {
         val legs = arrayListOf<Leg>()
@@ -223,6 +222,9 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
 
     override fun update(delta: Duration) {
         if (Game.players.isHost) {
+            if (Game.input.isKeyJustPressed(Key.H))
+                movementController.performAttack(GrabAttack())
+
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
                 isInvulnerableTimer = 0.0.seconds
@@ -333,6 +335,14 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
 
         if (Game.players.isHost) {
+            legs.forEach {
+                it.paralyze(PARALYZED_TIME, false)
+            }
+
+            arms.forEach {
+                it.paralyze(PARALYZED_TIME, false)
+            }
+
             movementController.onParalyze()
             isParalyzedTimer = PARALYZED_TIME
         }
@@ -354,6 +364,14 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource {
             } else {
                 isInvulnerableTimer = INVULNERABLE_TIME
                 isParalyzedTimer = 0.0.seconds
+            }
+
+            legs.forEach {
+                it.unparalyze()
+            }
+
+            arms.forEach {
+                it.unparalyze()
             }
         }
     }

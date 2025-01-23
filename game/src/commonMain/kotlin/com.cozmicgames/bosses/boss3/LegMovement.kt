@@ -65,29 +65,6 @@ class StretchDownLegMovement(val stretchFactor: Float) : LegMovement {
     }
 }
 
-class StretchOutLegMovement(val stretchFactor: Float) : LegMovement {
-    companion object {
-        private val TARGET_ANGLES = arrayOf(
-            35.0.degrees,
-            (0.0).degrees,
-            (-35.0).degrees,
-            35.0.degrees,
-            (0.0).degrees,
-            (-35.0).degrees
-        )
-    }
-
-    override fun updateParts(delta: Duration, leg: Leg) {
-        val targetAngle = TARGET_ANGLES[leg.index]
-
-        leg.parts[0].legRotation = lerpAngle(leg.parts[0].legRotation, targetAngle, if (leg.isParalyzed) stretchFactor * LEG_PARALYZED_FACTOR else stretchFactor)
-
-        for (i in 1 until leg.parts.size) {
-            leg.parts[i].legRotation = lerpAngle(leg.parts[i].legRotation, 0.0.degrees, if (leg.isParalyzed) stretchFactor * LEG_PARALYZED_FACTOR else stretchFactor)
-        }
-    }
-}
-
 class HangLegMovement : LegMovement {
     override fun updateParts(delta: Duration, leg: Leg) {
         leg.parts.forEachIndexed { index, part ->
@@ -98,7 +75,7 @@ class HangLegMovement : LegMovement {
     }
 }
 
-class DefendLegMovement(val defendFactor: Float = 0.1f) : LegMovement {
+class StretchOutLegMovement(val factor: Float) : LegMovement {
     companion object {
         private val TARGET_ANGLES = arrayOf(
             35.0.degrees,
@@ -112,9 +89,30 @@ class DefendLegMovement(val defendFactor: Float = 0.1f) : LegMovement {
 
     override fun updateParts(delta: Duration, leg: Leg) {
         leg.parts.forEachIndexed { index, part ->
-            val defendAngleStrength = (1.0f - index.toFloat() / leg.parts.size.toFloat()).pow(4.0f)
+            val stretchAngleStrength = (1.0f - index.toFloat() / leg.parts.size.toFloat()).pow(4.0f)
+            val stretchAngle = TARGET_ANGLES[leg.index] * stretchAngleStrength
+            part.legRotation = lerpAngle(part.legRotation, stretchAngle, if (leg.isParalyzed) factor * LEG_PARALYZED_FACTOR else factor)
+        }
+    }
+}
+
+class DefendLegMovement(val smoothFactor: Float = 0.1f) : LegMovement {
+    companion object {
+        private val TARGET_ANGLES = arrayOf(
+            (-40.0).degrees,
+            (-50.0).degrees,
+            (-60.0).degrees,
+            (-40.0).degrees,
+            (-50.0).degrees,
+            (-60.0).degrees,
+        )
+    }
+
+    override fun updateParts(delta: Duration, leg: Leg) {
+        leg.parts.forEachIndexed { index, part ->
+            val defendAngleStrength = (1.0f - index.toFloat() / leg.parts.size.toFloat())
             val defendAngle = TARGET_ANGLES[leg.index] * defendAngleStrength
-            part.legRotation = lerpAngle(part.legRotation, defendAngle, if (leg.isParalyzed) defendFactor * LEG_PARALYZED_FACTOR else defendFactor)
+            part.legRotation = lerpAngle(part.legRotation, defendAngle, if (leg.isParalyzed) smoothFactor * LEG_PARALYZED_FACTOR else smoothFactor)
         }
     }
 }

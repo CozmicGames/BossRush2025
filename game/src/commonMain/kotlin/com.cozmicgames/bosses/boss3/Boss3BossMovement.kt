@@ -34,6 +34,16 @@ class IdleBoss3BossMovement : BossMovement {
     }
 }
 
+class AimBoss3BossMovement(private val targetX: Float, private val targetY: Float) : BossMovement {
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        boss as? Boss3 ?: throw IllegalArgumentException("Boss must be a Boss3")
+
+        val dx = targetX - boss.x
+        val dy = targetY - boss.y
+        transform.targetRotation = atan(dy / dx).radians
+    }
+}
+
 class WiggleBoss3BossMovement : BossMovement {
     private var timer = 0.0.seconds
 
@@ -55,19 +65,30 @@ class SpinAttackBoss3BossMovement : BossMovement {
 }
 
 class GrabAttackBoss3BossMovement(private val ship: PlayerShip) : BossMovement {
-    private var timer = 0.0.seconds
-
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
-        timer += delta
-        transform.targetX = ship.x
-        transform.targetY = ship.y + 200.0f // Above the ship
-        transform.targetRotation = atan((transform.targetY - boss.y) / (transform.targetX - boss.x)).radians - 90.0.degrees
+        boss as? Boss3 ?: throw IllegalArgumentException("Boss must be a Boss3")
+
+        val dx0 = boss.arms[0].claw.x - ship.x
+        val dy0 = boss.arms[0].claw.y - ship.y
+        val distance0 = sqrt(dx0 * dx0 + dy0 * dy0)
+
+        val dx1 = boss.arms[1].claw.x - ship.x
+        val dy1 = boss.arms[1].claw.y - ship.y
+        val distance1 = sqrt(dx1 * dx1 + dy1 * dy1)
+
+        if (distance0 < distance1) {
+            transform.targetX = ship.x - (boss.arms[0].claw.x - boss.x)
+            transform.targetY = ship.y - (boss.arms[0].claw.y - boss.y)
+        } else {
+            transform.targetX = ship.x - (boss.arms[1].claw.x - boss.x)
+            transform.targetY = ship.y - (boss.arms[1].claw.y - boss.y)
+        }
     }
 }
 
 class FollowPlayerBoss3BossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
     companion object {
-        private const val TARGET_DISTANCE = 500.0f
+        private const val TARGET_DISTANCE = 400.0f
     }
 
     private var timer = 0.0.seconds

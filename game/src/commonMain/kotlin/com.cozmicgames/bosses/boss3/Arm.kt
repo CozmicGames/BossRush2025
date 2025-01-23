@@ -14,6 +14,8 @@ import kotlin.time.Duration.Companion.seconds
 class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource, ProjectileSource {
     override val id = "boss3arm$index"
 
+    val otherArm get() = boss.arms[(index + 1) % 2]
+
     var x = 0.0f
     var y = 0.0f
     var rotation = 0.0.degrees

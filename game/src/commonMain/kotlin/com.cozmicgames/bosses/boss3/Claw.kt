@@ -1,25 +1,20 @@
 package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.events.Events
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Grabbable
 import com.cozmicgames.physics.GrabbingObject
-import com.littlekt.graphics.Color
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.sin
 import com.littlekt.math.geom.sine
-import com.littlekt.util.seconds
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Float, layer: Int) : ArmPart(arm, parent, flip, index, Game.resources.boss3clawBase, partScale, layer), ProjectileSource, GrabbingObject {
     companion object {
-        private val MAX_GRAB_TIME = 3.0.seconds
         private val GRAB_COOLDOWN = 2.0.seconds
     }
 
@@ -56,10 +51,11 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
     val lowerClawPart = ClawPart(this, flip, false, partScale, layer)
 
     var clawAngle = 0.0.degrees
+    var hasGrabbedObject = false
+        private set
 
-    val grabCollider = Collider(CircleCollisionShape(height * 0.5f * 1.2f), null)
+    val grabCollider = Collider(CircleCollisionShape(height * 0.5f * 1.1f), null)
     private var grabbedObject: Grabbable? = null
-    private var grabTimer = 0.0.seconds
     private var grabCooldown = 0.0.seconds
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
@@ -81,40 +77,41 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
         grabRotation = rotation
 
         grabCollider.update(grabX, grabY)
+    }
 
-        if (grabbedObject == null) {
-            if (grabCooldown <= 0.0.seconds) {
-                var closestGrabbable: Grabbable? = null
-                var closestDistance = Float.MAX_VALUE
+    fun tryGrabObject(): Boolean {
+        if (hasGrabbedObject || grabCooldown > 0.0.seconds)
+            return false
 
-                Game.physics.checkCollision(grabCollider) {
-                    if (it.userData is Grabbable) {
-                        val dx = it.x - collider.x
-                        val dy = it.y - collider.y
-                        val distance = dx * dx + dy * dy
+        var closestGrabbable: Grabbable? = null
+        var closestDistance = Float.MAX_VALUE
 
-                        if (distance < closestDistance) {
-                            closestGrabbable = it.userData
-                            closestDistance = distance
-                        }
-                    }
-                }
+        Game.physics.checkCollision(grabCollider) {
+            if (it.userData is Grabbable) {
+                val dx = it.x - collider.x
+                val dy = it.y - collider.y
+                val distance = dx * dx + dy * dy
 
-                closestGrabbable?.let {
-                    grabbedObject = it
-                    Game.events.addSendEvent(Events.grab(it.id, grabbingId))
-                    grabTimer = MAX_GRAB_TIME
+                if (distance < closestDistance) {
+                    closestGrabbable = it.userData
+                    closestDistance = distance
                 }
             }
-        } else {
-            grabTimer -= delta
-            if (grabTimer <= 0.0.seconds) {
-                grabbedObject?.let {
-                    Game.events.addSendEvent(Events.release(it.id))
-                }
-                grabbedObject = null
-                grabCooldown = GRAB_COOLDOWN
-            }
+        }
+
+        closestGrabbable?.let {
+            grabbedObject = it
+            Game.events.addSendEvent(Events.grab(it.id, grabbingId))
+        }
+
+        return closestGrabbable != null
+    }
+
+    fun releaseGrabbedObject(impulseX: Float, impulseY: Float) {
+        grabbedObject?.let {
+            Game.events.addSendEvent(Events.release(it.id, impulseX, impulseY))
+            grabbedObject = null
+            grabCooldown = GRAB_COOLDOWN
         }
     }
 

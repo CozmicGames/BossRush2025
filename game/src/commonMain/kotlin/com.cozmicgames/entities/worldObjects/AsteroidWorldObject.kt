@@ -5,11 +5,12 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
+import com.cozmicgames.utils.Difficulty
 import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
-class AsteroidWorldObject(index: Int, private val directionX: Float, private val directionY: Float, private val speed: Float) : WorldObject("asteroid$index") {
+class AsteroidWorldObject(index: Int, private val directionX: Float, private val directionY: Float, private val speed: Float, private val difficulty: Difficulty) : WorldObject("asteroid$index") {
     companion object {
         private const val MIN_SIZE = 32.0f
         private const val MAX_SIZE = 128.0f
@@ -34,5 +35,24 @@ class AsteroidWorldObject(index: Int, private val directionX: Float, private val
         renderer.submit(RenderLayers.ASTEROIDS_BEGIN) {
             it.draw(Game.resources.asteroid0, x, y, size * 0.5f, size * 0.5f, width = size, height = size, rotation = rotation)
         }
+    }
+
+    override fun onAddToWorld() {
+        Game.world.add(this)
+    }
+
+    override fun onAddToPhysics() {
+        if (difficulty == Difficulty.EASY)
+            return
+
+        Game.physics.addCollider(collider)
+    }
+
+    override fun onRemoveFromWorld() {
+        Game.world.remove(this)
+    }
+
+    override fun onRemoveFromPhysics() {
+        Game.physics.removeCollider(collider)
     }
 }

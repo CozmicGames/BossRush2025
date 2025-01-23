@@ -54,6 +54,7 @@ class Resources : Releasable {
     lateinit var scattergunPreview: Texture
     lateinit var baitblasterPreview: Texture
     lateinit var currencyIcon: Texture
+    lateinit var messageBannerBackground: Texture
 
     lateinit var debug: Texture
     lateinit var debugNinePatch: NinePatch
@@ -134,7 +135,7 @@ class Resources : Releasable {
         resultBackground = context.resourcesVfs["textures/ui/result_background.png"].readTexture()
         resultBackgroundNinePatch = NinePatch(resultBackground, 32, 32, 32, 32)
         ratingBackground = context.resourcesVfs["textures/ui/rating_background.png"].readTexture()
-        ratingBackgroundNinePatch = NinePatch(ratingBackground, 16, 16, 16, 16)
+        ratingBackgroundNinePatch = NinePatch(ratingBackground, 18, 18, 18, 18)
         resultBanner = context.resourcesVfs["textures/ui/result_banner.png"].readTexture()
         returnIcon = context.resourcesVfs["textures/ui/return_icon.png"].readTexture()
         playIcon = context.resourcesVfs["textures/ui/play_icon.png"].readTexture()
@@ -162,6 +163,7 @@ class Resources : Releasable {
         scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
         baitblasterPreview = context.resourcesVfs["textures/weapons/baitblaster_preview.png"].readTexture()
         currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
+        messageBannerBackground = context.resourcesVfs["textures/ui/message_banner_background.png"].readTexture()
 
         debug = context.resourcesVfs["textures/ui/debug.png"].readTexture()
         debugNinePatch = NinePatch(debug, 4, 4, 4, 4)
@@ -240,6 +242,7 @@ class Resources : Releasable {
         scattergunPreview.release()
         baitblasterPreview.release()
         currencyIcon.release()
+        messageBannerBackground.release()
 
         debug.release()
 

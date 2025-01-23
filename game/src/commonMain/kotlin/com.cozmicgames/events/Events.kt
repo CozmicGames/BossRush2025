@@ -60,6 +60,7 @@ object Events {
             event.startsWith("release") -> {
                 val data = event.substringAfter(":")
                 val parts = data.split(",")
+
                 if (parts.size == 3) {
                     val id = parts[0]
                     val impulseX = parts[1].toFloatOrNull()

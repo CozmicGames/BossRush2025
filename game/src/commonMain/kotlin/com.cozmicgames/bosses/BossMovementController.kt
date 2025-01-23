@@ -15,7 +15,9 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
 
     val isAttacking get() = currentAttack != null
 
-    private var currentAttack: Attack? = null
+    var currentAttack: Attack? = null
+        private set
+
     private val transform = BossTransform()
     private var currentStage: BossStage = startStage
 
@@ -27,7 +29,7 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
 
         attack.afterAttack {
             movement.set(previousMovement)
-            movement.resetAfterAttack(boss)
+            movement.resetAfterAttack( boss, attack)
             onDone()
         }
 
@@ -35,8 +37,9 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
     }
 
     fun cancelAttack(runAfterAttackListeners: Boolean) {
-        currentAttack?.cancel(runAfterAttackListeners)
+        val attack = currentAttack
         currentAttack = null
+        attack?.cancel(runAfterAttackListeners)
     }
 
     fun onParalyze() {

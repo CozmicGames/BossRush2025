@@ -1,9 +1,6 @@
 package com.cozmicgames.bosses.boss1
 
-import com.cozmicgames.bosses.Boss
-import com.cozmicgames.bosses.BossMovement
-import com.cozmicgames.bosses.Movement
-import com.cozmicgames.bosses.ParalyzedBossMovement
+import com.cozmicgames.bosses.*
 
 class Boss1Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss1BossMovement()
@@ -18,7 +15,7 @@ class Boss1Movement : Movement {
         }
     }
 
-    override fun resetAfterAttack(boss: Boss) {
+    override fun resetAfterAttack(boss: Boss, attack: Attack) {
         tentacleMovement.reset()
     }
 

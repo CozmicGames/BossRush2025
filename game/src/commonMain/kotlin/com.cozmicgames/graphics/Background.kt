@@ -2,8 +2,10 @@ package com.cozmicgames.graphics
 
 import com.cozmicgames.Game
 import com.littlekt.graphics.Texture
+import com.littlekt.util.seconds
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.time.Duration
 
 class Background(private val texture: Texture) {
     companion object {
@@ -11,8 +13,17 @@ class Background(private val texture: Texture) {
         private const val PARALLAX_FACTOR = 0.3f
     }
 
-    fun render(renderer: Renderer) {
+    private var scrollX = 0.0f
+    private var scrollY = 0.0f
+
+    fun render(delta: Duration, renderer: Renderer) {
         val player = Game.players.getMyPlayer() ?: return
+
+        scrollX += delta.seconds * 25.0f
+        scrollY += delta.seconds * 10.0f
+
+        scrollX %= TILE_SIZE
+        scrollY %= TILE_SIZE
 
         renderer.submit(RenderLayers.BACKGROUND) { batch ->
             val camera = player.camera
@@ -28,7 +39,7 @@ class Background(private val texture: Texture) {
 
             repeat(tilesX) { xx ->
                 repeat(tilesY) { yy ->
-                    batch.draw(texture, alignedStartX + xx * TILE_SIZE, alignedStartY + yy * TILE_SIZE, width = TILE_SIZE, height = TILE_SIZE)
+                    batch.draw(texture, scrollX + alignedStartX + xx * TILE_SIZE, scrollY + alignedStartY + yy * TILE_SIZE, width = TILE_SIZE, height = TILE_SIZE)
                 }
             }
         }

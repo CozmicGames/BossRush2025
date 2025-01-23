@@ -154,7 +154,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         val pass = Game.graphics.beginMainRenderPass()
 
         pass.render(playerCamera.camera) { renderer: Renderer ->
-            background.render(renderer)
+            background.render(delta, renderer)
 
             Game.world.render(renderer)
 
@@ -172,9 +172,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
                 fightStartMessage?.render(delta, renderer)
             }
 
-        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-            boss.drawDebug(renderer)
-        }
+        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+        //    boss.drawDebug(renderer)
+        //}
 
         if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->

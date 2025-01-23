@@ -40,7 +40,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
-    private var isGrabbed = false
+    override var isGrabbed = false
+
     private var grabbedBy: GrabbingObject? = null
     private var grabRotation = 0.0.degrees
 
@@ -82,8 +83,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         var deltaY = impulseY * delta.seconds
         var deltaRotation = 0.0f
 
-        impulseX *= 0.9f
-        impulseY *= 0.9f
+        impulseX *= 1.0f - delta.seconds
+        impulseY *= 1.0f - delta.seconds
 
         if (impulseX.isFuzzyZero())
             impulseX = 0.0f
@@ -191,8 +192,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
                     Game.events.addSendEvent(Events.hit(projectileSourceId))
 
-                    val impulseX = x - it.userData.damageSourceX
-                    val impulseY = y - it.userData.damageSourceY
+                    val impulseX = (x - it.userData.damageSourceX) * 0.05f
+                    val impulseY = (y - it.userData.damageSourceY) * 0.05f
 
                     Game.events.addSendEvent(Events.impulseHit(projectileSourceId, impulseX, impulseY, 20.0f))
                 }
@@ -304,6 +305,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
         this.impulseX = impulseX
         this.impulseY = impulseY
+
+        println("Player released with impulse: $impulseX, $impulseY")
     }
 
     fun onDeath() {
