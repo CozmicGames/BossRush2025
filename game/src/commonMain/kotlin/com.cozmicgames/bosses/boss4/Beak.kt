@@ -8,7 +8,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Beak(private val boss: Boss4, val scale: Float, layer: Int): PlayerDamageSource {
+class Beak(val boss: Boss4, val scale: Float, layer: Int): PlayerDamageSource {
     override val id = "boss1beak"
 
     val leftBeak = BeakPart(this, true, layer)

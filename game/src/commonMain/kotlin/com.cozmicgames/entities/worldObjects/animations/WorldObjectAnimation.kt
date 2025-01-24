@@ -18,14 +18,16 @@ abstract class WorldObjectAnimation(val duration: Duration, val startColor: Colo
 
     abstract fun getFactor(progress: Float): Float
 
-    fun update(delta: Duration): Boolean {
+    fun update(delta: Duration, baseColor: Color): Boolean {
         timer += delta
 
         val factor = getFactor(timer.seconds / duration.seconds)
 
-        startColor.mix(Color.WHITE, factor, color)
+        startColor.mix(baseColor, factor, color)
         scale = startScale + (1.0f - startScale) * factor
 
         return timer >= duration
     }
 }
+
+

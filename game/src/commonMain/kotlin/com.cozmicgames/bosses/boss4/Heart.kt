@@ -25,6 +25,8 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
 
     override val texture = Game.resources.boss1heart.slice()
 
+    override val baseColor get() = boss.camouflageColor
+
     override val flipY = true
 
     override val damageSourceX get() = boss.x

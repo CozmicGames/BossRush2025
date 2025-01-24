@@ -6,6 +6,7 @@ import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
+import com.littlekt.graphics.Color
 import com.littlekt.graphics.slice
 
 class Head(private val boss: Boss4, headScale: Float, layer: Int) : EnemyPart("boss4head"), Hittable, PlayerDamageSource {
@@ -20,6 +21,8 @@ class Head(private val boss: Boss4, headScale: Float, layer: Int) : EnemyPart("b
     override val height = Game.resources.boss4head.height * headScale
 
     override val texture = Game.resources.boss4head.slice()
+
+    override val baseColor get() = boss.camouflageColor
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

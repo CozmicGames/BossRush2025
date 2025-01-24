@@ -19,6 +19,7 @@ abstract class WorldObject(val id: String) {
     open val collider: Collider? = null
 
     private val animations = arrayListOf<WorldObjectAnimation>()
+    open val baseColor: Color = Color.WHITE
     val color = MutableColor(Color.WHITE)
     var scale = 1.0f
 
@@ -26,7 +27,7 @@ abstract class WorldObject(val id: String) {
         val animationsToRemove = arrayListOf<WorldObjectAnimation>()
 
         animations.forEach {
-            if (it.update(delta))
+            if (it.update(delta, baseColor))
                 animationsToRemove += it
         }
 
@@ -44,7 +45,7 @@ abstract class WorldObject(val id: String) {
                 scale *= animations[i].scale
             }
         } else {
-            color.set(Color.WHITE)
+            color.set(baseColor)
             scale = 1.0f
         }
 

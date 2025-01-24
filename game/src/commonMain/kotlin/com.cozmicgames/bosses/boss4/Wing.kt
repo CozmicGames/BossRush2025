@@ -23,6 +23,8 @@ class Wing(private val boss: Boss4, left: Boolean, wingScale: Float, layer: Int)
 
     override val texture = Game.resources.boss4wing.slice()
 
+    override val baseColor get() = boss.camouflageColor
+
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 

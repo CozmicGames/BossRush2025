@@ -6,10 +6,7 @@ import com.cozmicgames.utils.lerp
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
 import com.littlekt.util.seconds
-import kotlin.math.atan
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -28,8 +25,11 @@ class IdleBoss4BossMovement : BossMovement {
         }
 
         timer += delta
-        transform.targetRotation = 10.0.degrees * sin(timer.seconds * 2.0)
-        transform.targetX = centerX + 100.0f * cos(timer.seconds)
-        transform.targetY = centerY + 100.0f * sin(timer.seconds)
+        transform.targetX = centerX + 600.0f * cos(timer.seconds)
+        transform.targetY = centerY + 600.0f * sin(timer.seconds)
+        transform.targetRotation = timer.seconds.radians - 30.0.degrees * (sin(timer.seconds * 3.0f) * 0.5f + 0.5f)
+
+
+        //transform.targetRotation = atan2((transform.targetY - boss.y), (transform.targetX - boss.x)).radians
     }
 }

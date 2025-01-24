@@ -10,6 +10,8 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.utils.Difficulty
+import com.littlekt.graphics.Color
+import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
@@ -61,6 +63,9 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
     override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
+
+    val camouflageColor = MutableColor(Color.WHITE)
+    var camouflageFactor = 0.8f
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val eyes = Eyes(this, EYES_SCALE, EYES_LAYER)
@@ -157,6 +162,8 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             isParalyzedTimer -= delta
             if (isParalyzedTimer <= 0.0.seconds)
                 isParalyzedTimer = 0.0.seconds
+
+            Color.WHITE.mix(Color.CLEAR, camouflageFactor, camouflageColor)
 
             movementController.update(delta)
             beak.update(delta, movementController.movement.beakMovement)

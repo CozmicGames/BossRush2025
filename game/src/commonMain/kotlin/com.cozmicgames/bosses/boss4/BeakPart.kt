@@ -14,6 +14,8 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
     override val texture = Game.resources.boss1beak.slice()
 
+    override val baseColor get() = beak.boss.camouflageColor
+
     override val width get() = Game.resources.boss1beak.width * beak.scale
 
     override val height get() = Game.resources.boss1beak.height * beak.scale

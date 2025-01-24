@@ -17,6 +17,8 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
 
     override val texture = Game.resources.boss4tailSlices[index]
 
+    override val baseColor get() = tail.boss.camouflageColor
+
     override val width get() = Game.resources.boss4tail.width * tail.scale
 
     override val height get() = Game.resources.boss4tail.height * tail.scale / Constants.BOSS4_TAIL_PARTS
