@@ -16,6 +16,7 @@ import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import com.littlekt.util.seconds
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -26,6 +27,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds
+        private val CAMOUFLAGE_TIME = 2.0.seconds
 
         private const val HEAD_SCALE = 3.0f
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
@@ -65,7 +67,9 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
     val camouflageColor = MutableColor(Color.WHITE)
-    var camouflageFactor = 0.8f
+    var camouflageFactor = 0.0f
+
+    val isCamouflaged get() = camouflageFactor > 0.0f
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val eyes = Eyes(this, EYES_SCALE, EYES_LAYER)
@@ -78,6 +82,8 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     private val heart = Heart(this, HEART_SCALE, HEART_LAYER)
     private var isInvulnerableTimer = 0.0.seconds
     private var isParalyzedTimer = 0.0.seconds
+    private var camouflageTimer = 0.0.seconds
+    private var camouflageDirection = 1.0f
 
     override fun addToWorld() {
         Game.world.add(head)
@@ -114,6 +120,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         Game.physics.addHittable(head)
 
         Game.physics.addCollider(body.collider)
+        Game.physics.addCollider(body.centerCollider)
         Game.physics.addHittable(body)
 
         tail.parts.forEach {
@@ -122,9 +129,11 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         Game.physics.addHittable(tail)
 
         Game.physics.addCollider(leftWing.collider)
+        Game.physics.addCollider(leftWing.lowerCollider)
         Game.physics.addHittable(leftWing)
 
         Game.physics.addCollider(rightWing.collider)
+        Game.physics.addCollider(rightWing.lowerCollider)
         Game.physics.addHittable(rightWing)
 
         Game.physics.addCollider(heart.collider)
@@ -136,6 +145,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         Game.physics.removeHittable(head)
 
         Game.physics.removeCollider(body.collider)
+        Game.physics.removeCollider(body.centerCollider)
         Game.physics.removeHittable(body)
 
         tail.parts.forEach {
@@ -144,9 +154,11 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         Game.physics.removeHittable(tail)
 
         Game.physics.removeCollider(leftWing.collider)
+        Game.physics.removeCollider(leftWing.lowerCollider)
         Game.physics.removeHittable(leftWing)
 
         Game.physics.removeCollider(rightWing.collider)
+        Game.physics.removeCollider(rightWing.lowerCollider)
         Game.physics.removeHittable(rightWing)
 
         Game.physics.removeCollider(heart.collider)
@@ -155,6 +167,12 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     override fun update(delta: Duration) {
         if (Game.players.isHost) {
+            //if (!isCamouflaged)
+            //    camouflage()
+
+
+
+
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
                 isInvulnerableTimer = 0.0.seconds
@@ -163,7 +181,18 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             if (isParalyzedTimer <= 0.0.seconds)
                 isParalyzedTimer = 0.0.seconds
 
-            Color.WHITE.mix(Color.CLEAR, camouflageFactor, camouflageColor)
+            camouflageTimer -= delta
+            if (camouflageTimer <= 0.0.seconds)
+                camouflageTimer = 0.0.seconds
+
+            camouflageFactor += (camouflageTimer / CAMOUFLAGE_TIME).toFloat() * camouflageDirection
+
+            if (camouflageFactor < 0.0f)
+                camouflageFactor = 0.0f
+            else if (camouflageFactor > 1.0f)
+                camouflageFactor = 1.0f
+
+            Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
 
             movementController.update(delta)
             beak.update(delta, movementController.movement.beakMovement)
@@ -175,7 +204,6 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             head.x = x
             head.y = y
             head.rotation = rotation
-            head.collider.update(head.x, head.y)
 
             eyes.x = head.x
             eyes.y = head.y
@@ -322,6 +350,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             return
 
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
+        decamouflage(true)
 
         if (Game.players.isHost) {
             tail.paralyze(PARALYZED_TIME, false)
@@ -336,6 +365,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
+        decamouflage(true)
 
         if (Game.players.isHost) {
             health--
@@ -385,14 +415,32 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         heart.cancelEntityAnimation(type)
     }
 
+    fun camouflage() {
+        camouflageTimer = CAMOUFLAGE_TIME
+        camouflageDirection = 1.0f
+    }
+
+    fun decamouflage(immidiate: Boolean = false) {
+        if (immidiate) {
+            camouflageTimer = 0.0.seconds
+            camouflageFactor = 0.0f
+        } else {
+            camouflageTimer = CAMOUFLAGE_TIME
+            camouflageDirection = -1.0f
+        }
+    }
+
     override fun drawDebug(renderer: ShapeRenderer) {
         head.collider.drawDebug(renderer)
         body.collider.drawDebug(renderer)
+        body.centerCollider.drawDebug(renderer)
         tail.parts.forEach {
             it.collider.drawDebug(renderer)
         }
         leftWing.collider.drawDebug(renderer)
+        leftWing.lowerCollider.drawDebug(renderer)
         rightWing.collider.drawDebug(renderer)
+        rightWing.lowerCollider.drawDebug(renderer)
 
         beak.leftBeak.collider.drawDebug(renderer)
         beak.rightBeak.collider.drawDebug(renderer)

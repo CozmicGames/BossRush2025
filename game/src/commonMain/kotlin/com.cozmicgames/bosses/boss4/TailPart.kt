@@ -8,12 +8,13 @@ import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import kotlin.math.pow
 import kotlin.time.Duration
 
 class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, layer: Int) : EnemyPart("boss4tail${index}") {
     override val renderLayer = layer
 
-    override val collider = Collider(getRectangleCollisionShape(scaleY = 1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS), tail)
+    override val collider = Collider(getRectangleCollisionShape(scaleX = (1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS).pow(2.0f)), tail)
 
     override val texture = Game.resources.boss4tailSlices[index]
 
