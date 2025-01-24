@@ -123,6 +123,17 @@ class Resources : Releasable {
     lateinit var boss3legLower: Texture
     lateinit var boss3foot: Texture
 
+    /*
+    * Boss 4 - Ray
+     */
+    lateinit var boss4preview: Texture
+    lateinit var boss4head: Texture
+    lateinit var boss4eyes: Texture
+    lateinit var boss4body: Texture
+    lateinit var boss4wing: Texture
+    lateinit var boss4tail: Texture
+    lateinit var boss4tailSlices: Array<TextureSlice>
+
     suspend fun load(context: Context) {
         logo = context.resourcesVfs["textures/logo.png"].readTexture()
         font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
@@ -214,6 +225,14 @@ class Resources : Releasable {
         boss3legUpper = context.resourcesVfs["textures/boss3/leg_upper.png"].readTexture()
         boss3legLower = context.resourcesVfs["textures/boss3/leg_lower.png"].readTexture()
         boss3foot = context.resourcesVfs["textures/boss3/foot.png"].readTexture()
+
+        boss4preview = context.resourcesVfs["textures/boss4/preview.png"].readTexture()
+        boss4head = context.resourcesVfs["textures/boss4/head.png"].readTexture()
+        boss4eyes = context.resourcesVfs["textures/boss4/eyes.png"].readTexture()
+        boss4body = context.resourcesVfs["textures/boss4/body.png"].readTexture()
+        boss4wing = context.resourcesVfs["textures/boss4/wing.png"].readTexture()
+        boss4tail = context.resourcesVfs["textures/boss4/tail.png"].readTexture()
+        boss4tailSlices = boss4tail.slice(boss4tail.width, boss4tail.height / Constants.BOSS4_TAIL_PARTS).map { it[0] }.toTypedArray()
     }
 
     override fun release() {
@@ -290,5 +309,12 @@ class Resources : Releasable {
         boss3legUpper.release()
         boss3legLower.release()
         boss3foot.release()
+
+        boss4preview.release()
+        boss4head.release()
+        boss4eyes.release()
+        boss4body.release()
+        boss4wing.release()
+        boss4tail.release()
     }
 }

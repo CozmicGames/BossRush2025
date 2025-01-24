@@ -25,7 +25,10 @@ class MessageBanner : GUIElement() {
             "Fishy business ahead!",
             "Fishy fishy fishy fish!",
             "In the beginning, there were fish, now there are space fish!",
-            "You spin me right round, space fish right round!"
+            "You spin me right round, space fish right round!",
+            "Who you gonna call? Space fishers!",
+            "We’re gonna need a bigger space boat.",
+            "Fishing in space is under no obligation to make sense to you."
         )
     }
 

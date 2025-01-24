@@ -14,6 +14,8 @@ abstract class WorldObject(val id: String) {
     var y = 0.0f
     var rotation = 0.0.degrees
 
+    var bodyAngle = 0.0.degrees
+
     open val collider: Collider? = null
 
     private val animations = arrayListOf<WorldObjectAnimation>()
