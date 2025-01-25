@@ -9,6 +9,7 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
+import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
@@ -71,13 +72,14 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     val isCamouflaged get() = camouflageFactor > 0.0f
 
+    val vortex = Vortex()
+
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
     private val eyes = Eyes(this, EYES_SCALE, EYES_LAYER)
     private val body = Body(this, BODY_SCALE, BODY_LAYER)
     private val tail = Tail(this, TAIL_SCALE, TAIL_LAYER)
     private val leftWing = Wing(this, true, WING_SCALE, WING_LAYER)
     private val rightWing = Wing(this, false, WING_SCALE, WING_LAYER)
-
     private val beak = Beak(this, BEAK_SCALE, BEAK_LAYER)
     private val heart = Heart(this, HEART_SCALE, HEART_LAYER)
     private var isInvulnerableTimer = 0.0.seconds
@@ -343,6 +345,10 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             heart.y = Game.players.getGlobalState("boss4hearty") ?: 0.0f
             heart.rotation = (Game.players.getGlobalState("boss4heartrotation") ?: 0.0f).degrees
         }
+    }
+
+    override fun renderSpecials(delta: Duration, renderer: Renderer) {
+        vortex.render(delta, renderer)
     }
 
     fun paralyze() {

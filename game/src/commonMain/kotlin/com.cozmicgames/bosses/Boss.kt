@@ -1,5 +1,6 @@
 package com.cozmicgames.bosses
 
+import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.Angle
@@ -23,6 +24,8 @@ interface Boss {
     fun addToPhysics()
     fun removeFromPhysics()
     fun update(delta: Duration)
+
+    fun renderSpecials(delta: Duration, renderer: Renderer) {}
 
     fun drawDebug(renderer: ShapeRenderer)
 }

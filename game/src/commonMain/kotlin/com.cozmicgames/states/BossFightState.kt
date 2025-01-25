@@ -164,6 +164,8 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
             Game.world.render(renderer)
 
+            boss.renderSpecials(delta, renderer)
+
             renderer.submit(RenderLayers.PROJECTILES_BEGIN) {
                 Game.projectiles.render(it)
             }

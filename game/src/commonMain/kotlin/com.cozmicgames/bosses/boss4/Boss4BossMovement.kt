@@ -25,9 +25,9 @@ class IdleBoss4BossMovement : BossMovement {
         }
 
         timer += delta
-        //transform.targetX = centerX + 600.0f * cos(timer.seconds)
-        //transform.targetY = centerY + 600.0f * sin(timer.seconds)
-        //transform.targetRotation = timer.seconds.radians - 30.0.degrees * (sin(timer.seconds * 3.0f) * 0.5f + 0.5f)
+        transform.targetX = centerX + 600.0f * cos(timer.seconds)
+        transform.targetY = centerY + 600.0f * sin(timer.seconds)
+        transform.targetRotation = timer.seconds.radians - 30.0.degrees * (sin(timer.seconds * 3.0f) * 0.5f + 0.5f)
 
 
         //transform.targetRotation = atan2((transform.targetY - boss.y), (transform.targetX - boss.x)).radians

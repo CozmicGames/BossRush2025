@@ -76,6 +76,11 @@ class Resources : Releasable {
      */
     lateinit var background: Texture
     lateinit var asteroid0: Texture
+    lateinit var vortexBase: Texture
+    lateinit var vortex0: Texture
+    lateinit var vortex1: Texture
+    lateinit var vortex2: Texture
+    lateinit var vortex3: Texture
 
     /**
      * Player
@@ -191,6 +196,11 @@ class Resources : Releasable {
 
         background = context.resourcesVfs["textures/background.png"].readTexture()
         asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
+        vortexBase = context.resourcesVfs["textures/vortex/base.png"].readTexture()
+        vortex0 = context.resourcesVfs["textures/vortex/vortex0.png"].readTexture()
+        vortex1 = context.resourcesVfs["textures/vortex/vortex1.png"].readTexture()
+        vortex2 = context.resourcesVfs["textures/vortex/vortex2.png"].readTexture()
+        vortex3 = context.resourcesVfs["textures/vortex/vortex3.png"].readTexture()
 
         playerShipBaseStill = context.resourcesVfs["textures/player/player_ship_base_still.png"].readTexture()
         playerShipBaseSlow = context.resourcesVfs["textures/player/player_ship_base_slow.png"].readTexture()
@@ -278,6 +288,11 @@ class Resources : Releasable {
 
         background.release()
         asteroid0.release()
+        vortexBase.release()
+        vortex0.release()
+        vortex1.release()
+        vortex2.release()
+        vortex3.release()
 
         playerShipBaseStill.release()
         playerShipBaseSlow.release()

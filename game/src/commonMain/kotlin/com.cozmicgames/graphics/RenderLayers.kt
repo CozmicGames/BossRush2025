@@ -3,6 +3,9 @@ package com.cozmicgames.graphics
 object RenderLayers {
     const val BACKGROUND = -1000
 
+    const val VORTEX_BEGIN = -500
+    const val VORTEX_END = -400
+
     const val ASTEROIDS_BEGIN = 100
     const val ASTEROIDS_END = 200
 
