@@ -1,6 +1,5 @@
 package com.cozmicgames.bosses.boss4
 
-import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.entities.Entity
@@ -17,7 +16,6 @@ import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
-import com.littlekt.util.seconds
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -29,6 +27,8 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds
         private val CAMOUFLAGE_TIME = 2.0.seconds
+        private val VORTEX_OPEN_CLOSE_TIME = 2.0.seconds
+        private const val VORTEX_SIZE = 500.0f
 
         private const val HEAD_SCALE = 3.0f
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
@@ -72,6 +72,8 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     val isCamouflaged get() = camouflageFactor > 0.0f
 
+    var bossScale = 1.0f
+
     val vortex = Vortex()
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
@@ -85,7 +87,9 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     private var isInvulnerableTimer = 0.0.seconds
     private var isParalyzedTimer = 0.0.seconds
     private var camouflageTimer = 0.0.seconds
-    private var camouflageDirection = 1.0f
+    private var camouflageDirection = -1.0f
+    private var vortexTimer = 0.0.seconds
+    private var vortexDirection = -1.0f
 
     override fun addToWorld() {
         Game.world.add(head)
@@ -169,12 +173,6 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     override fun update(delta: Duration) {
         if (Game.players.isHost) {
-            //if (!isCamouflaged)
-            //    camouflage()
-
-
-
-
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
                 isInvulnerableTimer = 0.0.seconds
@@ -187,12 +185,23 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             if (camouflageTimer <= 0.0.seconds)
                 camouflageTimer = 0.0.seconds
 
-            camouflageFactor += (camouflageTimer / CAMOUFLAGE_TIME).toFloat() * camouflageDirection
+            camouflageFactor += (1.0f - (camouflageTimer / CAMOUFLAGE_TIME).toFloat()) * camouflageDirection
 
             if (camouflageFactor < 0.0f)
                 camouflageFactor = 0.0f
             else if (camouflageFactor > 1.0f)
                 camouflageFactor = 1.0f
+
+            vortexTimer -= delta
+            if (vortexTimer <= 0.0.seconds)
+                vortexTimer = 0.0.seconds
+
+            vortex.size += (1.0f - (vortexTimer / VORTEX_OPEN_CLOSE_TIME).toFloat()) * vortexDirection * VORTEX_SIZE
+
+            if (vortex.size < 0.0f)
+                vortex.size = 0.0f
+            else if (vortex.size > VORTEX_SIZE)
+                vortex.size = VORTEX_SIZE
 
             Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
 
@@ -433,6 +442,21 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         } else {
             camouflageTimer = CAMOUFLAGE_TIME
             camouflageDirection = -1.0f
+        }
+    }
+
+    fun openVortex() {
+        vortexTimer = VORTEX_OPEN_CLOSE_TIME
+        vortexDirection = 1.0f
+    }
+
+    fun closeVortex(immidiate: Boolean = false) {
+        if (immidiate) {
+            vortexTimer = 0.0.seconds
+            vortex.size = 0.0f
+        } else {
+            vortexTimer = VORTEX_OPEN_CLOSE_TIME
+            vortexDirection = -1.0f
         }
     }
 

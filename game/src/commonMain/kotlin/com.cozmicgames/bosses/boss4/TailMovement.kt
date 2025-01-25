@@ -83,6 +83,6 @@ open class SequenceTentacleMovement(private val durationPerMovement: Duration, p
 
 class IdleTailMovement : CompoundTentacleMovement(
     listOf(
-        WaveTailMovement(8.0.degrees, 1.0f, 0.1f)
+        WaveTailMovement(8.0.degrees, 2.0f, 0.1f)
     )
 )

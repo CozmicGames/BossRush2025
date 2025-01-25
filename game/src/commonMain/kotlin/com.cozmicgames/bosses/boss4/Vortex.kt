@@ -40,7 +40,8 @@ class Vortex {
     var x = 0.0f
     var y = 0.0f
 
-    private var size = 500.0f
+    var size = 0.0f
+
     private val layers = arrayListOf<Layer>()
 
     init {

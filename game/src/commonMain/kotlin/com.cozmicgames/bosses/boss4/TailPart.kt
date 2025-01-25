@@ -20,9 +20,9 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
 
     override val baseColor get() = tail.boss.camouflageColor
 
-    override val width get() = Game.resources.boss4tail.width * tail.scale
+    override val width get() = Game.resources.boss4tail.width * tail.scale * tail.boss.bossScale
 
-    override val height get() = Game.resources.boss4tail.height * tail.scale / Constants.BOSS4_TAIL_PARTS
+    override val height get() = Game.resources.boss4tail.height * tail.scale * tail.boss.bossScale / Constants.BOSS4_TAIL_PARTS
 
     private val halfWidth get() = width * 0.5f
 
@@ -75,6 +75,8 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
             y = pivotY + partSin * xOffset + partCos * yOffset
 
             (collider.shape as RectangleCollisionShape).angle = rotation
+            (collider.shape as RectangleCollisionShape).width = width * (1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS).pow(2.0f)
+            (collider.shape as RectangleCollisionShape).height = height
             collider.update(x, y)
 
             Game.players.setGlobalState("boss4tailpart${index}X", x)

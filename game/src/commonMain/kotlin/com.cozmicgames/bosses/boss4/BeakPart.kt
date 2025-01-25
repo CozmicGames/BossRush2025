@@ -16,9 +16,9 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
 
     override val baseColor get() = beak.boss.camouflageColor
 
-    override val width get() = Game.resources.boss1beak.width * beak.scale
+    override val width get() = Game.resources.boss1beak.width * beak.scale * beak.boss.bossScale
 
-    override val height get() = Game.resources.boss1beak.height * beak.scale
+    override val height get() = Game.resources.boss1beak.height * beak.scale * beak.boss.bossScale
 
     override val flipX get() = !left
 
@@ -40,6 +40,8 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
         y = pivotY + sin * xOffset + cos * yOffset
 
         (collider.shape as? RectangleCollisionShape)?.angle = rotation
+        (collider.shape as? RectangleCollisionShape)?.width = width * 0.5f
+        (collider.shape as? RectangleCollisionShape)?.height = height
         collider.update(x,y)
     }
 }

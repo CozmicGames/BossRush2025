@@ -6,22 +6,21 @@ import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
-import com.littlekt.graphics.Color
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-class Body(private val boss: Boss4, bodyScale: Float, layer: Int) : EnemyPart("boss4body"), Hittable, PlayerDamageSource {
+class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : EnemyPart("boss4body"), Hittable, PlayerDamageSource {
     override val canHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer
 
-    override val collider = Collider(CircleCollisionShape(Game.resources.boss4body.width * bodyScale * 0.4f), this)
+    override val collider = Collider(CircleCollisionShape(width * 0.4f), this)
 
-    override val width = Game.resources.boss4body.width * bodyScale
+    override val width get() = Game.resources.boss4body.width * bodyScale * boss.bossScale
 
-    override val height = Game.resources.boss4body.height * bodyScale
+    override val height get() = Game.resources.boss4body.height * bodyScale * boss.bossScale
 
     override val texture = Game.resources.boss4body.slice()
 
@@ -30,7 +29,7 @@ class Body(private val boss: Boss4, bodyScale: Float, layer: Int) : EnemyPart("b
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 
-    val centerCollider = Collider(CircleCollisionShape(Game.resources.boss4body.width * bodyScale * 0.7f), this)
+    val centerCollider = Collider(CircleCollisionShape(width * 0.7f), this)
 
     override fun onDamageHit() {
         boss.paralyze()
@@ -48,6 +47,7 @@ class Body(private val boss: Boss4, bodyScale: Float, layer: Int) : EnemyPart("b
         val centerColliderX = x + cos * centerColliderOffsetX - sin * centerColliderOffsetY
         val centerColliderY = y + sin * centerColliderOffsetX + cos * centerColliderOffsetY
 
+        (centerCollider.shape as CircleCollisionShape).radius = width * 0.7f
         centerCollider.update(centerColliderX, centerColliderY)
     }
 }
