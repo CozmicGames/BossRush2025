@@ -10,6 +10,7 @@ interface BossDesc {
     val preview: Texture
     val fullHealth: Int
     val unlockedBossIndex: Int
+    val centerSpawnPosition: SpawnPosition
 
     fun createFightGameState(difficulty: Difficulty): BossFightState = BossFightState(this, difficulty)
 

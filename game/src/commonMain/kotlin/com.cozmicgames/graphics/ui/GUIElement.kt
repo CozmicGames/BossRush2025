@@ -5,7 +5,7 @@ import com.cozmicgames.graphics.Renderer
 import kotlin.time.Duration
 
 abstract class GUIElement {
-    open var layer = RenderLayers.UI_BEGIN
+    open var layer = RenderLayers.UI
 
     var x: Float
         set(value) {

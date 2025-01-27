@@ -2,8 +2,10 @@ package com.cozmicgames.states
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
-import com.cozmicgames.bosses.BossDesc
-import com.cozmicgames.bosses.SpawnPosition
+import com.cozmicgames.bosses.boss1.Boss1
+import com.cozmicgames.bosses.boss2.Boss2
+import com.cozmicgames.bosses.boss3.Boss3
+import com.cozmicgames.bosses.boss4.Boss4
 import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.PlayerCamera
@@ -19,20 +21,22 @@ import com.cozmicgames.utils.FightResults
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.radians
 import com.littlekt.math.geom.sine
 import com.littlekt.math.isFuzzyZero
-import kotlin.math.*
+import kotlin.math.min
+import kotlin.math.round
+import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState {
+class FinalFightState(var difficulty: Difficulty) : GameState {
     private val fightId = Game.random.nextLong()
 
     private lateinit var playerCamera: PlayerCamera
     private lateinit var guiCamera: GUICamera
     private lateinit var background: Background
-    private lateinit var boss: Boss
+    private lateinit var bosses: Array<Boss>
+
     private var resultPanel: ResultPanel? = null
     private var fightStartMessage: FightStartMessage? = null
 
@@ -67,48 +71,49 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
         Game.world.clear()
         Game.physics.clear()
-        Game.physics.width = 2500.0f
-        Game.physics.height = 2500.0f
+        Game.physics.width = 4000.0f
+        Game.physics.height = 4000.0f
 
         if (!isRetry)
             asteroids.initialize()
 
-        boss = desc.createBoss(difficulty)
-        boss.addToWorld()
-        boss.addToPhysics()
+        bosses = arrayOf(Boss1(difficulty), Boss2(difficulty), Boss3(difficulty), Boss4(difficulty))
+
+        bosses.forEach {
+            it.addToWorld()
+            it.addToPhysics()
+        }
+
+        bosses[0].x = Game.physics.minX + 200.0f
+        bosses[0].y = Game.physics.maxY - 200.0f
+
+        bosses[1].x = Game.physics.minX + 200.0f
+        bosses[1].y = Game.physics.minY + 200.0f
+
+        bosses[2].x = Game.physics.maxX - 200.0f
+        bosses[2].y = Game.physics.minY + 200.0f
+
+        bosses[3].x = Game.physics.maxX - 200.0f
+        bosses[3].y = Game.physics.maxY - 200.0f
 
         val numPlayers = Game.players.players.size
 
-        val spawnPositions: Array<Vec2f>
-
-        if (numPlayers == 1) {
-            spawnPositions = when (desc.centerSpawnPosition) {
-                SpawnPosition.TOP_LEFT -> arrayOf(Vec2f(Game.physics.minX + 200.0f, Game.physics.maxY - 200.0f))
-                SpawnPosition.TOP_RIGHT -> arrayOf(Vec2f(Game.physics.maxX - 200.0f, Game.physics.maxY - 200.0f))
-                SpawnPosition.BOTTOM_LEFT -> arrayOf(Vec2f(Game.physics.minX + 200.0f, Game.physics.minY + 200.0f))
-                SpawnPosition.BOTTOM_RIGHT -> arrayOf(Vec2f(Game.physics.maxX - 200.0f, Game.physics.minY + 200.0f))
-            }
+        val spawnPositions = if (numPlayers == 1) {
+            arrayOf(Vec2f(0.0f, 0.0f))
         } else {
-            val centerSpawnPosition = when (desc.centerSpawnPosition) {
-                SpawnPosition.TOP_LEFT -> Vec2f(Game.physics.minX + 200.0f, Game.physics.maxY - 200.0f)
-                SpawnPosition.TOP_RIGHT -> Vec2f(Game.physics.maxX - 200.0f, Game.physics.maxY - 200.0f)
-                SpawnPosition.BOTTOM_LEFT -> Vec2f(Game.physics.minX + 200.0f, Game.physics.minY + 200.0f)
-                SpawnPosition.BOTTOM_RIGHT -> Vec2f(Game.physics.maxX - 200.0f, Game.physics.minY + 200.0f)
-            }
-
-            spawnPositions = Array(numPlayers) {
+            Array(numPlayers) {
                 val radius = 200.0f
                 val angle = 360.0.degrees / numPlayers * it
-                val spawnX = centerSpawnPosition.x + radius * angle.cosine
-                val spawnY = centerSpawnPosition.y + radius * angle.sine
+                val spawnX = radius * angle.cosine
+                val spawnY = radius * angle.sine
                 Vec2f(spawnX, spawnY)
             }
         }
 
         Game.players.players.forEachIndexed { index, p ->
             val spawnPosition = spawnPositions[index]
-            val spawnRotation = atan2(spawnPosition.y - boss.y, spawnPosition.x - boss.x).radians + 180.0.degrees
-            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y, spawnRotation, false)
+            val spawnRotation = 0.0.degrees
+            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y, spawnRotation, true)
             p.ship.addToWorld()
             p.ship.addToPhysics()
         }
@@ -171,8 +176,14 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         var cameraTargetX = playerShip.x
         var cameraTargetY = playerShip.y
 
-        var playerShipToBossX = boss.x - playerShip.x
-        var playerShipToBossY = boss.y - playerShip.y
+        val nearestBoss = bosses.minBy { boss ->
+            val playerShipToBossX = boss.x - playerShip.x
+            val playerShipToBossY = boss.y - playerShip.y
+            playerShipToBossX * playerShipToBossX + playerShipToBossY * playerShipToBossY
+        }
+
+        var playerShipToBossX = nearestBoss.x - playerShip.x
+        var playerShipToBossY = nearestBoss.y - playerShip.y
         val playerShipToBossDistance = sqrt(playerShipToBossX * playerShipToBossX + playerShipToBossY * playerShipToBossY)
 
         if (!playerShipToBossDistance.isFuzzyZero()) {
@@ -185,7 +196,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         }
 
         if (fightStarted)
-            boss.update(delta)
+            bosses.forEach {
+                it.update(delta)
+            }
 
         asteroids.update(delta, fightStarted)
         Game.particles.update(delta)
@@ -198,17 +211,17 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         if (!showResults)
             fightDuration += delta
 
-        if (!showResults && (boss.isDead || Game.players.players.all { it.ship.isDead })) {
+        if (!showResults && (bosses.all { it.isDead } || Game.players.players.all { it.ship.isDead })) {
             showResults = true
             Game.world.shouldUpdate = false
 
-            if (!boss.isDead)
-                boss.movementController.onFailFight()
-            else
-                Game.players.newlyUnlockedBossIndex = desc.unlockedBossIndex
+            bosses.forEach {
+                if (!it.isDead)
+                    it.movementController.onFailFight()
+            }
 
             val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
-            val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
+            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
 
             resultPanel = ResultPanel(results)
         }
@@ -220,7 +233,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
             Game.world.render(renderer)
 
-            boss.renderSpecials(delta, renderer)
+            bosses.forEach {
+                it.renderSpecials(delta, renderer)
+            }
 
             renderer.submit(RenderLayers.PROJECTILES) {
                 Game.projectiles.render(it)
@@ -242,10 +257,6 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             if (!fightStarted)
                 fightStartMessage?.render(delta, renderer)
         }
-
-        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-        //    boss.drawDebug(renderer)
-        //}
 
         if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
@@ -279,8 +290,10 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
     }
 
     override fun end() {
-        boss.removeFromPhysics()
-        boss.removeFromWorld()
+        bosses.forEach {
+            it.removeFromPhysics()
+            it.removeFromWorld()
+        }
 
         Game.players.players.forEach {
             it.ship.removeFromPhysics()
@@ -290,18 +303,14 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is BossFightState) return false
+        if (other !is FinalFightState) return false
 
-        if (desc != other.desc) return false
         if (difficulty != other.difficulty) return false
 
         return fightId == other.fightId
     }
 
     override fun hashCode(): Int {
-        var result = desc.hashCode()
-        result = 31 * result + difficulty.hashCode()
-        result = 31 * result + fightId.hashCode()
-        return result
+        return fightId.hashCode()
     }
 }

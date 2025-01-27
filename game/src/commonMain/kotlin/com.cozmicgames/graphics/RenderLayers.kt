@@ -3,29 +3,28 @@ package com.cozmicgames.graphics
 object RenderLayers {
     const val BACKGROUND = -1000
 
-    const val VORTEX_BEGIN = -500
-    const val VORTEX_END = -400
+    const val VORTEX = -500
 
-    const val ASTEROIDS_BEGIN = 100
-    const val ASTEROIDS_END = 200
+    const val ASTEROIDS = 100
 
-    const val ENEMY_BEGIN = 200
-    const val ENEMY_END = 300
+    const val BOSS1 = 200
 
-    const val PLAYER_BEGIN = 400
-    const val PLAYER_END = 500
+    const val BOSS2 = 300
 
-    const val PROJECTILES_BEGIN = 500
-    const val PROJECTILES_END = 600
+    const val BOSS3 = 400
 
-    const val AREA_EFFECTS_BEGIN = 600
-    const val AREA_EFFECTS_END = 700
+    const val BOSS4 = 500
 
-    const val PARTICLES_BEGIN = 700
-    const val PARTICLES_END = 800
+    const val PLAYER = 600
 
-    const val UI_BEGIN = 1000
-    const val UI_END = 2000
+    const val PROJECTILES = 700
+
+    const val AREA_EFFECTS = 800
+
+    const val PARTICLES = 900
+
+    const val UI = 1000
+
     const val BORDER_INDICATOR = 10000
 
 }

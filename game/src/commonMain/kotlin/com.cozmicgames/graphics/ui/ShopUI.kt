@@ -60,7 +60,7 @@ class ShopUI : GUIElement() {
                     else -> {}
                 }
             }
-            slot.layer = RenderLayers.UI_BEGIN + 1
+            slot.layer = RenderLayers.UI + 1
             slot
         }
 

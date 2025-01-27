@@ -132,3 +132,7 @@ open class SequenceBodyMovement(private val durationPerMovement: Duration, priva
 }
 
 class IdleBodyMovement : WaveBodyMovement(3.0.degrees, 1.5f, 0.1f)
+
+class ParalyzedBodyMovement : WaveBodyMovement(2.0.degrees, 0.5f, 0.1f)
+
+class DeadBodyMovement : CurlBodyMovement(30.0.degrees, 0.1f)

@@ -20,7 +20,7 @@ class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.4f), this)
 
-    override val texture = Game.resources.boss2sword.slice()
+    override var texture = Game.resources.boss2sword.slice()
 
     override val damageSourceX get() = boss.x
 

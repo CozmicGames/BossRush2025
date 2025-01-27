@@ -13,5 +13,5 @@ class Eyes(private val boss: Boss4, private val eyesScale: Float, layer: Int) : 
 
     override val height get() = Game.resources.boss4eyes.height * eyesScale * boss.bossScale
 
-    override val texture = Game.resources.boss4eyes.slice()
+    override var texture = Game.resources.boss4eyes.slice()
 }

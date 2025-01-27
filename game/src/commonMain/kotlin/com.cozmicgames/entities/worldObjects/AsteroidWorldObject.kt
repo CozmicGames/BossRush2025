@@ -5,8 +5,6 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.utils.Difficulty
-import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -64,7 +62,7 @@ class AsteroidWorldObject(index: Int) : WorldObject("asteroid$index"), PlayerDam
     }
 
     override fun render(renderer: Renderer) {
-        renderer.submit(RenderLayers.ASTEROIDS_BEGIN) {
+        renderer.submit(RenderLayers.ASTEROIDS) {
             it.draw(Game.resources.asteroid0, x, y, size * 0.5f, size * 0.5f, width = size, height = size, rotation = rotation)
         }
     }

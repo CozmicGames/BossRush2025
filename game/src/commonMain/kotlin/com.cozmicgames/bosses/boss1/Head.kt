@@ -20,7 +20,7 @@ class Head(private val boss: Boss1, size: Float, layer: Int) : EnemyPart("boss1h
 
     override val height = size
 
-    override val texture = Game.resources.boss1head.slice()
+    override var texture = Game.resources.boss1head.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

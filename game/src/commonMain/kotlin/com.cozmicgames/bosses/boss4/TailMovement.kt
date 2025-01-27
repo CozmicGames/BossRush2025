@@ -99,6 +99,11 @@ class ParalyzedTailMovement() : TailMovement {
     }
 }
 
+class KeepTailMovement: TailMovement {
+    override fun updateParts(delta: Duration, tail: Tail) {
+    }
+}
+
 open class CompoundTentacleMovement(movements: List<TailMovement> = emptyList()) : TailMovement {
     private val movements = movements.toMutableList()
 
@@ -143,5 +148,11 @@ open class SequenceTentacleMovement(private val durationPerMovement: Duration, p
 class IdleTailMovement : CompoundTentacleMovement(
     listOf(
         WaveTailMovement(8.0.degrees, 2.0f, 0.1f)
+    )
+)
+
+class DeadTailMovement : CompoundTentacleMovement(
+    listOf(
+        KeepTailMovement()
     )
 )

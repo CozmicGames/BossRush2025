@@ -1,7 +1,6 @@
 package com.cozmicgames.bosses.boss2
 
-import com.cozmicgames.bosses.BossMovement
-import com.cozmicgames.bosses.Movement
+import com.cozmicgames.bosses.*
 
 class Boss2Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss2BossMovement()
@@ -13,5 +12,23 @@ class Boss2Movement : Movement {
         bossMovement = movement.bossMovement
         bodyMovement = movement.bodyMovement
         shieldMovement = movement.shieldMovement
+    }
+
+    override fun setToFail(boss: Boss) {
+        bossMovement = IdleBoss2BossMovement()
+        bodyMovement = IdleBodyMovement()
+        shieldMovement = IdleShieldMovement()
+    }
+
+    override fun setToParalyzed(boss: Boss) {
+        bossMovement = ParalyzedBossMovement(boss.rotation)
+        bodyMovement = ParalyzedBodyMovement()
+        shieldMovement = ParalyzedShieldMovement()
+    }
+
+    override fun setToDead(boss: Boss) {
+        bossMovement = DeadBossMovement(boss.rotation)
+        bodyMovement = DeadBodyMovement()
+        shieldMovement = DeadShieldMovement()
     }
 }

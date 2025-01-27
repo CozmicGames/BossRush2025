@@ -7,14 +7,13 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
-import com.cozmicgames.graphics.particles.effects.ContinuousShotEffect
-import com.cozmicgames.graphics.particles.effects.SingleShotEffect
 import com.cozmicgames.graphics.particles.effects.TrailEffect
 import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.*
 import com.littlekt.graphics.*
+import com.littlekt.math.clamp
 import com.littlekt.math.geom.*
 import com.littlekt.math.isFuzzyZero
 import com.littlekt.util.seconds
@@ -42,17 +41,31 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     var primaryWeapon: Weapon? = Weapons.REELGUN
     var secondaryWeapon: Weapon? = Weapons.REELGUN
 
+    val invulnerabilityFactor get() = 1.0f - (invulnerabilityTimer / invulnerabilityTime).toFloat().clamp(0.0f, 1.0f)
+    val primaryCooldownFactor get() = 1.0f - (firePrimaryCooldown / firePrimaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
+    val secondaryCooldownFactor get() = 1.0f - (fireSecondaryCooldown / fireSecondaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
+
+    var tryUsePrimaryWeapon = false
+        private set
+
+    var tryUseSecondaryWeapon = false
+        private set
+
     override var isStunMode = true
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
     override var isGrabbed = false
-
     private var grabbedBy: GrabbingObject? = null
     private var grabRotation = 0.0.degrees
 
+    private var firePrimaryCooldownTime = 0.0.seconds
     private var firePrimaryCooldown = 0.0.seconds
+
+    private var fireSecondaryCooldownTime = 0.0.seconds
     private var fireSecondaryCooldown = 0.0.seconds
+
+    private var invulnerabilityTime = 0.0.seconds
     private var invulnerabilityTimer = 0.0.seconds
 
     private var flySpeed = 0.0f
@@ -104,8 +117,11 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             if (impulseY.isFuzzyZero())
                 impulseY = 0.0f
 
-            if(impulseSpin.isFuzzyZero())
+            if (impulseSpin.isFuzzyZero())
                 impulseSpin = 0.0f
+
+            tryUsePrimaryWeapon = false
+            tryUseSecondaryWeapon = false
 
             if (fightStarted && !isGrabbed) {
                 player.state.getState<Float>("inputX")?.let {
@@ -121,22 +137,28 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                 }
 
                 player.state.getState<Boolean>("inputUsePrimary")?.let {
+                    if (it)
+                        tryUsePrimaryWeapon = true
+
                     if (firePrimaryCooldown <= 0.0.seconds)
                         primaryWeapon?.let { weapon ->
                             if (it)
-                                fireWeapon(weapon) { firePrimaryCooldown = it }
+                                fireWeapon(weapon) { setPrimaryCooldown(it) }
                             else
-                                stopFiringWeapon(weapon) { firePrimaryCooldown = it }
+                                stopFiringWeapon(weapon) { setPrimaryCooldown(it) }
                         }
                 }
 
                 player.state.getState<Boolean>("inputUseSecondary")?.let {
+                    if (it)
+                        tryUseSecondaryWeapon = true
+
                     if (fireSecondaryCooldown <= 0.0.seconds) {
                         secondaryWeapon?.let { weapon ->
                             if (it)
-                                fireWeapon(weapon) { fireSecondaryCooldown = it }
+                                fireWeapon(weapon) { setSecondaryCooldown(it) }
                             else
-                                stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+                                stopFiringWeapon(weapon) { setSecondaryCooldown(it) }
                         }
                     }
                 }
@@ -212,22 +234,15 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             return
 
         Game.physics.checkCollision(collider, { it != collider }) {
-            if (!isInvulnerable && it.userData is PlayerDamageSource) {
-                health--
+            if (it.userData is PlayerDamageSource) {
+                onDamageHit()
 
-                if (health <= 0) {
-                    health = 0
-                    Game.events.addSendEvent(Events.playerDeath(projectileSourceId))
-                } else {
-                    invulnerabilityTimer = PLAYER_SHIP_INVULNERABILITY_TIME
+                Game.events.addSendEvent(Events.hit(id))
 
-                    Game.events.addSendEvent(Events.hit(projectileSourceId))
+                val impulseX = (x - it.userData.damageSourceX) * 0.05f
+                val impulseY = (y - it.userData.damageSourceY) * 0.05f
 
-                    val impulseX = (x - it.userData.damageSourceX) * 0.05f
-                    val impulseY = (y - it.userData.damageSourceY) * 0.05f
-
-                    Game.events.addSendEvent(Events.impulseHit(projectileSourceId, impulseX, impulseY, 20.0f))
-                }
+                Game.events.addSendEvent(Events.impulseHit(id, impulseX, impulseY, 20.0f))
             }
         }
     }
@@ -247,21 +262,36 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         mainColor.mul(color)
         lightColor.mul(color)
 
-        renderer.submit(RenderLayers.PLAYER_BEGIN) {
+        renderer.submit(RenderLayers.PLAYER) {
             it.draw(baseTexture, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, color)
         }
 
-        renderer.submit(RenderLayers.PLAYER_BEGIN + 1) {
+        renderer.submit(RenderLayers.PLAYER + 1) {
             it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, lightColor)
         }
 
-        renderer.submit(RenderLayers.PLAYER_BEGIN + 2) {
+        renderer.submit(RenderLayers.PLAYER + 2) {
             it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, mainColor)
         }
 
-        renderer.submit(RenderLayers.PLAYER_BEGIN + 3) {
+        renderer.submit(RenderLayers.PLAYER + 3) {
             it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, darkColor)
         }
+    }
+
+    fun setPrimaryCooldown(cooldown: Duration) {
+        firePrimaryCooldownTime = cooldown
+        firePrimaryCooldown = cooldown
+    }
+
+    fun setSecondaryCooldown(cooldown: Duration) {
+        fireSecondaryCooldownTime = cooldown
+        fireSecondaryCooldown = cooldown
+    }
+
+    fun setInvulnerabilityTime(time: Duration) {
+        invulnerabilityTime = time
+        invulnerabilityTimer = time
     }
 
     private fun fireWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
@@ -317,7 +347,17 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     }
 
     override fun onDamageHit() {
+        if (isInvulnerable)
+            return
+
+        health--
+        if (health <= 0) {
+            health = 0
+            onDeath()
+        }
+
         addEntityAnimation(HitAnimation(PLAYER_SHIP_INVULNERABILITY_TIME))
+        setInvulnerabilityTime(PLAYER_SHIP_INVULNERABILITY_TIME)
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {
@@ -381,7 +421,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         Game.physics.removeHittable(this)
     }
 
-    fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float, spawnRotation: Angle) {
+    fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float, spawnRotation: Angle, isFinalBattle: Boolean) {
         health = difficulty.basePlayerHealth
         x = spawnX
         y = spawnY
@@ -402,5 +442,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         impulseY = 0.0f
 
         isBeamProjectileFiring = false
+
+        isStunMode = !isFinalBattle
     }
 }

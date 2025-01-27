@@ -54,6 +54,7 @@ class Resources : Releasable {
     lateinit var hyperHarpoonPreview: Texture
     lateinit var scattergunPreview: Texture
     lateinit var baitblasterPreview: Texture
+    lateinit var shockminePreview: Texture
     lateinit var currencyIcon: Texture
     lateinit var messageBannerBackground: Texture
 
@@ -66,9 +67,7 @@ class Resources : Releasable {
     lateinit var energyBall: Texture
     lateinit var energyBeam: Texture
     lateinit var baitBall: Texture
-    lateinit var shockwave0: Texture
-    lateinit var shockwave1: Texture
-    lateinit var shockwave2: Texture
+    lateinit var shockwave: Texture
     lateinit var shield: Texture
 
     /**
@@ -99,6 +98,7 @@ class Resources : Releasable {
      */
     lateinit var boss1preview: Texture
     lateinit var boss1head: Texture
+    lateinit var boss1headDead: Texture
     lateinit var boss1beak: Texture
     lateinit var boss1heart: Texture
     lateinit var boss1tentacle: Texture
@@ -109,7 +109,9 @@ class Resources : Releasable {
      */
     lateinit var boss2preview: Texture
     lateinit var boss2head: Texture
+    lateinit var boss2headDead: Texture
     lateinit var boss2sword: Texture
+    lateinit var boss2swordDead: Texture
     lateinit var boss2fin: Texture
     lateinit var boss2body: Texture
     lateinit var boss2bodySlices: Array<TextureSlice>
@@ -120,10 +122,12 @@ class Resources : Releasable {
      */
     lateinit var boss3preview: Texture
     lateinit var boss3head: Texture
+    lateinit var boss3headDead: Texture
     lateinit var boss3arm: Texture
     lateinit var boss3clawBase: Texture
     lateinit var boss3clawUpper: Texture
     lateinit var boss3clawLower: Texture
+    lateinit var boss3clawLowerDead: Texture
     lateinit var boss3legUpper: Texture
     lateinit var boss3legLower: Texture
     lateinit var boss3foot: Texture
@@ -134,6 +138,7 @@ class Resources : Releasable {
     lateinit var boss4preview: Texture
     lateinit var boss4head: Texture
     lateinit var boss4eyes: Texture
+    lateinit var boss4eyesDead: Texture
     lateinit var boss4body: Texture
     lateinit var boss4wing: Texture
     lateinit var boss4tail: Texture
@@ -180,6 +185,7 @@ class Resources : Releasable {
         hyperHarpoonPreview = context.resourcesVfs["textures/weapons/hyper_harpoon_preview.png"].readTexture()
         scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
         baitblasterPreview = context.resourcesVfs["textures/weapons/baitblaster_preview.png"].readTexture()
+        shockminePreview = context.resourcesVfs["textures/weapons/shockmine_preview.png"].readTexture()
         currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
         messageBannerBackground = context.resourcesVfs["textures/ui/message_banner_background.png"].readTexture()
 
@@ -189,9 +195,7 @@ class Resources : Releasable {
         energyBall = context.resourcesVfs["textures/projectiles/energy_ball.png"].readTexture()
         energyBeam = context.resourcesVfs["textures/projectiles/energy_beam.png"].readTexture()
         baitBall = context.resourcesVfs["textures/projectiles/bait_ball.png"].readTexture()
-        shockwave0 = context.resourcesVfs["textures/projectiles/shockwave0.png"].readTexture()
-        shockwave1 = context.resourcesVfs["textures/projectiles/shockwave1.png"].readTexture()
-        shockwave2 = context.resourcesVfs["textures/projectiles/shockwave2.png"].readTexture()
+        shockwave = context.resourcesVfs["textures/projectiles/shockwave.png"].readTexture()
         shield = context.resourcesVfs["textures/projectiles/shield.png"].readTexture()
 
         background = context.resourcesVfs["textures/background.png"].readTexture()
@@ -213,6 +217,7 @@ class Resources : Releasable {
 
         boss1preview = context.resourcesVfs["textures/boss1/preview.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
+        boss1headDead = context.resourcesVfs["textures/boss1/head_dead.png"].readTexture()
         boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
         boss1heart = context.resourcesVfs["textures/boss1/heart.png"].readTexture()
         boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
@@ -220,7 +225,9 @@ class Resources : Releasable {
 
         boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
         boss2head = context.resourcesVfs["textures/boss2/head.png"].readTexture()
+        boss2headDead = context.resourcesVfs["textures/boss2/head_dead.png"].readTexture()
         boss2sword = context.resourcesVfs["textures/boss2/sword.png"].readTexture()
+        boss2swordDead = context.resourcesVfs["textures/boss2/sword_dead.png"].readTexture()
         boss2fin = context.resourcesVfs["textures/boss2/fin.png"].readTexture()
         boss2body = context.resourcesVfs["textures/boss2/body.png"].readTexture()
         boss2bodySlices = boss2body.slice(boss2body.width / Constants.BOSS2_BODY_PARTS, boss2body.height)[0]
@@ -228,10 +235,12 @@ class Resources : Releasable {
 
         boss3preview = context.resourcesVfs["textures/boss3/preview.png"].readTexture()
         boss3head = context.resourcesVfs["textures/boss3/head.png"].readTexture()
+        boss3headDead = context.resourcesVfs["textures/boss3/head_dead.png"].readTexture()
         boss3arm = context.resourcesVfs["textures/boss3/arm.png"].readTexture()
         boss3clawBase = context.resourcesVfs["textures/boss3/claw_base.png"].readTexture()
         boss3clawUpper = context.resourcesVfs["textures/boss3/claw_upper.png"].readTexture()
         boss3clawLower = context.resourcesVfs["textures/boss3/claw_lower.png"].readTexture()
+        boss3clawLowerDead = context.resourcesVfs["textures/boss3/claw_lower_dead.png"].readTexture()
         boss3legUpper = context.resourcesVfs["textures/boss3/leg_upper.png"].readTexture()
         boss3legLower = context.resourcesVfs["textures/boss3/leg_lower.png"].readTexture()
         boss3foot = context.resourcesVfs["textures/boss3/foot.png"].readTexture()
@@ -239,6 +248,7 @@ class Resources : Releasable {
         boss4preview = context.resourcesVfs["textures/boss4/preview.png"].readTexture()
         boss4head = context.resourcesVfs["textures/boss4/head.png"].readTexture()
         boss4eyes = context.resourcesVfs["textures/boss4/eyes.png"].readTexture()
+        boss4eyesDead = context.resourcesVfs["textures/boss4/eyes_dead.png"].readTexture()
         boss4body = context.resourcesVfs["textures/boss4/body.png"].readTexture()
         boss4wing = context.resourcesVfs["textures/boss4/wing.png"].readTexture()
         boss4tail = context.resourcesVfs["textures/boss4/tail.png"].readTexture()
@@ -273,6 +283,7 @@ class Resources : Releasable {
         hyperHarpoonPreview.release()
         scattergunPreview.release()
         baitblasterPreview.release()
+        shockminePreview.release()
         currencyIcon.release()
         messageBannerBackground.release()
 
@@ -281,9 +292,7 @@ class Resources : Releasable {
         energyBall.release()
         energyBeam.release()
         baitBall.release()
-        shockwave0.release()
-        shockwave1.release()
-        shockwave2.release()
+        shockwave.release()
         shield.release()
 
         background.release()
@@ -304,23 +313,28 @@ class Resources : Releasable {
 
         boss1preview.release()
         boss1head.release()
+        boss1headDead.release()
         boss1beak.release()
         boss1heart.release()
         boss1tentacle.release()
 
         boss2preview.release()
         boss2head.release()
+        boss2headDead.release()
         boss2sword.release()
+        boss2swordDead.release()
         boss2fin.release()
         boss2body.release()
         boss2tail.release()
 
         boss3preview.release()
         boss3head.release()
+        boss3headDead.release()
         boss3arm.release()
         boss3clawBase.release()
         boss3clawUpper.release()
         boss3clawLower.release()
+        boss3clawLowerDead.release()
         boss3legUpper.release()
         boss3legLower.release()
         boss3foot.release()
@@ -328,6 +342,7 @@ class Resources : Releasable {
         boss4preview.release()
         boss4head.release()
         boss4eyes.release()
+        boss4eyesDead.release()
         boss4body.release()
         boss4wing.release()
         boss4tail.release()

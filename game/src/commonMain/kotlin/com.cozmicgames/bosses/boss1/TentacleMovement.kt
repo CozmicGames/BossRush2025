@@ -206,3 +206,10 @@ class IdleTentacleMovement : CompoundTentacleMovement(
         WaveTentacleMovement(10.0.degrees, 0.3f, 0.2f)
     )
 )
+
+class DeadTentacleMovement : CompoundTentacleMovement(
+    listOf(
+        SwayTentacleMovement(15.0.degrees, 0.1f, 0.2f),
+        HangTentacleMovement()
+    )
+)

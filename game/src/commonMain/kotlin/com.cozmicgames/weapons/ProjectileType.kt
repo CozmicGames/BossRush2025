@@ -10,7 +10,6 @@ import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.math.clamp
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.radians
-import org.w3c.dom.CanvasDirection
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -30,7 +29,7 @@ enum class ProjectileType(val baseType: ProjectileBaseType, val stunColor: Color
             return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
         }
     },
-    SHOCK_MINE(BulletProjectileType({ Game.resources.energyBall }, 16.0f), Color.fromHex("fdd2ed"), Color.fromHex("fdd2ed")) {
+    SHOCK_MINE(BulletProjectileType({ Game.resources.energyBall }, 16.0f), Color.fromHex("5ac54f"), Color.fromHex("fdd2ed")) {
         override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
             return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
         }

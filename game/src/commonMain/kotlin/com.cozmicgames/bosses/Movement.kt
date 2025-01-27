@@ -13,7 +13,9 @@ interface Movement {
 
     fun resetAfterAttack(boss: Boss, attack: Attack) {}
 
-    fun setToFail(boss: Boss) {}
+    fun setToFail(boss: Boss)
 
-    fun setToParalyzed(boss: Boss) {}
+    fun setToParalyzed(boss: Boss)
+
+    fun setToDead(boss: Boss)
 }

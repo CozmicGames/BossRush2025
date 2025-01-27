@@ -52,6 +52,12 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
         currentStage = currentStage.nextStage ?: EndStage()
     }
 
+    fun onDeath() {
+        cancelAttack(false)
+        currentStage = EndStage()
+        movement.setToDead(boss)
+    }
+
     open fun update(delta: Duration) {
         currentStage = currentStage.update(delta, this)
 

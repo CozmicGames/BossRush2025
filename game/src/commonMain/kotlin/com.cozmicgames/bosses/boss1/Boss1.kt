@@ -8,19 +8,20 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
+import com.cozmicgames.graphics.particles.effects.DeathSplatterEffect
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
+import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import com.littlekt.math.isFuzzyZero
 import com.littlekt.util.seconds
-import kotlin.math.sqrt
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Boss {
+class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = false) : Entity("boss1"), AreaEffectSource, Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -29,11 +30,11 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
         private const val HEAD_SIZE = 180.0f
 
-        private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val HEAD_LAYER = RenderLayers.BOSS1 + 10
 
-        private const val BEAK_LAYER = RenderLayers.ENEMY_BEGIN + 8
+        private const val BEAK_LAYER = RenderLayers.BOSS1 + 8
 
-        private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 5
+        private const val HEART_LAYER = RenderLayers.BOSS1 + 5
 
         private val TENTACLE_OFFSETS = arrayOf(
             0.67f to -0.45f,
@@ -69,14 +70,14 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         )
 
         private val TENTACLE_LAYERS = arrayOf(
-            RenderLayers.ENEMY_BEGIN + 10,
-            RenderLayers.ENEMY_BEGIN + 20,
-            RenderLayers.ENEMY_BEGIN + 30,
-            RenderLayers.ENEMY_BEGIN + 40,
-            RenderLayers.ENEMY_BEGIN + 50,
-            RenderLayers.ENEMY_BEGIN + 60,
-            RenderLayers.ENEMY_BEGIN + 70,
-            RenderLayers.ENEMY_BEGIN + 80
+            RenderLayers.BOSS1 + 10,
+            RenderLayers.BOSS1 + 20,
+            RenderLayers.BOSS1 + 30,
+            RenderLayers.BOSS1 + 40,
+            RenderLayers.BOSS1 + 50,
+            RenderLayers.BOSS1 + 60,
+            RenderLayers.BOSS1 + 70,
+            RenderLayers.BOSS1 + 80
         )
 
         private const val BEAK_OFFSET_X = 0.0f
@@ -85,6 +86,8 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         private const val HEART_OFFSET_X = 0.0f
         private const val HEART_OFFSET_Y = -0.8f
     }
+
+    override val fullHealth = FULL_HEALTH
 
     override var health = FULL_HEALTH
 
@@ -294,7 +297,7 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     }
 
     fun hit() {
-        if (isInvulnerable)
+        if (isInvulnerable || health <= 0)
             return
 
         cancelEntityAnimation<ParalyzeAnimation>()
@@ -302,10 +305,20 @@ class Boss1(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
         if (Game.players.isHost) {
             health--
+            if (health < 0) health = 0
+
             movementController.onHit()
 
             if (health <= 0) {
-                //TODO: Handle boss death
+                removeFromPhysics()
+                movementController.onDeath()
+
+                if (isFinalBattle) {
+                    head.texture = Game.resources.boss1headDead.slice()
+
+                    Game.world.remove(heart)
+                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                }
             } else {
                 tentacles.forEach {
                     it.unparalyze()

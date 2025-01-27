@@ -22,7 +22,7 @@ class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2
 
     override val collider = Collider(getCircleCollisionShape(0.9f), this)
 
-    override val texture = Game.resources.boss2head.slice()
+    override var texture = Game.resources.boss2head.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

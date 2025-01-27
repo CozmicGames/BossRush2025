@@ -12,6 +12,7 @@ interface Boss {
     val isDead get() = health <= 0
     val isParalyzed: Boolean
 
+    val fullHealth: Int
     val health: Int
     var x: Float
     var y: Float

@@ -9,10 +9,11 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.graphics.RenderLayers
+import com.cozmicgames.graphics.particles.effects.DeathSplatterEffect
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.utils.Difficulty
-import com.cozmicgames.weapons.ProjectileType
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
+import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -22,7 +23,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
+class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = false) : Boss, ProjectileSource {
     companion object {
         const val FULL_HEALTH = 4
 
@@ -36,19 +37,21 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
         private const val FIN_SCALE = 2.0f
         private const val TAIL_SCALE = 2.0f
 
-        private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 20
-        private const val SWORD_LAYER = RenderLayers.ENEMY_BEGIN + 9
-        private const val SHIELD_LAYER = RenderLayers.ENEMY_BEGIN + 7
-        private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 5
-        private const val BODY_LAYER = RenderLayers.ENEMY_BEGIN + 10
-        private const val DORSAL_FIN_LAYER = RenderLayers.ENEMY_BEGIN + 5
-        private const val SIDE_FIN_LAYER = RenderLayers.ENEMY_BEGIN + 25
-        private const val TAIL_LAYER = RenderLayers.ENEMY_BEGIN + 5
+        private const val HEAD_LAYER = RenderLayers.BOSS2 + 20
+        private const val SWORD_LAYER = RenderLayers.BOSS2 + 9
+        private const val SHIELD_LAYER = RenderLayers.BOSS2 + 7
+        private const val HEART_LAYER = RenderLayers.BOSS2 + 5
+        private const val BODY_LAYER = RenderLayers.BOSS2 + 10
+        private const val DORSAL_FIN_LAYER = RenderLayers.BOSS2 + 5
+        private const val SIDE_FIN_LAYER = RenderLayers.BOSS2 + 25
+        private const val TAIL_LAYER = RenderLayers.BOSS2 + 5
 
         private const val DORSAL_FIN_BODY_PART_INDEX = (Constants.BOSS2_BODY_PARTS * 0.3f).toInt()
         private const val SIDE_FIN_BODY_PART_INDEX = (Constants.BOSS2_BODY_PARTS * 0.15f).toInt()
         private const val TAIL_BODY_PART_INDEX = Constants.BOSS2_BODY_PARTS - 1
     }
+
+    override val fullHealth = FULL_HEALTH
 
     override val projectileSourceId = "boss2"
     override val muzzleX: Float
@@ -359,27 +362,11 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
         if (Game.players.isHost) {
             movementController.onParalyze()
             isParalyzedTimer = PARALYZED_TIME
-
-            if (shield.intensity > 0.5f) {
-                val shots = 7
-
-                for (i in 0 until shots) {
-                    val angle = (if (isFlipped) muzzleRotation - 135.0.degrees else muzzleRotation + 45.0.degrees) + 90.0.degrees / (shots - 1) * i
-                    val cos = angle.cosine
-                    val sin = angle.sine
-                    val radius = shield.width * 0.5f
-                    val x = shield.x + cos * radius
-                    val y = shield.y + sin * radius
-                    Game.projectiles.spawnProjectile(this, ProjectileType.ENERGY_BALL, x, y, angle, 500.0f, 0.0f)
-                }
-            }
-
-            shield.intensity = 0.0f
         }
     }
 
     fun hit() {
-        if (isInvulnerable)
+        if (isInvulnerable || health <= 0)
             return
 
         cancelEntityAnimation<ParalyzeAnimation>()
@@ -387,10 +374,21 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
 
         if (Game.players.isHost) {
             health--
+            if (health < 0) health = 0
+
             movementController.onHit()
 
             if (health <= 0) {
-                //TODO: Handle boss death
+                removeFromPhysics()
+                movementController.onDeath()
+
+                if (isFinalBattle) {
+                    head.texture = Game.resources.boss2headDead.slice()
+                    sword.texture = Game.resources.boss2swordDead.slice()
+
+                    Game.world.remove(heart)
+                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                }
             } else {
                 isInvulnerableTimer = INVULNERABLE_TIME
                 isParalyzedTimer = 0.0.seconds

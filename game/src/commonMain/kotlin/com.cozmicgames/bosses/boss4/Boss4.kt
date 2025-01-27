@@ -9,10 +9,12 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.particles.effects.DeathSplatterEffect
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
+import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -22,7 +24,7 @@ import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSource, Boss {
+class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = false) : Entity("boss1"), AreaEffectSource, Boss {
     companion object {
         const val FULL_HEALTH = 3
 
@@ -31,26 +33,28 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         private val CAMOUFLAGE_TIME = 2.0.seconds
 
         private const val HEAD_SCALE = 3.0f
-        private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val HEAD_LAYER = RenderLayers.BOSS4 + 10
 
         private const val BODY_SCALE = 3.0f
-        private const val BODY_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val BODY_LAYER = RenderLayers.BOSS4 + 10
 
         private const val EYES_SCALE = 3.0f
-        private const val EYES_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val EYES_LAYER = RenderLayers.BOSS4 + 10
 
         private const val WING_SCALE = 3.0f
-        private const val WING_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val WING_LAYER = RenderLayers.BOSS4 + 10
 
         private const val TAIL_SCALE = 3.0f
-        private const val TAIL_LAYER = RenderLayers.ENEMY_BEGIN + 10
+        private const val TAIL_LAYER = RenderLayers.BOSS4 + 10
 
         private const val BEAK_SCALE = 2.0f
-        private const val BEAK_LAYER = RenderLayers.ENEMY_BEGIN + 8
+        private const val BEAK_LAYER = RenderLayers.BOSS4 + 8
 
         private const val HEART_SCALE = 2.0f
-        private const val HEART_LAYER = RenderLayers.ENEMY_BEGIN + 5
+        private const val HEART_LAYER = RenderLayers.BOSS4 + 5
     }
+
+    override val fullHealth = FULL_HEALTH
 
     override var health = FULL_HEALTH
 
@@ -405,7 +409,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     }
 
     fun hit() {
-        if (isInvulnerable)
+        if (isInvulnerable || health <= 0)
             return
 
         cancelEntityAnimation<ParalyzeAnimation>()
@@ -414,10 +418,22 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
         if (Game.players.isHost) {
             health--
+            if (health < 0) health = 0
+
             movementController.onHit()
 
             if (health <= 0) {
-                //TODO: Handle boss death
+                removeFromPhysics()
+                decamouflage()
+                closeVortex(0.5.seconds)
+                movementController.onDeath()
+
+                if (isFinalBattle) {
+                    eyes.texture = Game.resources.boss4eyesDead.slice()
+
+                    Game.world.remove(heart)
+                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                }
             } else {
                 tail.unparalyze()
                 isInvulnerableTimer = INVULNERABLE_TIME

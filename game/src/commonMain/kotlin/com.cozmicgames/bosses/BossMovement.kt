@@ -34,6 +34,17 @@ class ParalyzedBossMovement(val currentAngle: Angle = 0.0.degrees) : BossMovemen
     }
 }
 
+class DeadBossMovement(val currentAngle: Angle = 0.0.degrees) : BossMovement {
+    private var timer = 0.0.seconds
+
+    override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        timer += delta
+        transform.targetRotation = currentAngle + 10.0.degrees * timer.seconds
+        transform.targetX = boss.x
+        transform.targetY = boss.y
+    }
+}
+
 class DestinationBossMovement(private val targetX: Float, private val targetY: Float, private val onReached: () -> Unit = {}) : BossMovement {
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         val dx = targetX - boss.x

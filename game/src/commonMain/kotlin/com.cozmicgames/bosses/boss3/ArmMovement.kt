@@ -230,3 +230,10 @@ class IdleArmMovement : CompoundArmMovement(
         IdleClawMovement(0.2f, 0.2f)
     )
 )
+
+class DeadArmMovement : CompoundArmMovement(
+    listOf(
+        KeepArmMovement(),
+        OpenClawMovement(0.5f)
+    )
+)

@@ -143,7 +143,7 @@ class ResultPanel(private val results: FightResults) {
             isAnimationFinished = true
         }
 
-        renderer.submit(RenderLayers.UI_BEGIN) {
+        renderer.submit(RenderLayers.UI) {
             Game.resources.resultBackgroundNinePatch.draw(it, x, y, width, height)
             Game.resources.ratingBackgroundNinePatch.draw(it, x + width * 0.1f, y + height * 0.5f, width * 0.8f, height * 0.315f)
         }

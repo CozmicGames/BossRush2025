@@ -29,4 +29,18 @@ class Boss3Movement : Movement {
         bossMovement = ParalyzedBossMovement(boss.rotation)
         beakMovement = ParalyzedBeakMovement()
     }
+
+    override fun setToFail(boss: Boss) {
+        bossMovement = IdleBoss3BossMovement()
+        beakMovement = IdleBeakMovement()
+        legMovement = DefendLegMovement()
+        armMovement = IdleArmMovement()
+    }
+
+    override fun setToDead(boss: Boss) {
+        bossMovement = DeadBossMovement(boss.rotation)
+        beakMovement = OpenBeakMovement()
+        legMovement = DeadLegMovement()
+        armMovement = DeadArmMovement()
+    }
 }

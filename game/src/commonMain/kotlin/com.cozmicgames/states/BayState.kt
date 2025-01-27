@@ -2,7 +2,6 @@ package com.cozmicgames.states
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.bosses.TodoBossDesc
 import com.cozmicgames.bosses.boss1.Boss1Desc
 import com.cozmicgames.bosses.boss2.Boss2Desc
 import com.cozmicgames.bosses.boss3.Boss3Desc

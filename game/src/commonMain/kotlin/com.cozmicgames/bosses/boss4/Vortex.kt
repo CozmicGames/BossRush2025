@@ -76,7 +76,7 @@ class Vortex {
 
     fun render(delta: Duration, renderer: Renderer) {
         if (size > 0.0f) {
-            renderer.submit(RenderLayers.VORTEX_BEGIN) {
+            renderer.submit(RenderLayers.VORTEX) {
                 val baseSize = size * 0.7f
                 it.draw(Game.resources.vortexBase, x, y, baseSize * 0.5f, baseSize * 0.5f, baseSize, baseSize, color = BASE_COLOR)
             }
@@ -85,7 +85,7 @@ class Vortex {
                 layer.rotation += 360.0.degrees * layer.rotationSpeed * delta.seconds
                 val layerSize = this.size * layer.scale
 
-                renderer.submit(RenderLayers.VORTEX_BEGIN + layer.layer) {
+                renderer.submit(RenderLayers.VORTEX + layer.layer) {
                     it.draw(layer.texture, x, y, layerSize * 0.5f, layerSize * 0.5f, layerSize, layerSize, rotation = layer.rotation, color = layer.color)
                 }
             }

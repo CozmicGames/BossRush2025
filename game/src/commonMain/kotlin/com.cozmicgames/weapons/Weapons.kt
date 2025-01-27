@@ -44,10 +44,10 @@ enum class Weapons : Weapon {
         override val spread = 0.0.degrees
         override val isRandomSpread = false
     },
-    SHOCK_MINE {
-        override val previewTexture get() = Game.resources.baitblasterPreview
+    SHOCKMINE {
+        override val previewTexture get() = Game.resources.shockminePreview
         override val price = 1000
-        override val displayName = "Shock Mine"
+        override val displayName = "Shockmine"
         override val fireRate = 10.seconds
         override val canContinoousFire = false
         override val projectileType = ProjectileType.SHOCK_MINE

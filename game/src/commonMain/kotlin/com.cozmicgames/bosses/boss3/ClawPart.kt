@@ -1,7 +1,6 @@
 package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
-import com.cozmicgames.bosses.boss1.Beak
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
@@ -15,7 +14,7 @@ import kotlin.time.Duration
 class ClawPart(val claw: Claw, private val flip: Boolean, private val isUpper: Boolean, private val partScale: Float, layer: Int) : EnemyPart("boss3claw${if (isUpper) "upper" else "lower"}"), ProjectileSource {
     override val renderLayer = layer - 1
 
-    override val texture = if (isUpper) Game.resources.boss3clawUpper.slice() else Game.resources.boss3clawLower.slice()
+    override var texture = if (isUpper) Game.resources.boss3clawUpper.slice() else Game.resources.boss3clawLower.slice()
 
     override val width get() = texture.width * partScale
 

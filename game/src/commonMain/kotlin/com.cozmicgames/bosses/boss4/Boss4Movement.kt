@@ -29,4 +29,10 @@ class Boss4Movement : Movement {
         bossMovement = IdleBoss4BossMovement()
         tailMovement = IdleTailMovement()
     }
+
+    override fun setToDead(boss: Boss) {
+        beakMovement = OpenBeakMovement()
+        bossMovement = DeadBossMovement(boss.rotation)
+        tailMovement = DeadTailMovement()
+    }
 }
