@@ -33,8 +33,11 @@ abstract class FightStage : BossStage() {
             val attackProbability = attack.probability / totalProbability
 
             if (probability < attackProbability) {
-                controller.performAttack(attack.createAttack(boss))
-                nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
+                controller.performAttack(attack.createAttack(boss)) {
+                    nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
+                }
+
+                break
             }
         }
     }

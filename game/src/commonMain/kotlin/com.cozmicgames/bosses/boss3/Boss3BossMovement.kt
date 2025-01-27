@@ -1,7 +1,6 @@
 package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.bosses.*
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerp
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -64,29 +63,29 @@ class SpinAttackBoss3BossMovement : BossMovement {
     }
 }
 
-class GrabAttackBoss3BossMovement(private val ship: PlayerShip) : BossMovement {
+class GrabAttackBoss3BossMovement(private val target: BossTarget) : BossMovement {
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         boss as? Boss3 ?: throw IllegalArgumentException("Boss must be a Boss3")
 
-        val dx0 = boss.arms[0].claw.x - ship.x
-        val dy0 = boss.arms[0].claw.y - ship.y
+        val dx0 = boss.arms[0].claw.x - target.x
+        val dy0 = boss.arms[0].claw.y - target.y
         val distance0 = sqrt(dx0 * dx0 + dy0 * dy0)
 
-        val dx1 = boss.arms[1].claw.x - ship.x
-        val dy1 = boss.arms[1].claw.y - ship.y
+        val dx1 = boss.arms[1].claw.x - target.x
+        val dy1 = boss.arms[1].claw.y - target.y
         val distance1 = sqrt(dx1 * dx1 + dy1 * dy1)
 
         if (distance0 < distance1) {
-            transform.targetX = ship.x - (boss.arms[0].claw.x - boss.x)
-            transform.targetY = ship.y - (boss.arms[0].claw.y - boss.y)
+            transform.targetX = target.x - (boss.arms[0].claw.x - boss.x)
+            transform.targetY = target.y - (boss.arms[0].claw.y - boss.y)
         } else {
-            transform.targetX = ship.x - (boss.arms[1].claw.x - boss.x)
-            transform.targetY = ship.y - (boss.arms[1].claw.y - boss.y)
+            transform.targetX = target.x - (boss.arms[1].claw.x - boss.x)
+            transform.targetY = target.y - (boss.arms[1].claw.y - boss.y)
         }
     }
 }
 
-class FollowPlayerBoss3BossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
+class FollowPlayerBoss3BossMovement(private val target: BossTarget, private val onReached: () -> Unit = {}) : BossMovement {
     companion object {
         private const val TARGET_DISTANCE = 400.0f
     }
@@ -94,8 +93,8 @@ class FollowPlayerBoss3BossMovement(private val ship: PlayerShip, private val on
     private var timer = 0.0.seconds
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
-        val dx = ship.x - boss.x
-        val dy = ship.y - boss.y
+        val dx = target.x - boss.x
+        val dy = target.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
 
         if (distance < TARGET_DISTANCE) {

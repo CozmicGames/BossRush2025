@@ -158,7 +158,7 @@ class AimArmMovement(val targetX: Float, val targetY: Float, val smoothFactor: F
     }
 }
 
-class KeepArmMovement() : ArmMovement {
+class KeepArmMovement : ArmMovement {
     override fun updateParts(delta: Duration, arm: Arm) {
 
     }

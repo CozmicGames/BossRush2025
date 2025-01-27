@@ -180,9 +180,9 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
                 fightStartMessage?.render(delta, renderer)
             }
 
-        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-        //    boss.drawDebug(renderer)
-        //}
+        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+            boss.drawDebug(renderer)
+        }
 
         if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->

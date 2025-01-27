@@ -36,15 +36,15 @@ abstract class Boss3FightStage : FightStage() {
         if (controller.isAttacking)
             return
 
-        val targetedPlayer = Game.players.players.random().ship
+        val target = Game.world.decideOnTarget() ?: return
 
-        val dx = targetedPlayer.x - boss.x
-        val dy = targetedPlayer.y - boss.y
+        val dx = target.x - boss.x
+        val dy = target.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
 
         if (distance > maxFollowDistance) {
             if (movement.bossMovement !is FollowPlayerBoss3BossMovement)
-                movement.bossMovement = FollowPlayerBoss3BossMovement(targetedPlayer) {
+                movement.bossMovement = FollowPlayerBoss3BossMovement(target) {
                     nextBossMovementDecisionTime = 1.0.seconds
                 }
         } else {
@@ -52,7 +52,7 @@ abstract class Boss3FightStage : FightStage() {
                 movement.bossMovement = IdleBoss3BossMovement()
                 nextBossMovementDecisionTime = 2.0.seconds
             } else {
-                movement.bossMovement = AimBossMovement(targetedPlayer.x, targetedPlayer.y)
+                movement.bossMovement = AimBossMovement(target.x, target.y)
                 nextBossMovementDecisionTime = 3.0.seconds
             }
         }

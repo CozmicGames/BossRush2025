@@ -2,6 +2,7 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossTarget
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.RenderLayers
@@ -20,7 +21,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class PlayerShip(private val player: Player) : WorldObject(player.state.id), ProjectileSource, AreaEffectSource, Hittable, Grabbable {
+class PlayerShip(private val player: Player) : WorldObject(player.state.id), ProjectileSource, AreaEffectSource, BossTarget, Grabbable {
     companion object {
         private val PLAYER_SHIP_INVULNERABILITY_TIME = 2.0.seconds
     }

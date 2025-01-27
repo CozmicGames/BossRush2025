@@ -2,7 +2,6 @@ package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
 import com.cozmicgames.weapons.AreaEffectType
@@ -45,24 +44,16 @@ class DefendAttack(override val duration: Duration = 2.0.seconds) : Boss1Attack(
     }
 }
 
-class GrabAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss1Attack() {
-    override val duration: Duration = 2.0.seconds
-
-    override val tentacleMovement = SequenceTentacleMovement(
-        duration / 2, listOf(
-            StretchDownTentacleMovement(0.3f),
-            GrabTentacleMovement(0.2f)
-        )
-    )
-    override val beakMovement = ScreamBeakMovement()
-    override val bossMovement = GrabAttackBoss1BossMovement(ship)
-}
-
-class FlyAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss1Attack() {
+class FlyAttack(target: BossTarget? = Game.world.decideOnTarget()) : Boss1Attack() {
     override val tentacleMovement = StretchDownTentacleMovement(0.3f)
     override val beakMovement = ScreamBeakMovement()
-    override val bossMovement = FlyAttackBoss1BossMovement(ship.x, ship.y) {
+    override val bossMovement = FlyAttackBoss1BossMovement(target?.x ?: 0.0f, target?.y ?: 0.0f) {
         setDone()
+    }
+
+    init {
+        if (target == null)
+            setDone()
     }
 }
 

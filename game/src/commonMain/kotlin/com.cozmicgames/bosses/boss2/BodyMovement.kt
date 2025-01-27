@@ -2,7 +2,7 @@ package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.entities.worldObjects.PlayerShip
+import com.cozmicgames.bosses.BossTarget
 import com.cozmicgames.utils.lerpAngle
 import com.littlekt.math.PI_F
 import com.littlekt.math.geom.Angle
@@ -72,13 +72,13 @@ open class CurlBodyMovement(val maxAngle: Angle, val smoothFactor: Float) : Body
 
 open class StretchBodyMovement(smoothFactor: Float) : CurlBodyMovement(0.0.degrees, smoothFactor)
 
-open class HitBodyMovement(val playerShip: PlayerShip, val smoothFactor: Float) : BodyMovement {
+open class HitBodyMovement(val target: BossTarget?, val smoothFactor: Float) : BodyMovement {
     private var targetAngle = 0.0.degrees
     private var isInitialized = false
 
     override fun updateParts(delta: Duration, body: Body) {
         if (!isInitialized) {
-            targetAngle = atan2(playerShip.y - body.y, playerShip.x - body.x).degrees
+            targetAngle = atan2((target?.y ?: 0.0f) - body.y, (target?.x ?: 0.0f) - body.x).degrees
             isInitialized = false
         }
 

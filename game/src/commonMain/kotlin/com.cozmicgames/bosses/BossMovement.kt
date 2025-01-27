@@ -5,7 +5,7 @@ import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
 import com.littlekt.util.seconds
-import kotlin.math.atan
+import kotlin.math.atan2
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.time.Duration
@@ -52,7 +52,7 @@ class AimBossMovement(private val targetX: Float, private val targetY: Float) : 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         val dx = targetX - boss.x
         val dy = targetY - boss.y
-        transform.targetRotation = atan(dy / dx).radians - 90.0.degrees
+        transform.targetRotation = atan2(dy, dx).radians - 90.0.degrees
     }
 }
 

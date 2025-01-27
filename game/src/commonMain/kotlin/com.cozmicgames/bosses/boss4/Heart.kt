@@ -21,7 +21,7 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
 
     override val height get() = Game.resources.boss1heart.height * heartScale * size * boss.bossScale
 
-    override val collider = Collider(CircleCollisionShape(width * 1.5f), this)
+    override val collider = Collider(CircleCollisionShape(width * 0.7f), this)
 
     override val texture = Game.resources.boss1heart.slice()
 
@@ -40,7 +40,7 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f
 
-        (collider.shape as CircleCollisionShape).radius = width * 1.5f
+        (collider.shape as CircleCollisionShape).radius = width * 0.7f
         collider.update(x, y)
     }
 

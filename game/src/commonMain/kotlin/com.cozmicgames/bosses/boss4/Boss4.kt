@@ -27,8 +27,6 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds
         private val CAMOUFLAGE_TIME = 2.0.seconds
-        private val VORTEX_OPEN_CLOSE_TIME = 2.0.seconds
-        private const val VORTEX_SIZE = 500.0f
 
         private const val HEAD_SCALE = 3.0f
         private const val HEAD_LAYER = RenderLayers.ENEMY_BEGIN + 10
@@ -63,7 +61,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     override val movementController = Boss4MovementController(this)
 
-    val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
+    val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds || isTeleporting
 
     override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
@@ -72,8 +70,10 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
 
     val isCamouflaged get() = camouflageFactor > 0.0f
 
-    var bossScale = 1.0f
+    val isVortexOpen get() = vortex.size > 0.0f
 
+    var bossScale = 1.0f
+    var isTeleporting = false
     val vortex = Vortex()
 
     private val head = Head(this, HEAD_SCALE, HEAD_LAYER)
@@ -90,6 +90,9 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     private var camouflageDirection = -1.0f
     private var vortexTimer = 0.0.seconds
     private var vortexDirection = -1.0f
+    private var vortexOpenCloseTime = 0.0.seconds
+    private var vortexTargetSize = 0.0f
+    private var vortexCallback: () -> Unit = {}
 
     override fun addToWorld() {
         Game.world.add(head)
@@ -193,15 +196,19 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
                 camouflageFactor = 1.0f
 
             vortexTimer -= delta
-            if (vortexTimer <= 0.0.seconds)
+            if (vortexTimer <= 0.0.seconds) {
                 vortexTimer = 0.0.seconds
+                vortexCallback()
+                vortexCallback = {}
+            }
 
-            vortex.size += (1.0f - (vortexTimer / VORTEX_OPEN_CLOSE_TIME).toFloat()) * vortexDirection * VORTEX_SIZE
+            if (vortexOpenCloseTime > 0.0.seconds)
+                vortex.size += (1.0f - (vortexTimer / vortexOpenCloseTime).toFloat()) * vortexDirection * vortexTargetSize
 
             if (vortex.size < 0.0f)
                 vortex.size = 0.0f
-            else if (vortex.size > VORTEX_SIZE)
-                vortex.size = VORTEX_SIZE
+            else if (vortex.size > vortexTargetSize)
+                vortex.size = vortexTargetSize
 
             Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
 
@@ -292,7 +299,7 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
             beak.rotation = rotation
 
             val heartOffsetX = 0.0f
-            val heartOffsetY = head.height * 0.37f
+            val heartOffsetY = head.height * 0.38f
 
             heart.x = head.x + cos * heartOffsetX - sin * heartOffsetY
             heart.y = head.y + sin * heartOffsetX + cos * heartOffsetY
@@ -431,11 +438,17 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
     }
 
     fun camouflage() {
+        if (isCamouflaged)
+            return
+
         camouflageTimer = CAMOUFLAGE_TIME
         camouflageDirection = 1.0f
     }
 
     fun decamouflage(immidiate: Boolean = false) {
+        if (!isCamouflaged)
+            return
+
         if (immidiate) {
             camouflageTimer = 0.0.seconds
             camouflageFactor = 0.0f
@@ -445,17 +458,29 @@ class Boss4(override val difficulty: Difficulty) : Entity("boss1"), AreaEffectSo
         }
     }
 
-    fun openVortex() {
-        vortexTimer = VORTEX_OPEN_CLOSE_TIME
+    fun openVortex(x: Float, y: Float, size: Float, duration: Duration, callback: () -> Unit = {}) {
+        if (isVortexOpen)
+            return
+
+        vortex.x = x
+        vortex.y = y
+        vortexTimer = duration
+        vortexOpenCloseTime = duration
         vortexDirection = 1.0f
+        vortexTargetSize = size
+        vortexCallback = callback
     }
 
-    fun closeVortex(immidiate: Boolean = false) {
-        if (immidiate) {
+    fun closeVortex(duration: Duration) {
+        if (!isVortexOpen)
+            return
+
+        if (duration == 0.0.seconds) {
             vortexTimer = 0.0.seconds
             vortex.size = 0.0f
         } else {
-            vortexTimer = VORTEX_OPEN_CLOSE_TIME
+            vortexTimer = duration
+            vortexOpenCloseTime = duration
             vortexDirection = -1.0f
         }
     }

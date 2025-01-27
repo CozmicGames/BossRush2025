@@ -85,9 +85,12 @@ class ProjectileManager {
                 }
             }
 
-            projectile.updateDistance()
+            projectile.onUpdate(delta)
         }
 
+        projectilesToRemove.forEach {
+            it.onRemove()
+        }
         projectiles -= projectilesToRemove
 
         Game.players.setGlobalState("renderProjectileCount", projectiles.size)
@@ -114,7 +117,14 @@ class ProjectileManager {
         if (!Game.players.isHost)
             return
 
-        projectiles += Projectile(fromSource, type, x, y, direction, speed, speedFalloff)
+        val projectile = Projectile(fromSource, type, x, y, direction, speed, speedFalloff)
+        projectile.onAdded()
+        projectiles += projectile
+    }
+
+    fun removeProjectile(projectile: Projectile) {
+        projectiles -= projectile
+        projectile.onRemove()
     }
 
     fun render(batch: SpriteBatch) {

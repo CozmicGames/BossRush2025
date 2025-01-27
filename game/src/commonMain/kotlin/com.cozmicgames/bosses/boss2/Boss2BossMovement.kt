@@ -1,7 +1,6 @@
 package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.bosses.*
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerp
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -45,7 +44,7 @@ class AimBoss2BossMovement(private val targetX: Float, private val targetY: Floa
     }
 }
 
-class FollowPlayerBoss2BossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
+class FollowPlayerBoss2BossMovement(private val target: BossTarget, private val onReached: () -> Unit = {}) : BossMovement {
     companion object {
         private const val TARGET_DISTANCE = 500.0f
     }
@@ -53,8 +52,8 @@ class FollowPlayerBoss2BossMovement(private val ship: PlayerShip, private val on
     private var timer = 0.0.seconds
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
-        val dx = ship.x - boss.x
-        val dy = ship.y - boss.y
+        val dx = target.x - boss.x
+        val dy = target.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
 
         if (distance < TARGET_DISTANCE) {
@@ -68,7 +67,7 @@ class FollowPlayerBoss2BossMovement(private val ship: PlayerShip, private val on
         }
 
         timer += delta
-        transform.targetRotation = 6.0.degrees * sin(timer.seconds * 0.5)
+        //transform.targetRotation = 6.0.degrees * sin(timer.seconds * 0.5)
     }
 }
 

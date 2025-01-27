@@ -41,15 +41,15 @@ abstract class Boss2FightStage : FightStage() {
         if (controller.isAttacking)
             return
 
-        val targetedPlayer = Game.players.players.random().ship
+        val target = Game.world.decideOnTarget() ?: return
 
-        val dx = targetedPlayer.x - boss.x
-        val dy = targetedPlayer.y - boss.y
+        val dx = target.x - boss.x
+        val dy = target.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
 
         if (distance > maxFollowDistance) {
             if (movement.bossMovement !is FollowPlayerBoss2BossMovement)
-                movement.bossMovement = FollowPlayerBoss2BossMovement(targetedPlayer) {
+                movement.bossMovement = FollowPlayerBoss2BossMovement(target) {
                     nextBossMovementDecisionTime = 1.0.seconds
                 }
         } else {
@@ -57,7 +57,7 @@ abstract class Boss2FightStage : FightStage() {
                 movement.bossMovement = IdleBoss2BossMovement()
                 nextBossMovementDecisionTime = 2.0.seconds
             } else {
-                movement.bossMovement = AimBossMovement(targetedPlayer.x, targetedPlayer.y)
+                movement.bossMovement = AimBossMovement(target.x, target.y)
                 nextBossMovementDecisionTime = 3.0.seconds
             }
         }
@@ -70,7 +70,7 @@ class Boss2FightStage1 : Boss2FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.7f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.7f, 1.0.seconds) { HitAttack() },
         StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
         StageAttack(0.4f, 3.0.seconds) { FlyAttack() }
     )
@@ -82,7 +82,7 @@ class Boss2FightStage2 : Boss2FightStage() {
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.3f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.3f, 1.0.seconds) { HitAttack() },
         StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
         StageAttack(0.4f, 3.0.seconds) { FlyAttack() },
         StageAttack(0.4f, 5.0.seconds) { PierceAttack() },
@@ -97,7 +97,7 @@ class Boss2FightStage3 : Boss2FightStage() {
     override val maxFollowDistance = 400.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.2f, 1.0.seconds) { HitPlayerAttack() },
+        StageAttack(0.2f, 1.0.seconds) { HitAttack() },
         StageAttack(0.3f, 3.0.seconds) { FlyAttack() },
         StageAttack(0.3f, 4.0.seconds) { PierceAttack() },
         StageAttack(0.7f, 3.0.seconds) { ShootAttack() },

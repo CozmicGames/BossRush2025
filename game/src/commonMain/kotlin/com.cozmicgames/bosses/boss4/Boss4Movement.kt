@@ -10,6 +10,7 @@ class Boss4Movement : Movement {
     override fun set(movement: Movement) {
         if (movement is Boss4Movement) {
             bossMovement = movement.bossMovement
+            tailMovement = movement.tailMovement
             beakMovement = movement.beakMovement
         }
     }
@@ -19,7 +20,7 @@ class Boss4Movement : Movement {
 
     override fun setToParalyzed(boss: Boss) {
         bossMovement = ParalyzedBossMovement(boss.rotation)
-        //tailMovement = ParalyzedTailMovement()
+        tailMovement = ParalyzedTailMovement()
         beakMovement = ParalyzedBeakMovement()
     }
 

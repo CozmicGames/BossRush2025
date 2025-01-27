@@ -2,7 +2,6 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
-import com.cozmicgames.bosses.boss1.Boss1
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
@@ -18,7 +17,7 @@ abstract class Boss3Attack : Attack() {
     abstract val beakMovement: BeakMovement?
 
     override fun applyToMovement(movement: Movement) {
-        movement as? Boss3Movement ?: throw IllegalArgumentException("Movement must be a Boss1Movement")
+        movement as? Boss3Movement ?: throw IllegalArgumentException("Movement must be a Boss3Movement")
         bossMovement?.let { movement.bossMovement = it }
         legMovement?.let { movement.legMovement = it }
         armMovement?.let { movement.armMovement = it }
@@ -26,7 +25,7 @@ abstract class Boss3Attack : Attack() {
     }
 }
 
-class GravityScreamAttack(): Boss3Attack() {
+class GravityScreamAttack : Boss3Attack() {
     override val duration = 4.0.seconds
 
     override val bossMovement = WiggleBoss3BossMovement()
@@ -53,13 +52,22 @@ class SpinAttack(override val duration: Duration = 2.0.seconds) : Boss3Attack() 
     override val beakMovement = ClosedBeakMovement()
 }
 
-class GrabAttack(ship: PlayerShip = Game.players.players.random().ship) : Boss3Attack() {
+class GrabAttack(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attack() {
     override val duration: Duration = 7.0.seconds
 
-    override val bossMovement = GrabAttackBoss3BossMovement(ship)
+    override var bossMovement: BossMovement? = null
     override val legMovement = HangLegMovement()
-    override val armMovement = GrabArmMovement(ship, 0.2f)
+    override var armMovement: ArmMovement? = null
     override val beakMovement = ClosedBeakMovement()
+
+    init {
+        if (target !is PlayerShip)
+            setDone()
+        else {
+            bossMovement = GrabAttackBoss3BossMovement(target)
+            armMovement = GrabArmMovement(target, 0.2f)
+        }
+    }
 }
 
 class ThrowAttack : Boss3Attack() {
@@ -76,55 +84,91 @@ class ThrowAttack : Boss3Attack() {
     override val beakMovement = ClosedBeakMovement()
 }
 
-class ShootAttack0(ship: PlayerShip = Game.players.players.random().ship) : Boss3Attack() {
+class ShootAttack0(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attack() {
     override val duration = 5.0.seconds
 
-    override val bossMovement = FollowPlayerBoss3BossMovement(ship)
-    override val legMovement = CompoundLegMovement(
-        listOf(
-            DefendLegMovement(),
-            SwayLegMovement(10.0.degrees, 0.3f, 0.2f)
-        )
-    )
-    override val armMovement = CompoundArmMovement(listOf(
-        AimArmMovement(ship.x, ship.y, 0.1f),
-        ShootClawMovement(0.3.seconds, 1, 0.0.degrees)
-    ))
+    override var bossMovement: BossMovement? = null
+    override var legMovement: LegMovement? = null
+    override var armMovement: ArmMovement? = null
     override val beakMovement = ClosedBeakMovement()
+
+    init {
+        if (target !is PlayerShip)
+            setDone()
+        else {
+            bossMovement = FollowPlayerBoss3BossMovement(target)
+            legMovement = CompoundLegMovement(
+                listOf(
+                    DefendLegMovement(),
+                    SwayLegMovement(10.0.degrees, 0.3f, 0.2f)
+                )
+            )
+            armMovement = CompoundArmMovement(
+                listOf(
+                    AimArmMovement(target.x, target.y, 0.1f),
+                    ShootClawMovement(0.3.seconds, 1, 0.0.degrees)
+                )
+            )
+        }
+    }
 }
 
-class ShootAttack1(ship: PlayerShip = Game.players.players.random().ship) : Boss3Attack() {
+class ShootAttack1(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attack() {
     override val duration = 5.0.seconds
 
-    override val bossMovement = FollowPlayerBoss3BossMovement(ship)
-    override val legMovement = CompoundLegMovement(
-        listOf(
-            DefendLegMovement(),
-            SwayLegMovement(7.0.degrees, 0.4f, 0.2f)
-        )
-    )
-    override val armMovement = CompoundArmMovement(listOf(
-        AimArmMovement(ship.x, ship.y, 0.1f),
-        ShootClawMovement(0.4.seconds, 3, 30.0.degrees)
-    ))
+    override var bossMovement: BossMovement? = null
+    override var legMovement: LegMovement? = null
+    override var armMovement: ArmMovement? = null
     override val beakMovement = ClosedBeakMovement()
+
+    init {
+        if (target !is PlayerShip)
+            setDone()
+        else {
+            bossMovement = FollowPlayerBoss3BossMovement(target)
+            legMovement = CompoundLegMovement(
+                listOf(
+                    DefendLegMovement(),
+                    SwayLegMovement(7.0.degrees, 0.4f, 0.2f)
+                )
+            )
+            armMovement = CompoundArmMovement(
+                listOf(
+                    AimArmMovement(target.x, target.y, 0.1f),
+                    ShootClawMovement(0.4.seconds, 3, 30.0.degrees)
+                )
+            )
+        }
+    }
 }
 
-class ShootAttack2(ship: PlayerShip = Game.players.players.random().ship) : Boss3Attack() {
+class ShootAttack2(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attack() {
     override val duration = 5.0.seconds
 
-    override val bossMovement = FollowPlayerBoss3BossMovement(ship)
-    override val legMovement = CompoundLegMovement(
-        listOf(
-            DefendLegMovement(),
-            SwayLegMovement(12.0.degrees, 0.5f, 0.2f)
-        )
-    )
-    override val armMovement = CompoundArmMovement(listOf(
-        AimArmMovement(ship.x, ship.y, 0.1f),
-        ShootClawMovement(0.2.seconds, 5, 40.0.degrees)
-    ))
+    override var bossMovement: BossMovement? = null
+    override var legMovement: LegMovement? = null
+    override var armMovement: ArmMovement? = null
     override val beakMovement = ClosedBeakMovement()
+
+    init {
+        if (target !is PlayerShip)
+            setDone()
+        else {
+            bossMovement = FollowPlayerBoss3BossMovement(target)
+            legMovement = CompoundLegMovement(
+                listOf(
+                    DefendLegMovement(),
+                    SwayLegMovement(12.0.degrees, 0.5f, 0.2f)
+                )
+            )
+            armMovement = CompoundArmMovement(
+                listOf(
+                    AimArmMovement(target.x, target.y, 0.1f),
+                    ShootClawMovement(0.2.seconds, 5, 40.0.degrees)
+                )
+            )
+        }
+    }
 }
 
 class SpinShootAttack0(override val duration: Duration = 4.0.seconds) : Boss3Attack() {

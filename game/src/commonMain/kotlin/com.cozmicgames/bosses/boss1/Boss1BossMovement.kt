@@ -1,7 +1,6 @@
 package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.bosses.*
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.utils.lerp
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -54,18 +53,18 @@ class SpinAttackBoss1BossMovement : BossMovement {
     }
 }
 
-class GrabAttackBoss1BossMovement(private val ship: PlayerShip) : BossMovement {
+class GrabAttackBoss1BossMovement(private val target: BossTarget) : BossMovement {
     private var timer = 0.0.seconds
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         timer += delta
-        transform.targetX = ship.x
-        transform.targetY = ship.y + 200.0f // Above the ship
+        transform.targetX = target.x
+        transform.targetY = target.y + 200.0f // Above the ship
         transform.targetRotation = atan((transform.targetY - boss.y) / (transform.targetX - boss.x)).radians - 90.0.degrees
     }
 }
 
-class FollowPlayerBoss1BossMovement(private val ship: PlayerShip, private val onReached: () -> Unit = {}) : BossMovement {
+class FollowPlayerBoss1BossMovement(private val target: BossTarget, private val onReached: () -> Unit = {}) : BossMovement {
     companion object {
         private const val TARGET_DISTANCE = 500.0f
     }
@@ -73,8 +72,8 @@ class FollowPlayerBoss1BossMovement(private val ship: PlayerShip, private val on
     private var timer = 0.0.seconds
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
-        val dx = ship.x - boss.x
-        val dy = ship.y - boss.y
+        val dx = target.x - boss.x
+        val dy = target.y - boss.y
         val distance = sqrt(dx * dx + dy * dy)
 
         if (distance < TARGET_DISTANCE) {

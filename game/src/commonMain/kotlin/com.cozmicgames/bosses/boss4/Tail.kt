@@ -5,7 +5,6 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.physics.Hittable
-import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.math.pow
 import kotlin.time.Duration
@@ -67,6 +66,9 @@ class Tail(val boss: Boss4, val scale: Float, val layer: Int) : Hittable, Player
     }
 
     override fun onDamageHit() {
+        if (boss.isInvulnerable)
+            return
+
         paralyze()
     }
 }
