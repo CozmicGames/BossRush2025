@@ -31,4 +31,6 @@ class Tail(val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2tail"), 
     override val muzzleY get() = boss.muzzleY
 
     override val muzzleRotation get() = boss.muzzleRotation
+
+    override val isStunMode = false
 }

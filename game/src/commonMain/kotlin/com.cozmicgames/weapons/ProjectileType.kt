@@ -1,17 +1,37 @@
 package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
+import com.cozmicgames.graphics.particles.ParticleEffect
+import com.cozmicgames.graphics.particles.effects.ContinuousShotEffect
+import com.cozmicgames.graphics.particles.effects.SingleShotEffect
+import com.littlekt.graphics.Color
 import com.littlekt.graphics.Texture
 import com.littlekt.graphics.g2d.SpriteBatch
 import com.littlekt.math.clamp
+import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.radians
+import org.w3c.dom.CanvasDirection
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
-enum class ProjectileType(val baseType: ProjectileBaseType) {
-    ENERGY_BALL(BulletProjectileType({ Game.resources.energyBall }, 16.0f)),
-    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.energyBeam }),
-    BAIT_BALL(BulletProjectileType({ Game.resources.baitBall }, 24.0f))
+enum class ProjectileType(val baseType: ProjectileBaseType, val stunColor: Color, val killColor: Color) {
+    ENERGY_BALL(BulletProjectileType({ Game.resources.energyBall }, 16.0f), Color.fromHex("94fdff"), Color.fromHex("e7211d")) {
+        override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
+            return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
+        }
+    },
+    ENERGY_BEAM(BeamProjectileType(1000.0f) { Game.resources.energyBeam }, Color.fromHex("94fdff"), Color.fromHex("e7211d")) {
+        override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
+            return ContinuousShotEffect(x, y, direction, if (isStun) stunColor else killColor)
+        }
+    },
+    BAIT_BALL(BulletProjectileType({ Game.resources.baitBall }, 24.0f), Color.fromHex("ffd59b"), Color.fromHex("ffd59b")) {
+        override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
+            return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
+        }
+    };
+
+    abstract fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect
 }
 
 sealed interface ProjectileBaseType

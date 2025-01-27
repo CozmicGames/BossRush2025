@@ -100,6 +100,7 @@ class Boss3(override val difficulty: Difficulty) : Boss, ProjectileSource, AreaE
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     override val effectSourceX get() = beak.x
     override val effectSourceY get() = beak.y

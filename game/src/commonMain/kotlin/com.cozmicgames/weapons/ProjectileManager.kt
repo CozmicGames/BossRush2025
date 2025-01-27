@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.events.Events
+import com.cozmicgames.graphics.particles.ParticleEffect
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.g2d.SpriteBatch
@@ -15,12 +16,11 @@ import kotlin.time.Duration
 
 class ProjectileManager {
     private val projectiles = arrayListOf<Projectile>()
+    private val projectilesToRemove = arrayListOf<Projectile>()
 
     fun update(delta: Duration) {
         if (!Game.players.isHost)
             return
-
-        val projectilesToRemove = arrayListOf<Projectile>()
 
         for (projectile in projectiles) {
             if (projectile.type.baseType is BeamProjectileType) {
@@ -92,6 +92,7 @@ class ProjectileManager {
             it.onRemove()
         }
         projectiles -= projectilesToRemove
+        projectilesToRemove.clear()
 
         Game.players.setGlobalState("renderProjectileCount", projectiles.size)
 
@@ -110,14 +111,22 @@ class ProjectileManager {
         if (!Game.players.isHost)
             return
 
-        projectiles.removeAll { it.fromSource == fromSource && it.type == ProjectileType.ENERGY_BEAM }
+        projectilesToRemove += projectiles.filter { it.fromSource == fromSource && it.type == ProjectileType.ENERGY_BEAM }
     }
 
-    fun spawnProjectile(fromSource: ProjectileSource, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float, speedFalloff: Float) {
+    fun spawnProjectile(fromSource: ProjectileSource, type: ProjectileType, x: Float, y: Float, direction: Angle, speed: Float, speedFalloff: Float, withParticleEffect: Boolean = true) {
         if (!Game.players.isHost)
             return
 
+        var particleEffect: ParticleEffect? = null
+
+        if (withParticleEffect) {
+            particleEffect = type.createParticleEffect(x, y, direction, fromSource.isStunMode)
+            Game.particles.add(particleEffect)
+        }
+
         val projectile = Projectile(fromSource, type, x, y, direction, speed, speedFalloff)
+        projectile.particleEffect = particleEffect
         projectile.onAdded()
         projectiles += projectile
     }

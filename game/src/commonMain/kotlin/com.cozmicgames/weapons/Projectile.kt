@@ -3,6 +3,8 @@ package com.cozmicgames.weapons
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.BossTarget
 import com.cozmicgames.entities.worldObjects.ProjectileSource
+import com.cozmicgames.graphics.particles.ParticleEffect
+import com.cozmicgames.graphics.particles.effects.ShootEffect
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.littlekt.math.geom.Angle
@@ -35,6 +37,8 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
     var currentX = startX
     var currentY = startY
 
+    var particleEffect: ParticleEffect? = null
+
     private val bossTarget: BaitTarget? = if (type == ProjectileType.BAIT_BALL)
         BaitTarget()
     else
@@ -60,9 +64,17 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
             if (it.life <= 0.seconds)
                 Game.projectiles.removeProjectile(this)
         }
+
+        (particleEffect as? ShootEffect)?.let {
+            it.x = startX
+            it.y = startY
+            it.direction = direction
+        }
     }
 
     fun onRemove() {
+        particleEffect?.setShouldBeRemoved()
+
         val target = bossTarget ?: return
 
         Game.physics.removeCollider(target.collider)

@@ -33,6 +33,7 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     val blockingCollider = Collider(getRectangleCollisionShape(0.9f, 0.3f), null)
 

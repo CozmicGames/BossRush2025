@@ -7,6 +7,9 @@ import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.particles.effects.ContinuousShotEffect
+import com.cozmicgames.graphics.particles.effects.SingleShotEffect
+import com.cozmicgames.graphics.particles.effects.TrailEffect
 import com.cozmicgames.multiplayer.Player
 import com.cozmicgames.physics.*
 import com.cozmicgames.utils.Difficulty
@@ -38,6 +41,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     var primaryWeapon: Weapon? = Weapons.REELGUN
     var secondaryWeapon: Weapon? = Weapons.REELGUN
+
+    override var isStunMode = true
 
     override val collider = Collider(RectangleCollisionShape(64.0f, 64.0f, 0.0f.degrees), this)
 
@@ -75,6 +80,9 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         private set
 
     private var isBeamProjectileFiring = false
+
+    private val leftTrailEffect = TrailEffect(player.state.id, true)
+    private val rightTrailEffect = TrailEffect(player.state.id, false)
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         //TODO: Organize this into what is host only and what not
@@ -270,11 +278,15 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         state.setState("spawnProjectileSpeed", weapon.projectileSpeed)
         state.setState("spawnProjectileSpeedFalloff", weapon.projectileSpeedFalloff)
 
-        if (weapon.projectileType.baseType is BulletProjectileType)
-            setCooldown(weapon.fireRate)
+        when (weapon.projectileType.baseType) {
+            is BulletProjectileType -> {
+                setCooldown(weapon.fireRate)
+            }
 
-        if (weapon.projectileType.baseType is BeamProjectileType)
-            isBeamProjectileFiring = true
+            is BeamProjectileType -> {
+                isBeamProjectileFiring = true
+            }
+        }
     }
 
     private fun stopFiringWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
@@ -328,10 +340,20 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
     fun addToWorld() {
         Game.world.add(this)
+
+        if (Game.players.isHost) {
+            Game.particles.add(leftTrailEffect)
+            Game.particles.add(rightTrailEffect)
+        }
     }
 
     fun removeFromWorld() {
         Game.world.remove(this)
+
+        if (Game.players.isHost) {
+            Game.particles.remove(leftTrailEffect)
+            Game.particles.remove(rightTrailEffect)
+        }
     }
 
     fun addToPhysics() {

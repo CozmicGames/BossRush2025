@@ -29,6 +29,7 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     val halfWidth get() = width * 0.5f
 

@@ -68,6 +68,8 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
         }
     override val muzzleRotation get() = if (isFlipped) rotation else rotation + 180.0.degrees
 
+    override val isStunMode = false
+
     override var health = FULL_HEALTH
     override var x = 0.0f
     override var y = 0.0f

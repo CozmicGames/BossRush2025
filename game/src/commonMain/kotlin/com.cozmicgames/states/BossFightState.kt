@@ -136,6 +136,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             boss.update(delta)
 
         asteroids.update(delta, fightStarted)
+        Game.particles.update(delta)
         Game.world.update(delta, fightStarted)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
@@ -172,6 +173,10 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
             renderer.submit(RenderLayers.AREA_EFFECTS_BEGIN) {
                 Game.areaEffects.render(it)
+            }
+
+            renderer.submit(RenderLayers.PARTICLES_BEGIN) {
+                Game.particles.render(it)
             }
         }
 

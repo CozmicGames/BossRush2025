@@ -55,4 +55,6 @@ class Heart(private val boss: Boss2, layer: Int) : EnemyPart("boss2heart"), Hitt
     override val muzzleY get() = boss.muzzleY
 
     override val muzzleRotation get() = boss.muzzleRotation
+
+    override val isStunMode = false
 }

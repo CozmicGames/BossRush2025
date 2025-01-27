@@ -3,6 +3,7 @@ package com.cozmicgames
 import com.cozmicgames.entities.worldObjects.World
 import com.cozmicgames.events.EventManager
 import com.cozmicgames.graphics.Graphics2D
+import com.cozmicgames.graphics.particles.ParticleManager
 import com.cozmicgames.input.ControlManager
 import com.cozmicgames.input.InputManager
 import com.cozmicgames.multiplayer.PlayerManager
@@ -27,6 +28,7 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         lateinit var players: PlayerManager
         lateinit var input: InputManager
         lateinit var graphics: Graphics2D
+        val particles = ParticleManager()
         val physics = PhysicsWorld(1500.0f, 1500.0f)
         val controls = ControlManager()
         val resources = Resources()

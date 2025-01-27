@@ -35,6 +35,7 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     init {
         val parts = arrayListOf<ArmPart>()

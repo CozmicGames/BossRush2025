@@ -38,6 +38,7 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
 
     override val muzzleRotation get() = if (flip) rotation + 180.0.degrees else rotation
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     override val grabbingId = "boss3"
 

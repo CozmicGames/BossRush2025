@@ -1,6 +1,7 @@
 package com.cozmicgames.events
 
 import com.cozmicgames.Game
+import com.cozmicgames.graphics.particles.ParticleEffect
 import com.cozmicgames.physics.Grabbable
 
 object Events {
@@ -13,6 +14,8 @@ object Events {
     fun grab(id: String, fromId: String): String = "grab:$id,$fromId"
 
     fun release(id: String, impulseX: Float = 0.0f, impulseY: Float = 0.0f): String = "release:$id,$impulseX,$impulseY"
+
+    fun stopParticleEffect(id: String) = "stopParticleEffect:$id"
 
     fun process(event: String) {
         when {
@@ -69,6 +72,11 @@ object Events {
                     if (hittable is Grabbable && impulseX != null && impulseY != null)
                         hittable.onReleased(impulseX, impulseY)
                 }
+            }
+
+            event.startsWith("stopParticleEffect") -> {
+                val id = event.substringAfter(":")
+                Game.particles.remove(id)
             }
         }
     }

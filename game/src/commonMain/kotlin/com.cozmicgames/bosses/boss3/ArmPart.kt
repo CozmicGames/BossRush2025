@@ -29,6 +29,7 @@ open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean,
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     private val halfWidth get() = width * 0.5f
 

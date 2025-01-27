@@ -34,6 +34,7 @@ class Heart(val boss: Boss3, private val heartScale: Float, layer: Int) : EnemyP
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     private var size = 1.0f
     private var timer = 0.0.seconds

@@ -29,6 +29,7 @@ class ClawPart(val claw: Claw, private val flip: Boolean, private val isUpper: B
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         val pivotOffsetX = (if (isUpper) claw.width * 0.48f else claw.width * 0.27f) * (if (flip) -1.0f else 1.0f)

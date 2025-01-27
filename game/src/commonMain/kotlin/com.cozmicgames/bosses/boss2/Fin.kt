@@ -31,4 +31,6 @@ class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int
     override val muzzleY get() = boss.muzzleY
 
     override val muzzleRotation get() = boss.muzzleRotation
+
+    override val isStunMode = false
 }

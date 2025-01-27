@@ -28,6 +28,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
     override val muzzleY = 0.0f
     override val muzzleRotation = 0.0.degrees
     override val projectileSourceId = "boss3"
+    override val isStunMode = false
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
