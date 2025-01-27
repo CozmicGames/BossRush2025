@@ -5,9 +5,11 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
+import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
+import kotlin.math.sqrt
 
-class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2sword"), PlayerDamageSource, ProjectileSource {
+class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2sword"), PlayerDamageSource, ProjectileSource, Hittable {
     override val renderLayer = layer
 
     override val width = Game.resources.boss2sword.width * scale
@@ -33,4 +35,12 @@ class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss
     override val muzzleRotation get() = boss.muzzleRotation
 
     override val isStunMode = false
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
+    }
 }

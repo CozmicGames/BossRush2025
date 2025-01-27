@@ -8,6 +8,7 @@ import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -76,6 +77,17 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     }
 
     override fun onDamageHit() {
+        if (boss.isInvulnerable)
+            return
+
         paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 }

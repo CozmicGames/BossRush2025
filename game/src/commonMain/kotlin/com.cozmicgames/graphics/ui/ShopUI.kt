@@ -64,7 +64,7 @@ class ShopUI : GUIElement() {
             slot
         }
 
-        val spacing = (Game.graphics.width - (130.0f * weaponSlots.size)) / (weaponSlots.size + 1)
+        val spacing = 10.0f
 
         weaponSlots.forEachIndexed { index, slot ->
             slot.getX = { spacing + index * (130.0f + spacing) }
@@ -73,13 +73,13 @@ class ShopUI : GUIElement() {
             slot.getHeight = { 130.0f }
         }
 
-        walletLabel.getX = { 870.0f }
-        walletLabel.getY = { 160.0f }
-
-        walletBackground.getX = { 740.0f }
-        walletBackground.getY = { 154.0f }
+        walletBackground.getX = { 360.0f }
+        walletBackground.getY = { 150.0f }
         walletBackground.getWidth = { 200.0f }
         walletBackground.getHeight = { 38.0f }
+
+        walletLabel.getX = { walletBackground.x + 130.0f }
+        walletLabel.getY = { walletBackground.y + 6.0f }
 
         shopLabel.getX = { spacing }
         shopLabel.getY = { 170.0f }

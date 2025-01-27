@@ -16,6 +16,8 @@ import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import com.littlekt.math.isFuzzyZero
+import com.littlekt.util.seconds
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -74,6 +76,10 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
     override var x = 0.0f
     override var y = 0.0f
     override var rotation = 0.0.degrees
+
+    var impulseX = 0.0f
+    var impulseY = 0.0f
+    var impulseSpin = 0.0f
 
     val isInvulnerable get() = isInvulnerableTimer > 0.0.seconds
 
@@ -181,6 +187,23 @@ class Boss2(override val difficulty: Difficulty) : Boss, ProjectileSource {
             isParalyzedTimer -= delta
             if (isParalyzedTimer <= 0.0.seconds)
                 isParalyzedTimer = 0.0.seconds
+
+            impulseX *= 1.0f - delta.seconds
+            impulseY *= 1.0f - delta.seconds
+            impulseSpin *= 1.0f - delta.seconds * 1.05f
+
+            if (impulseX.isFuzzyZero())
+                impulseX = 0.0f
+
+            if (impulseY.isFuzzyZero())
+                impulseY = 0.0f
+
+            if (impulseSpin.isFuzzyZero())
+                impulseSpin = 0.0f
+
+            x += impulseX * delta.seconds * 300.0f
+            y += impulseY * delta.seconds * 300.0f
+            rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
             if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
                 flip()

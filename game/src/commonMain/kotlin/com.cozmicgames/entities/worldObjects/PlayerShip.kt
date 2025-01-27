@@ -85,108 +85,123 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     private val rightTrailEffect = TrailEffect(player.state.id, false)
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        //TODO: Organize this into what is host only and what not
+        if (Game.players.isHost) {
+            invulnerabilityTimer -= delta
+            if (invulnerabilityTimer < 0.0.seconds)
+                invulnerabilityTimer = 0.0.seconds
 
-        invulnerabilityTimer -= delta
-        if (invulnerabilityTimer < 0.0.seconds)
-            invulnerabilityTimer = 0.0.seconds
+            var deltaX = impulseX * delta.seconds
+            var deltaY = impulseY * delta.seconds
+            var deltaRotation = 0.0f
 
-        var deltaX = impulseX * delta.seconds
-        var deltaY = impulseY * delta.seconds
-        var deltaRotation = 0.0f
+            impulseX *= 1.0f - delta.seconds
+            impulseY *= 1.0f - delta.seconds
+            impulseSpin *= 1.0f - delta.seconds * 1.05f
 
-        impulseX *= 1.0f - delta.seconds
-        impulseY *= 1.0f - delta.seconds
-        impulseSpin *= 1.0f - delta.seconds * 1.05f
+            if (impulseX.isFuzzyZero())
+                impulseX = 0.0f
 
-        if (impulseX.isFuzzyZero())
-            impulseX = 0.0f
+            if (impulseY.isFuzzyZero())
+                impulseY = 0.0f
 
-        if (impulseY.isFuzzyZero())
-            impulseY = 0.0f
+            if(impulseSpin.isFuzzyZero())
+                impulseSpin = 0.0f
 
-        if (fightStarted && !isGrabbed) {
-            player.state.getState<Float>("inputX")?.let {
-                deltaX += it
-            }
+            if (fightStarted && !isGrabbed) {
+                player.state.getState<Float>("inputX")?.let {
+                    deltaX += it
+                }
 
-            player.state.getState<Float>("inputY")?.let {
-                deltaY += it
-            }
+                player.state.getState<Float>("inputY")?.let {
+                    deltaY += it
+                }
 
-            player.state.getState<Float>("inputRotation")?.let {
-                deltaRotation = it
-            }
+                player.state.getState<Float>("inputRotation")?.let {
+                    deltaRotation = it
+                }
 
-            player.state.getState<Boolean>("inputUsePrimary")?.let {
-                if (firePrimaryCooldown <= 0.0.seconds)
-                    primaryWeapon?.let { weapon ->
-                        if (it)
-                            fireWeapon(weapon) { firePrimaryCooldown = it }
-                        else
-                            stopFiringWeapon(weapon) { firePrimaryCooldown = it }
-                    }
-            }
+                player.state.getState<Boolean>("inputUsePrimary")?.let {
+                    if (firePrimaryCooldown <= 0.0.seconds)
+                        primaryWeapon?.let { weapon ->
+                            if (it)
+                                fireWeapon(weapon) { firePrimaryCooldown = it }
+                            else
+                                stopFiringWeapon(weapon) { firePrimaryCooldown = it }
+                        }
+                }
 
-            player.state.getState<Boolean>("inputUseSecondary")?.let {
-                if (fireSecondaryCooldown <= 0.0.seconds) {
-                    secondaryWeapon?.let { weapon ->
-                        if (it)
-                            fireWeapon(weapon) { fireSecondaryCooldown = it }
-                        else
-                            stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+                player.state.getState<Boolean>("inputUseSecondary")?.let {
+                    if (fireSecondaryCooldown <= 0.0.seconds) {
+                        secondaryWeapon?.let { weapon ->
+                            if (it)
+                                fireWeapon(weapon) { fireSecondaryCooldown = it }
+                            else
+                                stopFiringWeapon(weapon) { fireSecondaryCooldown = it }
+                        }
                     }
                 }
             }
-        }
 
-        val speedScaleX = Game.physics.getSpeedScaleX(collider, deltaX)
-        val speedScaleY = Game.physics.getSpeedScaleY(collider, deltaY)
+            val speedScaleX = Game.physics.getSpeedScaleX(collider, deltaX)
+            val speedScaleY = Game.physics.getSpeedScaleY(collider, deltaY)
 
-        val minSpeedScale = min(speedScaleX, speedScaleY)
-        player.indicatorColor.set(Constants.INDICATOR_COLOR_BORDER)
-        player.indicatorColor.a = 1.0f - minSpeedScale
+            val minSpeedScale = min(speedScaleX, speedScaleY)
+            player.indicatorColor.set(Constants.INDICATOR_COLOR_BORDER)
+            player.indicatorColor.a = 1.0f - minSpeedScale
 
-        val moveX = speedScaleX * deltaX * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
-        val moveY = speedScaleY * deltaY * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
-        val moveRotation = deltaRotation.degrees * rotationSpeed * Constants.PLAYER_SHIP_BASE_ROTATION_SPEED
+            val moveX = speedScaleX * deltaX * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
+            val moveY = speedScaleY * deltaY * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
+            val moveRotation = deltaRotation.degrees * rotationSpeed * Constants.PLAYER_SHIP_BASE_ROTATION_SPEED
 
-        x += moveX
-        y += moveY
-        rotation += moveRotation + impulseSpin.degrees * 5.0f
+            x += moveX
+            y += moveY
+            rotation += moveRotation + impulseSpin.degrees * 5.0f
 
-        if (isGrabbed) {
-            grabbedBy?.let {
-                x = it.grabX
-                y = it.grabY
-                rotation = it.grabRotation + grabRotation
+            if (isGrabbed) {
+                grabbedBy?.let {
+                    x = it.grabX
+                    y = it.grabY
+                    rotation = it.grabRotation + grabRotation
+                }
             }
+
+            flySpeed = sqrt(moveX * moveX + moveY * moveY) + (moveRotation.degrees).absoluteValue
+
+            (collider.shape as RectangleCollisionShape).angle = rotation
+            Game.physics.updatePlayerCollider(collider, x, y)
+            x = collider.x
+            y = collider.y
+
+            muzzleX = x + rotation.cosine * Constants.PLAYER_SHIP_WIDTH * 0.47f
+            muzzleY = y + rotation.sine * Constants.PLAYER_SHIP_HEIGHT * 0.47f
+            muzzleRotation = rotation
+
+            effectSourceX = x
+            effectSourceY = y
+
+            firePrimaryCooldown -= delta
+            if (firePrimaryCooldown < 0.0.seconds)
+                firePrimaryCooldown = 0.0.seconds
+
+            fireSecondaryCooldown -= delta
+            if (fireSecondaryCooldown < 0.0.seconds)
+                fireSecondaryCooldown = 0.0.seconds
+
+            if (fightStarted)
+                player.ship.checkCollision()
+
+            player.state.setState("x", x)
+            player.state.setState("y", y)
+            player.state.setState("rotation", rotation.degrees)
+            player.state.setState("health", health)
+            player.state.setState("shipColor", color.toRgba8888())
+        } else {
+            x = player.state.getState<Float>("x") ?: x
+            y = player.state.getState<Float>("y") ?: y
+            rotation = player.state.getState<Float>("rotation")?.degrees ?: rotation
+            health = player.state.getState("health") ?: health
+            color.setRgba8888(player.state.getState("shipColor") ?: color.toRgba8888())
         }
-
-        flySpeed = sqrt(moveX * moveX + moveY * moveY) + (moveRotation.degrees).absoluteValue
-
-        (collider.shape as RectangleCollisionShape).angle = rotation
-        Game.physics.updatePlayerCollider(collider, x, y)
-        x = collider.x
-        y = collider.y
-
-        muzzleX = x + rotation.cosine * Constants.PLAYER_SHIP_WIDTH * 0.47f
-        muzzleY = y + rotation.sine * Constants.PLAYER_SHIP_HEIGHT * 0.47f
-        muzzleRotation = rotation
-
-        effectSourceX = x
-        effectSourceY = y
-
-        firePrimaryCooldown -= delta
-        if (firePrimaryCooldown < 0.0.seconds)
-            firePrimaryCooldown = 0.0.seconds
-
-        fireSecondaryCooldown -= delta
-        if (fireSecondaryCooldown < 0.0.seconds)
-            fireSecondaryCooldown = 0.0.seconds
-
-        if (fightStarted)
-            player.ship.checkCollision()
     }
 
     fun checkCollision() {

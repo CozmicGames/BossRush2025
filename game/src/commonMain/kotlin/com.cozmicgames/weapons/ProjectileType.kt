@@ -29,6 +29,11 @@ enum class ProjectileType(val baseType: ProjectileBaseType, val stunColor: Color
         override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
             return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
         }
+    },
+    SHOCK_MINE(BulletProjectileType({ Game.resources.energyBall }, 16.0f), Color.fromHex("fdd2ed"), Color.fromHex("fdd2ed")) {
+        override fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect {
+            return SingleShotEffect(x, y, direction, if (isStun) stunColor else killColor)
+        }
     };
 
     abstract fun createParticleEffect(x: Float, y: Float, direction: Angle, isStun: Boolean): ParticleEffect

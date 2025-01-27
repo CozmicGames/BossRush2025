@@ -7,6 +7,7 @@ import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
+import kotlin.math.sqrt
 
 class Head(private val boss: Boss1, size: Float, layer: Int) : EnemyPart("boss1head"), Hittable, PlayerDamageSource {
     override val canHit get() = !boss.isInvulnerable
@@ -26,5 +27,13 @@ class Head(private val boss: Boss1, size: Float, layer: Int) : EnemyPart("boss1h
 
     override fun onDamageHit() {
         boss.paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 }

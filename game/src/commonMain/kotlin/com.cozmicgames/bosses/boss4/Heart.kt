@@ -9,6 +9,7 @@ import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import com.littlekt.util.seconds
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -47,5 +48,13 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
     override fun onDamageHit() {
         if (!boss.isInvulnerable)
             boss.hit()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 }

@@ -11,6 +11,7 @@ import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3head"), Hittable, PlayerDamageSource, ProjectileSource {
@@ -64,5 +65,13 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
 
     override fun onDamageHit() {
         boss.paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 }

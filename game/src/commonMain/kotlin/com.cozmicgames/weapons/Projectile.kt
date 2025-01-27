@@ -2,6 +2,7 @@ package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.BossTarget
+import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.graphics.particles.ParticleEffect
 import com.cozmicgames.graphics.particles.effects.ShootEffect
@@ -12,10 +13,8 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var startX: Float, var startY: Float, var direction: Angle, var speed: Float, val speedFalloff: Float) {
+class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var startX: Float, var startY: Float, var direction: Angle, var speed: Float, val speedFalloff: Float) : AreaEffectSource {
     private inner class BaitTarget : BossTarget {
-        var life = 10.0.seconds
-
         override val id = "BaitBall${fromSource.projectileSourceId}"
 
         override val x get() = currentX
@@ -44,6 +43,14 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
     else
         null
 
+    private var areaEffectTimer = 0.0.seconds
+    private var lifeTimer = 0.0.seconds
+    private var setLifeTimer = false
+
+    override val effectSourceX get() = currentX
+    override val effectSourceY get() = currentY
+
+
     fun onAdded() {
         val target = bossTarget ?: return
 
@@ -57,18 +64,45 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
         val dy = currentY - startY
         distance = sqrt(dx * dx + dy * dy)
 
-        bossTarget?.let {
-            it.collider.update(currentX, currentY)
-            it.life -= delta //TODO: Add ripples as graphical effect
-
-            if (it.life <= 0.seconds)
-                Game.projectiles.removeProjectile(this)
-        }
+        bossTarget?.collider?.update(currentX, currentY)
 
         (particleEffect as? ShootEffect)?.let {
             it.x = startX
             it.y = startY
             it.direction = direction
+        }
+
+        if ((type == ProjectileType.SHOCK_MINE || type == ProjectileType.BAIT_BALL) && speed < 10.0f) {
+            if (!setLifeTimer) {
+                lifeTimer = when (type) {
+                    ProjectileType.SHOCK_MINE -> 30.0.seconds
+                    ProjectileType.BAIT_BALL -> 45.0.seconds
+                    else -> 0.0.seconds
+                }
+                setLifeTimer = true
+            }
+
+            areaEffectTimer -= delta
+
+            if (areaEffectTimer <= 0.0.seconds) {
+                when (type) {
+                    ProjectileType.SHOCK_MINE -> {
+                        Game.areaEffects.spawnEffect(this, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 16.0f, 50.0f, 3.5.seconds)
+                        areaEffectTimer = 2.0.seconds
+                    }
+
+                    ProjectileType.BAIT_BALL -> {
+                        Game.areaEffects.spawnEffect(this, AreaEffectType.BAIT, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 12.0f, 20.0f, 1.0.seconds)
+                        areaEffectTimer = 0.7.seconds
+                    }
+
+                    else -> {}
+                }
+            }
+
+            lifeTimer -= delta
+            if (lifeTimer <= 0.0.seconds)
+                Game.projectiles.removeProjectile(this)
         }
     }
 

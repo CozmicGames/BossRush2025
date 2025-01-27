@@ -12,7 +12,7 @@ import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
     val shootStatistics = ShootStatistics()
-    var wallet = 1000
+    var wallet = 10000
         private set
 
     val unlockedBossIndices = hashSetOf(0, 1, 2, 3)

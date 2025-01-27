@@ -9,6 +9,7 @@ import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
+import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : EnemyPart("boss4body"), Hittable, PlayerDamageSource {
@@ -33,6 +34,14 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
 
     override fun onDamageHit() {
         boss.paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {

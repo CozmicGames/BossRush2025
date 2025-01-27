@@ -7,6 +7,7 @@ import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.degrees
 import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -70,5 +71,13 @@ class Tail(val boss: Boss4, val scale: Float, val layer: Int) : Hittable, Player
             return
 
         paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 }

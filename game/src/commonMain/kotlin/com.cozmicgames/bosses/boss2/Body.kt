@@ -66,6 +66,9 @@ class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDama
     }
 
     override fun onDamageHit() {
+        if (boss.isInvulnerable)
+            return
+
         paralyze()
     }
 }

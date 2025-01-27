@@ -5,7 +5,9 @@ import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.events.Events
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Hittable
+import com.cozmicgames.utils.Easing
 import com.littlekt.graphics.g2d.SpriteBatch
+import com.littlekt.math.clamp
 import kotlin.time.Duration
 
 class AreaEffectManager {
@@ -28,7 +30,8 @@ class AreaEffectManager {
 
             Game.physics.checkCollision(areaEffect.collider, filter) {
                 if (it.userData is Hittable) {
-                    val strength = areaEffect.growRate * (areaEffect.timer / areaEffect.duration).toFloat() * 0.2f
+                    val factor = (areaEffect.timer / areaEffect.duration).toFloat()
+                    val strength = areaEffect.growRate * factor * 0.2f
 
                     val dx = it.x - areaEffect.sourceX
                     val dy = it.y - areaEffect.sourceY
@@ -46,6 +49,8 @@ class AreaEffectManager {
                         AreaEffectType.GRAVITY_WAVE -> {
                             Game.events.addSendEvent(Events.impulseHit(it.userData.id, -dx, -dy, strength))
                         }
+
+                        else -> {}
                     }
                 }
             }
@@ -54,11 +59,14 @@ class AreaEffectManager {
         Game.players.setGlobalState("renderAreaEffectsCount", areaEffects.size)
 
         areaEffects.forEachIndexed { index, areaEffect ->
+            val strength = (areaEffect.timer / areaEffect.duration).toFloat()
+            val alpha = 1.0f - Easing.CUBIC_OUT(strength).clamp(0.0f, 1.0f)
+
             Game.players.setGlobalState("renderAreaEffectType$index", areaEffect.type.ordinal)
             Game.players.setGlobalState("renderAreaEffectX$index", areaEffect.sourceX)
             Game.players.setGlobalState("renderAreaEffectY$index", areaEffect.sourceY)
             Game.players.setGlobalState("renderAreaEffectRadius$index", areaEffect.radius)
-            Game.players.setGlobalState("renderAreaEffectStrength$index", (areaEffect.timer / areaEffect.duration).toFloat())
+            Game.players.setGlobalState("renderAreaEffectAlpha$index", alpha)
         }
     }
 
@@ -74,9 +82,9 @@ class AreaEffectManager {
             val areaEffectX = Game.players.getGlobalState<Float>("renderAreaEffectX$index") ?: continue
             val areaEffectY = Game.players.getGlobalState<Float>("renderAreaEffectY$index") ?: continue
             val areaEffectRadius = Game.players.getGlobalState<Float>("renderAreaEffectRadius$index") ?: continue
-            val areaEffectStrength = Game.players.getGlobalState<Float>("renderAreaEffectStrength$index") ?: continue
+            val areaEffectAlpha = Game.players.getGlobalState<Float>("renderAreaEffectAlpha$index") ?: continue
 
-            areaEffectType.render(batch, areaEffectX, areaEffectY, areaEffectRadius, areaEffectStrength)
+            areaEffectType.render(batch, areaEffectX, areaEffectY, areaEffectRadius, areaEffectAlpha)
         }
     }
 }

@@ -10,6 +10,7 @@ import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
+import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Wing(private val boss: Boss4, private val left: Boolean, private val wingScale: Float, layer: Int) : EnemyPart("boss4wing${if (left) "left" else "right"}"), Hittable, PlayerDamageSource {
@@ -36,6 +37,14 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
 
     override fun onDamageHit() {
         boss.paralyze()
+    }
+
+    override fun onImpulseHit(x: Float, y: Float, strength: Float) {
+        val distance = sqrt(x * x + y * y)
+
+        boss.impulseX = x / distance * strength * 0.15f
+        boss.impulseY = y / distance * strength * 0.15f
+        boss.impulseSpin = strength * 0.15f
     }
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
