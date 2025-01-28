@@ -29,7 +29,7 @@ class AreaEffectManager {
             val filter = { collider: Collider -> collider.userData != areaEffect.fromSource }
 
             Game.physics.checkCollision(areaEffect.collider, filter) {
-                if (it.userData is Hittable) {
+                if (it.userData is Hittable && areaEffect.fromSource.shouldHitWithAreaEffect(it.userData.id)) {
                     val factor = (areaEffect.timer / areaEffect.duration).toFloat()
                     val strength = areaEffect.growRate * factor * 0.2f
 

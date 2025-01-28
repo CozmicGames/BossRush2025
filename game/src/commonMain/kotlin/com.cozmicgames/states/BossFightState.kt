@@ -9,10 +9,7 @@ import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.PlayerCamera
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
-import com.cozmicgames.graphics.ui.FightStartMessage
-import com.cozmicgames.graphics.ui.FightWeaponSlot
-import com.cozmicgames.graphics.ui.GUICamera
-import com.cozmicgames.graphics.ui.ResultPanel
+import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
@@ -35,9 +32,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
     private lateinit var boss: Boss
     private var resultPanel: ResultPanel? = null
     private var fightStartMessage: FightStartMessage? = null
-
-    private var primaryWeaponSlot: FightWeaponSlot? = null
-    private var secondaryWeaponSlot: FightWeaponSlot? = null
+    private var ingameUI: IngameUI? = null
 
     private var fightDuration = 0.0.seconds
     private var fightStarted = false
@@ -122,31 +117,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             Game.world.shouldUpdate = true
         }
 
-        player.ship.primaryWeapon?.let {
-            primaryWeaponSlot = FightWeaponSlot(it, FightWeaponSlot.Type.PRIMARY)
-        }
-
-        player.ship.secondaryWeapon?.let {
-            secondaryWeaponSlot = FightWeaponSlot(it, FightWeaponSlot.Type.SECONDARY)
-        }
-
-        primaryWeaponSlot?.let {
-            if (secondaryWeaponSlot != null)
-                it.getX = { Game.graphics.width - 80.0f - 25.0f - 80.0f - 25.0f }
-            else
-                it.getX = { Game.graphics.width - 80.0f - 25.0f }
-
-            it.getY = { 10.0f }
-            it.getWidth = { 80.0f }
-            it.getHeight = { 80.0f }
-        }
-
-        secondaryWeaponSlot?.let {
-            it.getX = { Game.graphics.width - 80f - 25.0f }
-            it.getY = { 10.0f }
-            it.getWidth = { 80.0f }
-            it.getHeight = { 80.0f }
-        }
+        ingameUI = IngameUI(player.ship, difficulty)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -192,9 +163,6 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         Game.world.update(delta, fightStarted)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
-        primaryWeaponSlot?.update(player.ship.primaryCooldownFactor, player.ship.tryUsePrimaryWeapon)
-        secondaryWeaponSlot?.update(player.ship.secondaryCooldownFactor, player.ship.tryUseSecondaryWeapon)
-
         if (!showResults)
             fightDuration += delta
 
@@ -236,8 +204,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         }
 
         pass.render(guiCamera.camera) { renderer: Renderer ->
-            primaryWeaponSlot?.render(delta, renderer)
-            secondaryWeaponSlot?.render(delta, renderer)
+            ingameUI?.render(delta, renderer)
 
             if (!fightStarted)
                 fightStartMessage?.render(delta, renderer)
@@ -249,13 +216,6 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
         if (!showResults) //TODO: Rework this, move to UI
             pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
-                renderer.submit(RenderLayers.UI) {
-                    repeat(difficulty.basePlayerHealth) { health ->
-                        val texture = if (health < playerShip.health) Game.resources.playerHealthIndicator else Game.resources.playerHealthEmptyIndicator
-                        it.draw(texture, -Game.graphics.width * 0.5f + 5.0f + health * 25.0f, -Game.graphics.height * 0.5f + 5.0f, width = 25.0f, height = 25.0f)
-                    }
-                }
-
                 if (player.indicatorColor.a > 0.0f)
                     renderer.submit(RenderLayers.BORDER_INDICATOR) {
                         it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)

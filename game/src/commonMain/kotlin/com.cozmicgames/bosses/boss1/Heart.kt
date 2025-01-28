@@ -14,7 +14,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, PlayerDamageSource {
-    override val canHit get() = boss.isParalyzed
+    override val canBeHit get() = boss.isParalyzed
 
     override val renderLayer = layer
 
@@ -43,8 +43,10 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, Pl
     }
 
     override fun onDamageHit() {
-        if (!boss.isInvulnerable)
-            boss.hit()
+        if (boss.isInvulnerable)
+            return
+
+        boss.hit()
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {

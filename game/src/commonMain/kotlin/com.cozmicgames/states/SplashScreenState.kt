@@ -20,6 +20,8 @@ class SplashScreenState : GameState {
         guiCamera = GUICamera()
         background = Background(Game.resources.background)
         logo = SplashScreenLogo()
+
+        Game.resources.themeSound.play(0.5f, true)
     }
 
     override fun resize(width: Int, height: Int) {

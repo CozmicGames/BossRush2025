@@ -72,6 +72,8 @@ class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     }
 
     override fun onDamageHit() {
+        Game.resources.hitEnemySound.play(0.5f)
+
         paralyze()
     }
 

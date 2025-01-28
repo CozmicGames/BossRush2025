@@ -9,7 +9,7 @@ class World {
     private val bossTargetsInternal = arrayListOf<BossTarget>()
 
     fun decideOnTarget(): BossTarget? {
-        val targets = bossTargetsInternal.filter { it.canHit }
+        val targets = bossTargetsInternal.filter { it.canBeHit }
         if (targets.isEmpty())
             return null
 

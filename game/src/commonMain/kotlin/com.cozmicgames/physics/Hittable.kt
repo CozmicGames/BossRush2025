@@ -7,7 +7,7 @@ interface Hittable {
 
     val y: Float
 
-    val canHit: Boolean get() = true
+    val canBeHit: Boolean get() = true
 
     fun onDamageHit() {}
 

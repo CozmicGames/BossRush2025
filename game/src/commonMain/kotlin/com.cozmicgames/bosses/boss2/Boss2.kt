@@ -369,6 +369,8 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         if (isInvulnerable || health <= 0)
             return
 
+        Game.resources.hitEnemySound.play(0.5f)
+
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
 

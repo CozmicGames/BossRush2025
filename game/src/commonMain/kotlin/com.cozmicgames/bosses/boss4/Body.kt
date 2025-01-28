@@ -13,7 +13,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : EnemyPart("boss4body"), Hittable, PlayerDamageSource {
-    override val canHit get() = !boss.isInvulnerable
+    override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer
 
@@ -33,7 +33,9 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
     val centerCollider = Collider(CircleCollisionShape(width * 0.7f), this)
 
     override fun onDamageHit() {
-        boss.paralyze()
+        Game.resources.hitEnemySound.play(0.5f)
+
+        //boss.paralyze() //TODO: Paralyze?
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {

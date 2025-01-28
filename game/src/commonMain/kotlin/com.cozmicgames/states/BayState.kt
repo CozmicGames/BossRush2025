@@ -63,6 +63,8 @@ class BayState : GameState {
 
         shop.getX = { Game.graphics.width - shop.width }
         shop.getY = { 0.0f }
+
+        Game.resources.baySound.play(0.4f)
     }
 
     override fun resize(width: Int, height: Int) {

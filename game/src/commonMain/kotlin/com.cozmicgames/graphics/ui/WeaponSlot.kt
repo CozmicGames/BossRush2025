@@ -50,6 +50,7 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
     } else null
     private var isUnlocking = false
     private val overlayColor = MutableColor()
+    private var wasHovered = false
 
     init {
         nameLabel.getX = { x + (width - nameLabel.width) * 0.5f }
@@ -82,14 +83,22 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
 
         val isHovered = Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
 
+        if (!wasHovered && isHovered)
+            Game.resources.hoverSound.play(0.1f)
+
+        wasHovered = isHovered
+
         if (isUnlocked) {
             val isClickedPrimary = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered
             val isClickedSecondary = (Game.input.isJustTouched(Pointer.MOUSE_MIDDLE) || Game.input.isJustTouched(Pointer.MOUSE_RIGHT)) && isHovered
 
-            if (isClickedPrimary)
+            if (isClickedPrimary) {
+                Game.resources.selectPrimarySound.play()
                 selectionState = SelectionState.PRIMARY
-            else if (isClickedSecondary)
+            } else if (isClickedSecondary) {
+                Game.resources.selectSecondarySound.play()
                 selectionState = SelectionState.SECONDARY
+            }
 
             renderer.submit(layer) {
                 val background = if (isHovered) Game.resources.weaponBackgroundHoveredNinePatch else Game.resources.weaponBackgroundNinePatch
@@ -117,6 +126,8 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
             val isClicked = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered
 
             if (isClicked && !isUnlocking) {
+                Game.resources.unlockSound.play()
+
                 if (Game.players.wallet >= weapon.price) {
                     Game.players.spendCredits(weapon.price)
                     Game.players.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)

@@ -10,7 +10,7 @@ import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2head"), Hittable, PlayerDamageSource, ProjectileSource {
-    override val canHit get() = !boss.isInvulnerable
+    override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer
 
@@ -28,6 +28,8 @@ class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2
     override val damageSourceY get() = boss.y
 
     override fun onDamageHit() {
+        Game.resources.hitEnemySound.play(0.5f)
+
         boss.paralyze()
     }
 

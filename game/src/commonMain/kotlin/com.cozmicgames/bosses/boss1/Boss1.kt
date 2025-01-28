@@ -300,6 +300,8 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         if (isInvulnerable || health <= 0)
             return
 
+        Game.resources.hitEnemySound.play(0.5f)
+
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
 
@@ -328,6 +330,10 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
                 isParalyzedTimer = 0.0.seconds
             }
         }
+    }
+
+    override fun shouldHitWithAreaEffect(id: String): Boolean {
+        return !id.startsWith("boss1")
     }
 
     fun addEntityAnimation(block: () -> WorldObjectAnimation) {

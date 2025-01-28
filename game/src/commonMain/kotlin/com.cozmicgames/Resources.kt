@@ -2,6 +2,8 @@ package com.cozmicgames
 
 import com.littlekt.Context
 import com.littlekt.Releasable
+import com.littlekt.audio.AudioClip
+import com.littlekt.file.vfs.readAudioClip
 import com.littlekt.file.vfs.readBitmapFont
 import com.littlekt.file.vfs.readTexture
 import com.littlekt.graphics.Texture
@@ -61,6 +63,16 @@ class Resources : Releasable {
     lateinit var debug: Texture
     lateinit var debugNinePatch: NinePatch
 
+    lateinit var hoverSound: AudioClip
+    lateinit var clickSound: AudioClip
+    lateinit var unlockSound: AudioClip
+    lateinit var selectPrimarySound: AudioClip
+    lateinit var selectSecondarySound: AudioClip
+    lateinit var themeSound: AudioClip
+    lateinit var hitShipSound: AudioClip
+    lateinit var hitEnemySound: AudioClip
+    lateinit var baySound: AudioClip
+
     /**
      * Projectiles and area effects
      */
@@ -69,6 +81,9 @@ class Resources : Releasable {
     lateinit var baitBall: Texture
     lateinit var shockwave: Texture
     lateinit var shield: Texture
+
+    lateinit var shootSound: AudioClip
+    lateinit var beamSound: AudioClip
 
     /**
      * World
@@ -90,6 +105,8 @@ class Resources : Releasable {
     lateinit var playerShipTemplate: Texture
     lateinit var playerHealthIndicator: Texture
     lateinit var playerHealthEmptyIndicator: Texture
+    lateinit var playerHealthIndicatorNinepatch: NinePatch
+    lateinit var playerHealthEmptyIndicatorNinepatch: NinePatch
     lateinit var borderIndicator: Texture
     lateinit var borderIndicatorNinePatch: NinePatch
 
@@ -145,6 +162,16 @@ class Resources : Releasable {
     lateinit var boss4tailSlices: Array<TextureSlice>
 
     suspend fun load(context: Context) {
+        hoverSound = context.resourcesVfs["audio/hover.ogg"].readAudioClip()
+        clickSound = context.resourcesVfs["audio/click.ogg"].readAudioClip()
+        unlockSound = context.resourcesVfs["audio/unlock.ogg"].readAudioClip()
+        selectPrimarySound = context.resourcesVfs["audio/select_primary.ogg"].readAudioClip()
+        selectSecondarySound = context.resourcesVfs["audio/select_secondary.ogg"].readAudioClip()
+        themeSound = context.resourcesVfs["audio/theme.wav"].readAudioClip()
+        hitShipSound = context.resourcesVfs["audio/hit_ship.ogg"].readAudioClip()
+        hitEnemySound = context.resourcesVfs["audio/hit_enemy.ogg"].readAudioClip()
+        baySound = context.resourcesVfs["audio/bay.ogg"].readAudioClip()
+
         logo = context.resourcesVfs["textures/logo.png"].readTexture()
         font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
         buttonNormal = context.resourcesVfs["textures/ui/button_normal.png"].readTexture()
@@ -198,6 +225,9 @@ class Resources : Releasable {
         shockwave = context.resourcesVfs["textures/projectiles/shockwave.png"].readTexture()
         shield = context.resourcesVfs["textures/projectiles/shield.png"].readTexture()
 
+        shootSound = context.resourcesVfs["audio/shoot.ogg"].readAudioClip()
+        beamSound = context.resourcesVfs["audio/beam.ogg"].readAudioClip()
+
         background = context.resourcesVfs["textures/background.png"].readTexture()
         asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
         vortexBase = context.resourcesVfs["textures/vortex/base.png"].readTexture()
@@ -211,7 +241,9 @@ class Resources : Releasable {
         playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
         playerShipTemplate = context.resourcesVfs["textures/player/player_ship_template.png"].readTexture()
         playerHealthIndicator = context.resourcesVfs["textures/player/health.png"].readTexture()
+        playerHealthIndicatorNinepatch = NinePatch(playerHealthIndicator, 7, 7, 7, 7)
         playerHealthEmptyIndicator = context.resourcesVfs["textures/player/health_empty.png"].readTexture()
+        playerHealthEmptyIndicatorNinepatch = NinePatch(playerHealthEmptyIndicator, 7, 7, 7, 7)
         borderIndicator = context.resourcesVfs["textures/player/border_indicator.png"].readTexture()
         borderIndicatorNinePatch = NinePatch(borderIndicator, 24, 24, 24, 24)
 
@@ -256,6 +288,16 @@ class Resources : Releasable {
     }
 
     override fun release() {
+        hoverSound.release()
+        clickSound.release()
+        unlockSound.release()
+        selectPrimarySound.release()
+        selectSecondarySound.release()
+        themeSound.release()
+        hitShipSound.release()
+        hitEnemySound.release()
+        baySound.release()
+
         logo.release()
         font.release()
         buttonNormal.release()
@@ -294,6 +336,9 @@ class Resources : Releasable {
         baitBall.release()
         shockwave.release()
         shield.release()
+
+        shootSound.release()
+        beamSound.release()
 
         background.release()
         asteroid0.release()

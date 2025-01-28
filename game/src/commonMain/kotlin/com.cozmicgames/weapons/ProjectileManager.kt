@@ -58,7 +58,7 @@ class ProjectileManager {
             }
 
             if (nearestCollider != null) {
-                if (nearestCollider.userData is Hittable && nearestCollider.userData.canHit)
+                if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit)
                     Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
 
                 if (projectile.fromSource is PlayerShip)

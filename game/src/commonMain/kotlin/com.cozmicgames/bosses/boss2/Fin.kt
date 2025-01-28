@@ -43,4 +43,8 @@ class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onDamageHit() {
+        Game.resources.hitEnemySound.play(0.5f)
+    }
 }

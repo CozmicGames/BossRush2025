@@ -42,14 +42,17 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     var secondaryWeapon: Weapon? = Weapons.REELGUN
 
     val invulnerabilityFactor get() = 1.0f - (invulnerabilityTimer / invulnerabilityTime).toFloat().clamp(0.0f, 1.0f)
-    val primaryCooldownFactor get() = 1.0f - (firePrimaryCooldown / firePrimaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
-    val secondaryCooldownFactor get() = 1.0f - (fireSecondaryCooldown / fireSecondaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
+    val primaryCooldownFactor get() = if (firePrimaryCooldownTime == 0.0.seconds) 0.0f else 1.0f - (firePrimaryCooldown / firePrimaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
+    val secondaryCooldownFactor get() = if (fireSecondaryCooldownTime == 0.0.seconds) 0.0f else 1.0f - (fireSecondaryCooldown / fireSecondaryCooldownTime).toFloat().clamp(0.0f, 1.0f)
 
     var tryUsePrimaryWeapon = false
         private set
 
     var tryUseSecondaryWeapon = false
         private set
+
+    private var triedUsePrimaryWeapon = false
+    private var triedUseSecondaryWeapon = false
 
     override var isStunMode = true
 
@@ -59,13 +62,13 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     private var grabbedBy: GrabbingObject? = null
     private var grabRotation = 0.0.degrees
 
-    private var firePrimaryCooldownTime = 0.0.seconds
+    private var firePrimaryCooldownTime = 0.01.seconds
     private var firePrimaryCooldown = 0.0.seconds
 
-    private var fireSecondaryCooldownTime = 0.0.seconds
+    private var fireSecondaryCooldownTime = 0.01.seconds
     private var fireSecondaryCooldown = 0.0.seconds
 
-    private var invulnerabilityTime = 0.0.seconds
+    private var invulnerabilityTime = 0.01.seconds
     private var invulnerabilityTimer = 0.0.seconds
 
     private var flySpeed = 0.0f
@@ -137,8 +140,10 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                 }
 
                 player.state.getState<Boolean>("inputUsePrimary")?.let {
-                    if (it)
+                    if (it && !triedUsePrimaryWeapon)
                         tryUsePrimaryWeapon = true
+
+                    triedUsePrimaryWeapon = it
 
                     if (firePrimaryCooldown <= 0.0.seconds)
                         primaryWeapon?.let { weapon ->
@@ -150,8 +155,10 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                 }
 
                 player.state.getState<Boolean>("inputUseSecondary")?.let {
-                    if (it)
+                    if (it && !triedUseSecondaryWeapon)
                         tryUseSecondaryWeapon = true
+
+                    triedUseSecondaryWeapon = it
 
                     if (fireSecondaryCooldown <= 0.0.seconds) {
                         secondaryWeapon?.let { weapon ->
@@ -218,8 +225,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             player.state.setState("health", health)
             player.state.setState("shipColor", color.toRgba8888())
         } else {
-            x = player.state.getState<Float>("x") ?: x
-            y = player.state.getState<Float>("y") ?: y
+            x = player.state.getState("x") ?: x
+            y = player.state.getState("y") ?: y
             rotation = player.state.getState<Float>("rotation")?.degrees ?: rotation
             health = player.state.getState("health") ?: health
             color.setRgba8888(player.state.getState("shipColor") ?: color.toRgba8888())
@@ -294,12 +301,12 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
         invulnerabilityTimer = time
     }
 
-    private fun fireWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
+    private fun fireWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit): Boolean {
         if (isInvulnerable)
-            return
+            return false
 
         if (isBeamProjectileFiring)
-            return
+            return false
 
         val state = Game.players.getMyPlayerState()
 
@@ -325,17 +332,22 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
 
         when (weapon.projectileType.baseType) {
             is BulletProjectileType -> {
+                Game.resources.shootSound.play(0.5f)
                 setCooldown(weapon.fireRate)
             }
 
             is BeamProjectileType -> {
+                Game.resources.beamSound.play(0.8f)
                 isBeamProjectileFiring = true
+                setCooldown(0.0.seconds)
             }
         }
+
+        return true
     }
 
     private fun stopFiringWeapon(weapon: Weapon, setCooldown: (Duration) -> Unit) {
-        if (weapon.projectileType.baseType is BeamProjectileType) {
+        if (weapon.projectileType.baseType is BeamProjectileType && isBeamProjectileFiring) {
             val state = Game.players.getMyPlayerState()
 
             state.setState("stopBeamProjectile", true)
@@ -343,12 +355,15 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             setCooldown(weapon.fireRate)
 
             isBeamProjectileFiring = false
+            Game.resources.beamSound.stop()
         }
     }
 
     override fun onDamageHit() {
-        if (isInvulnerable)
+        if (isInvulnerable || isDead)
             return
+
+        Game.resources.hitShipSound.play(0.5f)
 
         health--
         if (health <= 0) {

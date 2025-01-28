@@ -5,16 +5,14 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.weapons.Weapon
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
-import com.littlekt.util.seconds
 import kotlin.time.Duration
 
-class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
+open class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
     companion object {
         private val PRIMARY_COLOR = Color.fromHex("0065ff")
         private val SECONDARY_COLOR = Color.fromHex("ff5d00")
 
         private val OVERLAY_NORMAL_COLOR = Color(1.0f, 1.0f, 1.0f, 0.0f)
-        private val OVERLAY_USE_COLOR = Color(1.0f, 1.0f, 1.0f, 0.3f)
         private val OVERLAY_CANT_USE_COLOR = Color(1.0f, 0.0f, 0.0f, 0.7f)
     }
 
@@ -23,7 +21,7 @@ class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
         SECONDARY
     }
 
-    private val cooldown = object : CooldownElement() {
+    private val cooldown = object : CooldownElement(Color.fromHex("94fdff"), true) {
         override var layer: Int
             get() = this@FightWeaponSlot.layer + 2
             set(value) {}
@@ -37,19 +35,12 @@ class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
         cooldown.getHeight = { height * 0.8f }
     }
 
-    fun update(value: Float, tryUse: Boolean) {
+    fun update(value: Float) {
         cooldown.currentValue = value
-
-        if (tryUse) {
-            if (cooldown.currentValue < 1.0f)
-                overlayColor.set(OVERLAY_CANT_USE_COLOR)
-            else
-                overlayColor.set(OVERLAY_USE_COLOR)
-        }
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
-        overlayColor.mix(OVERLAY_NORMAL_COLOR, delta.seconds * 2.0f, overlayColor)
+        overlayColor.set(OVERLAY_CANT_USE_COLOR).mix(OVERLAY_NORMAL_COLOR, cooldown.currentValue, overlayColor)
 
         renderer.submit(layer) {
             val background = Game.resources.weaponBackgroundNinePatch

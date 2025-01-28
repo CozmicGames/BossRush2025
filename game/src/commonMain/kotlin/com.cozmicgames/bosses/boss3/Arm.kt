@@ -80,6 +80,8 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
         if (boss.isInvulnerable)
             return
 
+        Game.resources.hitEnemySound.play(0.5f)
+
         paralyze()
     }
 

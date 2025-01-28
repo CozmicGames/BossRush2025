@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3head"), Hittable, PlayerDamageSource, ProjectileSource {
-    override val canHit get() = !boss.isInvulnerable
+    override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer
 
@@ -64,6 +64,8 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
     }
 
     override fun onDamageHit() {
+        Game.resources.hitEnemySound.play(0.5f)
+
         boss.paralyze()
     }
 

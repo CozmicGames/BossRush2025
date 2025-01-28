@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Wing(private val boss: Boss4, private val left: Boolean, private val wingScale: Float, layer: Int) : EnemyPart("boss4wing${if (left) "left" else "right"}"), Hittable, PlayerDamageSource {
-    override val canHit get() = !boss.isInvulnerable
+    override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer
 
@@ -36,7 +36,9 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
     val lowerCollider = Collider(RectangleCollisionShape(width, height * 0.15f, 0.0.degrees), this)
 
     override fun onDamageHit() {
-        boss.paralyze()
+        Game.resources.hitEnemySound.play(0.5f)
+
+        //boss.paralyze() //TODO: Paralyze?
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {

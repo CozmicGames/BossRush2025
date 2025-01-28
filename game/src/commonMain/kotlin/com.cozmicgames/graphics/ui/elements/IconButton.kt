@@ -10,6 +10,8 @@ import kotlin.time.Duration
 open class IconButton(val texture: Texture, val color: Color, var scale: Float = 1.0f, var onClick: () -> Unit = {}) : GUIElement() {
     var isEnabled = true
 
+    private var wasHovered = false
+
     override fun renderElement(delta: Duration, renderer: Renderer) {
         val minX = x
         val minY = y
@@ -19,8 +21,15 @@ open class IconButton(val texture: Texture, val color: Color, var scale: Float =
         val isHovered = isEnabled && Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
         val isClicked = isEnabled && Game.input.justTouched && isHovered
 
-        if (isClicked)
+        if (!wasHovered && isHovered)
+            Game.resources.hoverSound.play(0.1f)
+
+        wasHovered = isHovered
+
+        if (isClicked) {
             onClick()
+            Game.resources.clickSound.play()
+        }
 
         val ninePatch = when {
             isClicked -> Game.resources.buttonPressedNinePatch

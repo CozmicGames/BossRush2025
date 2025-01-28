@@ -5,10 +5,9 @@ import com.littlekt.graphics.Color
 import com.littlekt.resources.Textures
 import kotlin.time.Duration
 
-open class CooldownElement(val isVertical: Boolean = true) : GUIElement() {
+open class CooldownElement(private val color: Color, val isVertical: Boolean) : GUIElement() {
     companion object {
         private val BACKGROUND_COLOR = Color.fromHex("272727")
-        private val FOREGROUND_COLOR = Color.fromHex("94fdff")
     }
 
     var currentValue = 1.0f
@@ -18,9 +17,9 @@ open class CooldownElement(val isVertical: Boolean = true) : GUIElement() {
             it.draw(Textures.white, x, y, width = width, height = height, color = BACKGROUND_COLOR)
 
             if (isVertical)
-                it.draw(Textures.white, x, y, width = width, height = height * currentValue, color = FOREGROUND_COLOR)
+                it.draw(Textures.white, x, y, width = width, height = height * currentValue, color = color)
             else
-                it.draw(Textures.white, x, y, width = width * currentValue, height = height, color = FOREGROUND_COLOR)
+                it.draw(Textures.white, x, y, width = width * currentValue, height = height, color = color)
         }
     }
 }
