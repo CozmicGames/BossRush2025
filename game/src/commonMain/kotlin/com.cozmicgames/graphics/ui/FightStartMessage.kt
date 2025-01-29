@@ -68,7 +68,7 @@ class FightStartMessage : GUIElement() {
     }
 
     private val color = MutableColor(1.0f, 1.0f, 1.0f, 0.7f)
-    private val label = Label("Ready?", 0.1f, color)
+    private val label = Label("Ready?", 140.0f, color)
     private var stage: Stage? = Stage0()
     private var onFinish: () -> Unit = {}
     private var isAnimationStarted = false

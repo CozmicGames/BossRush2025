@@ -16,6 +16,7 @@ object Constants {
     const val CAMERA_FOLLOW_MOVE_SPEED = 5.0f
     const val CAMERA_FOLLOW_ROTATE_SPEED = 0.5f
 
+    const val BOSS_TUTORIAL_BODY_PARTS = 8
     const val BOSS1_TENTACLE_PARTS = 8
     const val BOSS2_BODY_PARTS = 12
     const val BOSS4_TAIL_PARTS = 16
@@ -24,4 +25,6 @@ object Constants {
 
     const val BOSS_SELECTION_POSTER_WIDTH = 200.0f
     const val BOSS_SELECTION_POSTER_HEIGHT = 256.0f
+
+    const val FINAL_FIGHT_INDEX = 4
 }

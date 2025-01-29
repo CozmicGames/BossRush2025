@@ -31,30 +31,86 @@ class ResultPanel(private val results: FightResults) {
     val x = (Game.graphics.width - width) * 0.5f
     var y = (Game.graphics.height - height) * 0.5f
 
-    private val titleLabel = Label(if (results.isVictory) "Catched!" else "Failed!", 72.0f)
-    private val resultsDivider = Divider()
-    private val durationLabel = DurationLabel(results.duration)
-    private val damageResultLabel = ResultLabel("Damage", "${ceil(results.bossDamage * 100).toInt()} %")
-    private val healthResultLabel = ResultLabel("Health", "${ceil(results.playerHealth * 100).toInt()} %")
-    private val accuracyResultLabel = ResultLabel("Accuracy", "${ceil(results.accuracy * 100).toInt()} %")
-    private val messageLabel = ResultMessageLabel(results.message)
-    private val ratingBanner = RatingBanner(results.totalPoints) {
+    private val titleLabel = object : Label(if (results.isVictory) "Catched!" else "Failed!", 72.0f) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val resultsDivider = object : Divider() {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val durationLabel = object : DurationLabel(results.duration) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val damageResultLabel = object : ResultLabel("Damage", "${ceil(results.bossDamage * 100).toInt()} %") {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val healthResultLabel = object : ResultLabel("Health", "${ceil(results.playerHealth * 100).toInt()} %") {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val accuracyResultLabel = object : ResultLabel("Accuracy", "${ceil(results.accuracy * 100).toInt()} %") {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val messageLabel = object : ResultMessageLabel(results.message) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val ratingBanner = object : RatingBanner(results.totalPoints, {
         isAnimationFinished = true
         messageLabel.startAnimation()
+    }) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
     }
-    private val returnLabel = Label("Return", 32.0f)
-    private val retryLabel = Label("Retry", 32.0f)
-    private val returnButton = ReturnButton {
+    private val returnLabel = object : Label("Return", 32.0f) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val retryLabel = object : Label("Retry", 32.0f) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
+    }
+    private val returnButton = object : ReturnButton({
         resultState = ResultState.RETURN
+    }) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
     }
-    private val playEasyButton = PlayButton(Difficulty.EASY) {
+    private val playEasyButton = object : PlayButton(Difficulty.EASY, {
         resultState = ResultState.RETRY_EASY
+    }) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
     }
-    private val playNormalButton = PlayButton(Difficulty.NORMAL) {
+    private val playNormalButton = object : PlayButton(Difficulty.NORMAL, {
         resultState = ResultState.RETRY_NORMAL
+    }) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
     }
-    private val playHardButton = PlayButton(Difficulty.HARD) {
+    private val playHardButton = object : PlayButton(Difficulty.HARD, {
         resultState = ResultState.RETRY_HARD
+    }) {
+        override var layer: Int
+            get() = RenderLayers.UI + 1
+            set(value) {}
     }
 
     init {

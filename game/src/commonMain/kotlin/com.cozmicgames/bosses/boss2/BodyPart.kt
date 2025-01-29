@@ -140,13 +140,13 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
                 it.update(colliderX, colliderY)
             }
 
-            Game.players.setGlobalState("boss1bodypart${index}X", x)
-            Game.players.setGlobalState("boss1bodypart${index}Y", y)
-            Game.players.setGlobalState("boss1bodypart${index}Angle", rotation.degrees)
+            Game.players.setGlobalState("boss2bodypart${index}X", x)
+            Game.players.setGlobalState("boss2bodypart${index}Y", y)
+            Game.players.setGlobalState("boss2bodypart${index}Angle", rotation.degrees)
         } else {
-            x = Game.players.getGlobalState("boss1bodypart${index}X") ?: 0.0f
-            y = Game.players.getGlobalState("boss1bodypart${index}Y") ?: 0.0f
-            rotation = (Game.players.getGlobalState("boss1tentaclebodypart${index}Angle") ?: 0.0f).degrees
+            x = Game.players.getGlobalState("boss2bodypart${index}X") ?: 0.0f
+            y = Game.players.getGlobalState("boss2bodypart${index}Y") ?: 0.0f
+            rotation = (Game.players.getGlobalState("boss2bodypart${index}Angle") ?: 0.0f).degrees
         }
     }
 }

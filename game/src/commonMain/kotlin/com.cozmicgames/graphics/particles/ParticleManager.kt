@@ -3,12 +3,7 @@ package com.cozmicgames.graphics.particles
 import com.cozmicgames.Game
 import com.cozmicgames.utils.createInstance
 import com.cozmicgames.utils.getClassByName
-import com.littlekt.graphics.Color
-import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.g2d.SpriteBatch
-import com.littlekt.graphics.rgba
-import com.littlekt.math.geom.degrees
-import com.littlekt.resources.Textures
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -64,8 +59,6 @@ class ParticleManager {
 
                 system.duration += delta
                 val systemDuration = system.effect.duration
-
-                println(system.effect.shouldBeRemoved)
 
                 if (system.effect.shouldBeRemoved || (systemDuration != null && system.duration >= systemDuration))
                     systemsToRemove += system

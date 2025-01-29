@@ -6,7 +6,7 @@ import com.littlekt.graphics.HAlign
 import com.littlekt.graphics.VAlign
 import kotlin.time.Duration
 
-class ResultLabel(labelText: String, resultText: String) : GUIElement() {
+open class ResultLabel(labelText: String, resultText: String) : GUIElement() {
     private val label = Label(labelText, 40.0f)
     private val result = Label(resultText, 40.0f)
 

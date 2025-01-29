@@ -181,7 +181,7 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         Game.physics.removeCollider(tail.collider)
     }
 
-    override fun update(delta: Duration) {
+    override fun update(delta: Duration, fightStarted: Boolean) {
         if (Game.players.isHost) {
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
@@ -211,9 +211,11 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
                 flip()
 
-            movementController.update(delta)
-            body.update(delta, movementController.movement.bodyMovement)
-            shield.update(delta, movementController.movement.shieldMovement)
+            if (fightStarted) {
+                movementController.update(delta)
+                body.update(delta, movementController.movement.bodyMovement)
+                shield.update(delta, movementController.movement.shieldMovement)
+            }
 
             body.x = x
             body.y = y

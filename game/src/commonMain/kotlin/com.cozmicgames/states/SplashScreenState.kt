@@ -3,6 +3,7 @@ package com.cozmicgames.states
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.Transition
 import com.cozmicgames.graphics.ui.GUICamera
 import com.cozmicgames.graphics.ui.SplashScreenLogo
 import kotlin.time.Duration
@@ -12,6 +13,7 @@ class SplashScreenState : GameState {
 
     private lateinit var guiCamera: GUICamera
     private lateinit var background: Background
+    private lateinit var transitionOut: Transition
     private lateinit var logo: SplashScreenLogo
 
     private var isFirstFrame = true
@@ -19,6 +21,7 @@ class SplashScreenState : GameState {
     override fun begin() {
         guiCamera = GUICamera()
         background = Background(Game.resources.background)
+        transitionOut = Transition(fromOpenToClose = true)
         logo = SplashScreenLogo()
 
         Game.resources.themeSound.play(0.5f, true)
@@ -30,8 +33,11 @@ class SplashScreenState : GameState {
 
     override fun render(delta: Duration): () -> GameState {
         if (isFirstFrame) {
+            //TODO: Player overview, start and tutorial button
             logo.startAnimation {
-                returnState = BayState()
+                transitionOut.start { returnState = BayState() }
+
+                //returnState = TutorialState() //BayState()
             }
             isFirstFrame = false
         }
@@ -40,6 +46,7 @@ class SplashScreenState : GameState {
 
         pass.render(guiCamera.camera) { renderer: Renderer ->
             background.render(delta, renderer)
+            transitionOut.render(delta, renderer)
             logo.render(delta, renderer)
         }
 

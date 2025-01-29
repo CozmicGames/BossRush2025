@@ -7,7 +7,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class ResultMessageLabel(text: String) : Label(text, 0.0f) {
+open class ResultMessageLabel(text: String) : Label(text, 0.0f) {
     private var animationTime = 0.0.seconds
     private var isAnimationStarted = false
 

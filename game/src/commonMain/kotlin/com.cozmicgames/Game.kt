@@ -28,6 +28,7 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
         lateinit var players: PlayerManager
         lateinit var input: InputManager
         lateinit var graphics: Graphics2D
+        val game = GameManager()
         val particles = ParticleManager()
         val physics = PhysicsWorld(1500.0f, 1500.0f)
         val controls = ControlManager()

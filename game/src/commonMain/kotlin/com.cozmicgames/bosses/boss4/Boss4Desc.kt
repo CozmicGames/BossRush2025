@@ -1,5 +1,6 @@
 package com.cozmicgames.bosses.boss4
 
+import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.bosses.BossDesc
@@ -15,7 +16,7 @@ class Boss4Desc : BossDesc {
 
     override val fullHealth get() = Boss4.FULL_HEALTH
 
-    override val unlockedBossIndex = 4
+    override val unlockedBossIndex = Constants.FINAL_FIGHT_INDEX
 
     override val centerSpawnPosition = SpawnPosition.TOP_RIGHT
 

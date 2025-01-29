@@ -50,10 +50,16 @@ class IngameUI(private val ship: PlayerShip, difficulty: Difficulty) : GUIElemen
             it.getHeight = { 80.0f }
         }
 
-        healthbar.getX = { Game.graphics.width - 210.0f }
+        healthbar.getX = { Game.graphics.width - 210.0f + (healthbar.width - 200.0f) * 0.5f }
         healthbar.getY = { 100.0f }
-        healthbar.getWidth = { 200.0f }
-        healthbar.getHeight = { 25.0f }
+        healthbar.getWidth = {
+            when (difficulty) {
+                Difficulty.EASY -> 200.0f
+                Difficulty.NORMAL, Difficulty.TUTORIAL -> 150.0f
+                Difficulty.HARD -> 100.0f
+            }
+        }
+        healthbar.getHeight = { 18.0f }
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {

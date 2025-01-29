@@ -184,7 +184,7 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         Game.physics.removeHittable(heart)
     }
 
-    override fun update(delta: Duration) {
+    override fun update(delta: Duration, fightStarted: Boolean) {
         if (Game.players.isHost) {
             isInvulnerableTimer -= delta
             if (isInvulnerableTimer <= 0.0.seconds)
@@ -239,9 +239,11 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             y += impulseY * delta.seconds * 300.0f
             rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-            movementController.update(delta)
-            beak.update(delta, movementController.movement.beakMovement)
-            tail.update(delta, movementController.movement.tailMovement)
+            if (fightStarted) {
+                movementController.update(delta)
+                beak.update(delta, movementController.movement.beakMovement)
+                tail.update(delta, movementController.movement.tailMovement)
+            }
 
             val cos = rotation.cosine
             val sin = rotation.sine

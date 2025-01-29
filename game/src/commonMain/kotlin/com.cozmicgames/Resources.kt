@@ -59,7 +59,11 @@ class Resources : Releasable {
     lateinit var shockminePreview: Texture
     lateinit var currencyIcon: Texture
     lateinit var messageBannerBackground: Texture
+    lateinit var checkmark: Texture
 
+    lateinit var borderIndicator: Texture
+    lateinit var borderIndicatorNinePatch: NinePatch
+    lateinit var transition: Texture
     lateinit var debug: Texture
     lateinit var debugNinePatch: NinePatch
 
@@ -107,8 +111,20 @@ class Resources : Releasable {
     lateinit var playerHealthEmptyIndicator: Texture
     lateinit var playerHealthIndicatorNinepatch: NinePatch
     lateinit var playerHealthEmptyIndicatorNinepatch: NinePatch
-    lateinit var borderIndicator: Texture
-    lateinit var borderIndicatorNinePatch: NinePatch
+
+    /**
+     * Tutorial boss
+     */
+    lateinit var bossTutorialHead: Texture
+    lateinit var bossTutorialEyes: Texture
+    lateinit var bossTutorialEyesDead: Texture
+    lateinit var bossTutorialMouth: Texture
+    lateinit var bossTutorialBody: Texture
+    lateinit var bossTutorialBodySlices: Array<TextureSlice>
+    lateinit var bossTutorialTail: Texture
+    lateinit var bossTutorialBackFin: Texture
+    lateinit var bossTutorialBodyFin: Texture
+
 
     /**
      * Boss 1 - Space octopus
@@ -215,6 +231,11 @@ class Resources : Releasable {
         shockminePreview = context.resourcesVfs["textures/weapons/shockmine_preview.png"].readTexture()
         currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
         messageBannerBackground = context.resourcesVfs["textures/ui/message_banner_background.png"].readTexture()
+        checkmark = context.resourcesVfs["textures/ui/checkmark.png"].readTexture()
+
+        transition = context.resourcesVfs["textures/ui/transition.png"].readTexture()
+        borderIndicator = context.resourcesVfs["textures/ui/border_indicator.png"].readTexture()
+        borderIndicatorNinePatch = NinePatch(borderIndicator, 60, 60, 60, 60)
 
         debug = context.resourcesVfs["textures/ui/debug.png"].readTexture()
         debugNinePatch = NinePatch(debug, 4, 4, 4, 4)
@@ -244,8 +265,16 @@ class Resources : Releasable {
         playerHealthIndicatorNinepatch = NinePatch(playerHealthIndicator, 7, 7, 7, 7)
         playerHealthEmptyIndicator = context.resourcesVfs["textures/player/health_empty.png"].readTexture()
         playerHealthEmptyIndicatorNinepatch = NinePatch(playerHealthEmptyIndicator, 7, 7, 7, 7)
-        borderIndicator = context.resourcesVfs["textures/player/border_indicator.png"].readTexture()
-        borderIndicatorNinePatch = NinePatch(borderIndicator, 24, 24, 24, 24)
+
+        bossTutorialHead = context.resourcesVfs["textures/tutorial_boss/head.png"].readTexture()
+        bossTutorialEyes = context.resourcesVfs["textures/tutorial_boss/eyes.png"].readTexture()
+        bossTutorialEyesDead = context.resourcesVfs["textures/tutorial_boss/eyes_dead.png"].readTexture()
+        bossTutorialMouth = context.resourcesVfs["textures/tutorial_boss/mouth.png"].readTexture()
+        bossTutorialBody = context.resourcesVfs["textures/tutorial_boss/body.png"].readTexture()
+        bossTutorialBodySlices = bossTutorialBody.slice(bossTutorialBody.width / Constants.BOSS_TUTORIAL_BODY_PARTS, bossTutorialBody.height)[0]
+        bossTutorialTail = context.resourcesVfs["textures/tutorial_boss/tail.png"].readTexture()
+        bossTutorialBackFin = context.resourcesVfs["textures/tutorial_boss/back_fin.png"].readTexture()
+        bossTutorialBodyFin = context.resourcesVfs["textures/tutorial_boss/body_fin.png"].readTexture()
 
         boss1preview = context.resourcesVfs["textures/boss1/preview.png"].readTexture()
         boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
@@ -328,6 +357,9 @@ class Resources : Releasable {
         shockminePreview.release()
         currencyIcon.release()
         messageBannerBackground.release()
+        checkmark.release()
+        transition.release()
+        borderIndicator.release()
 
         debug.release()
 
@@ -354,7 +386,15 @@ class Resources : Releasable {
         playerShipTemplate.release()
         playerHealthIndicator.release()
         playerHealthEmptyIndicator.release()
-        borderIndicator.release()
+
+        bossTutorialHead.release()
+        bossTutorialEyes.release()
+        bossTutorialEyesDead.release()
+        bossTutorialMouth.release()
+        bossTutorialBody.release()
+        bossTutorialTail.release()
+        bossTutorialBackFin.release()
+        bossTutorialBodyFin.release()
 
         boss1preview.release()
         boss1head.release()

@@ -4,7 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import kotlin.time.Duration
 
-class RatingBanner(val rating: Int, private val onAnimationFinished: () -> Unit) : GUIElement() {
+open class RatingBanner(val rating: Int, private val onAnimationFinished: () -> Unit) : GUIElement() {
     private lateinit var stars: Array<RatingStar>
 
     init {

@@ -14,19 +14,51 @@ import com.littlekt.graphics.MutableColor
 import com.littlekt.resources.Textures
 import kotlin.time.Duration
 
-class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (BossFightState) -> Unit) : GUIElement() {
-    private val nameLabel = Label(desc.name, 32.0f)
-    private val divider = Divider()
-    private val previewImageBorder = Image(Textures.white, Color.fromHex("8a4836"))
-    private val previewImage = Image(desc.preview)
-    private val rewardLabel = Label("${desc.reward} Credits", 28.0f)
-    private val playEasyButton = PlayButton(Difficulty.EASY) { onSelect(desc.createFightGameState(Difficulty.EASY)) }
-    private val playNormalButton = PlayButton(Difficulty.NORMAL) { onSelect(desc.createFightGameState(Difficulty.NORMAL)) }
-    private val playHardButton = PlayButton(Difficulty.HARD) { onSelect(desc.createFightGameState(Difficulty.HARD)) }
+open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (BossFightState) -> Unit) : GUIElement() {
+    private val nameLabel = object : Label(desc.name, 32.0f) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val divider = object : Divider() {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val previewImageBorder = object : Image(Textures.white, Color.fromHex("8a4836")) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val previewImage = object : Image(desc.preview) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val rewardLabel = object : Label("${desc.reward} Credits", 28.0f) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val playEasyButton = object : PlayButton(Difficulty.EASY, { onSelect(desc.createFightGameState(Difficulty.EASY)) }) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val playNormalButton = object : PlayButton(Difficulty.NORMAL, { onSelect(desc.createFightGameState(Difficulty.NORMAL)) }) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
+    private val playHardButton = object : PlayButton(Difficulty.HARD, { onSelect(desc.createFightGameState(Difficulty.HARD)) }) {
+        override var layer: Int
+            get() = this@SelectionPoster.layer + 1
+            set(value) {}
+    }
 
     private var lock = if (!isUnlocked) object : Lock() {
         override var layer: Int
-            get() = this@SelectionPoster.layer + 1
+            get() = this@SelectionPoster.layer + 2
             set(value) {}
     } else null
     private var isUnlocking = false

@@ -5,7 +5,9 @@ object RenderLayers {
 
     const val VORTEX = -500
 
-    const val ASTEROIDS = 100
+    const val ASTEROIDS = -100
+
+    const val TUTORIAL_BOSS = 100
 
     const val BOSS1 = 200
 
@@ -25,6 +27,7 @@ object RenderLayers {
 
     const val UI = 1000
 
-    const val BORDER_INDICATOR = 10000
+    const val BORDER_INDICATOR = 2000
 
+    const val TRANSITION = 10000
 }

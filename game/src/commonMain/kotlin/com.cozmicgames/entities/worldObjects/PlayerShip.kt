@@ -2,6 +2,7 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.TutorialStage
 import com.cozmicgames.bosses.BossTarget
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.events.Events
@@ -101,7 +102,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     private val rightTrailEffect = TrailEffect(player.state.id, false)
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
+        if (Game.players.isHost || Game.game.isTutorialMode) {
             invulnerabilityTimer -= delta
             if (invulnerabilityTimer < 0.0.seconds)
                 invulnerabilityTimer = 0.0.seconds
@@ -135,40 +136,43 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
                     deltaY += it
                 }
 
-                player.state.getState<Float>("inputRotation")?.let {
-                    deltaRotation = it
-                }
+                if (!Game.game.isTutorialMode || Game.game.tutorialStage >= TutorialStage.LOOKING.ordinal)
+                    player.state.getState<Float>("inputRotation")?.let {
+                        deltaRotation = it
+                    }
 
-                player.state.getState<Boolean>("inputUsePrimary")?.let {
-                    if (it && !triedUsePrimaryWeapon)
-                        tryUsePrimaryWeapon = true
+                if (!Game.game.isTutorialMode || Game.game.tutorialStage >= TutorialStage.SHOOTING_PRIMARY.ordinal)
+                    player.state.getState<Boolean>("inputUsePrimary")?.let {
+                        if (it && !triedUsePrimaryWeapon)
+                            tryUsePrimaryWeapon = true
 
-                    triedUsePrimaryWeapon = it
+                        triedUsePrimaryWeapon = it
 
-                    if (firePrimaryCooldown <= 0.0.seconds)
-                        primaryWeapon?.let { weapon ->
-                            if (it)
-                                fireWeapon(weapon) { setPrimaryCooldown(it) }
-                            else
-                                stopFiringWeapon(weapon) { setPrimaryCooldown(it) }
-                        }
-                }
+                        if (firePrimaryCooldown <= 0.0.seconds)
+                            primaryWeapon?.let { weapon ->
+                                if (it)
+                                    fireWeapon(weapon) { setPrimaryCooldown(it) }
+                                else
+                                    stopFiringWeapon(weapon) { setPrimaryCooldown(it) }
+                            }
+                    }
 
-                player.state.getState<Boolean>("inputUseSecondary")?.let {
-                    if (it && !triedUseSecondaryWeapon)
-                        tryUseSecondaryWeapon = true
+                if (!Game.game.isTutorialMode || Game.game.tutorialStage >= TutorialStage.SHOOTING_SECONDARY.ordinal)
+                    player.state.getState<Boolean>("inputUseSecondary")?.let {
+                        if (it && !triedUseSecondaryWeapon)
+                            tryUseSecondaryWeapon = true
 
-                    triedUseSecondaryWeapon = it
+                        triedUseSecondaryWeapon = it
 
-                    if (fireSecondaryCooldown <= 0.0.seconds) {
-                        secondaryWeapon?.let { weapon ->
-                            if (it)
-                                fireWeapon(weapon) { setSecondaryCooldown(it) }
-                            else
-                                stopFiringWeapon(weapon) { setSecondaryCooldown(it) }
+                        if (fireSecondaryCooldown <= 0.0.seconds) {
+                            secondaryWeapon?.let { weapon ->
+                                if (it)
+                                    fireWeapon(weapon) { setSecondaryCooldown(it) }
+                                else
+                                    stopFiringWeapon(weapon) { setSecondaryCooldown(it) }
+                            }
                         }
                     }
-                }
             }
 
             val speedScaleX = Game.physics.getSpeedScaleX(collider, deltaX)
@@ -234,7 +238,7 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
     }
 
     fun checkCollision() {
-        if (!Game.players.isHost)
+        if (!Game.players.isHost && !Game.game.isTutorialMode)
             return
 
         if (isInvulnerable)
@@ -244,7 +248,8 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             if (it.userData is PlayerDamageSource) {
                 onDamageHit()
 
-                Game.events.addSendEvent(Events.hit(id))
+                if (!Game.game.isTutorialMode)
+                    Game.events.addSendEvent(Events.hit(id))
 
                 val impulseX = (x - it.userData.damageSourceX) * 0.05f
                 val impulseY = (y - it.userData.damageSourceY) * 0.05f

@@ -5,13 +5,13 @@ import com.cozmicgames.utils.Difficulty
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
-class AsteroidManager(val difficulty: Difficulty) {
-    private val asteroids = Array(1000) { AsteroidWorldObject(it) }
-    private val activeAsteroids = BooleanArray(1000)
+class AsteroidManager(val difficulty: Difficulty, val maxAsteroids: Int) {
+    private val asteroids = Array(maxAsteroids) { AsteroidWorldObject(it) }
+    private val activeAsteroids = BooleanArray(maxAsteroids)
 
     fun initialize() {
         if (Game.players.isHost) {
-            repeat(30) {
+            repeat(maxAsteroids / 50) {
                 activeAsteroids[it] = true
                 val asteroid = asteroids[it]
 

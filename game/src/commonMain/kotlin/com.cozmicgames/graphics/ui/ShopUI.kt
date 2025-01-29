@@ -1,14 +1,13 @@
 package com.cozmicgames.graphics.ui
 
 import com.cozmicgames.Game
-import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.graphics.ui.elements.NinepatchImage
 import com.cozmicgames.weapons.Weapons
 import kotlin.time.Duration
 
-class ShopUI : GUIElement() {
+open class ShopUI : GUIElement() {
     private val shopBackground = object : NinepatchImage(Game.resources.shopBackgroundNinePatch) {
         override var layer: Int
             get() = this@ShopUI.layer
@@ -60,7 +59,7 @@ class ShopUI : GUIElement() {
                     else -> {}
                 }
             }
-            slot.layer = RenderLayers.UI + 1
+            slot.layer = layer + 1
             slot
         }
 

@@ -235,7 +235,7 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         }
     }
 
-    override fun update(delta: Duration) {
+    override fun update(delta: Duration, fightStarted: Boolean) {
         if (Game.players.isHost) {
             if (Game.input.isKeyJustPressed(Key.H))
                 movementController.performAttack(GrabAttack())
@@ -265,13 +265,15 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             y += impulseY * delta.seconds * 300.0f
             rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-            movementController.update(delta)
-            beak.update(delta, movementController.movement.beakMovement)
-            legs.forEach {
-                it.update(delta, movementController.movement.legMovement)
-            }
-            arms.forEach {
-                it.update(delta, movementController.movement.armMovement)
+            if (fightStarted) {
+                movementController.update(delta)
+                beak.update(delta, movementController.movement.beakMovement)
+                legs.forEach {
+                    it.update(delta, movementController.movement.legMovement)
+                }
+                arms.forEach {
+                    it.update(delta, movementController.movement.armMovement)
+                }
             }
 
             val cos = rotation.cosine

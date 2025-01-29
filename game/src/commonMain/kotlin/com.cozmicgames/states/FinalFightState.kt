@@ -7,10 +7,7 @@ import com.cozmicgames.bosses.boss2.Boss2
 import com.cozmicgames.bosses.boss3.Boss3
 import com.cozmicgames.bosses.boss4.Boss4
 import com.cozmicgames.entities.worldObjects.AsteroidManager
-import com.cozmicgames.graphics.Background
-import com.cozmicgames.graphics.PlayerCamera
-import com.cozmicgames.graphics.RenderLayers
-import com.cozmicgames.graphics.Renderer
+import com.cozmicgames.graphics.*
 import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
@@ -32,17 +29,20 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     private lateinit var playerCamera: PlayerCamera
     private lateinit var guiCamera: GUICamera
     private lateinit var background: Background
+    private var transitionIn: Transition? = null
+    private lateinit var transitionOut: Transition
     private lateinit var bosses: Array<Boss>
 
     private var resultPanel: ResultPanel? = null
-    private var fightStartMessage: FightStartMessage? = null
+    private var fightStartMessage: FinalFightStartMessage? = FinalFightStartMessage()
 
     private var ingameUI: IngameUI? = null
+    private val borderIndicator = BorderIndicator()
 
     private var fightDuration = 0.0.seconds
     private var fightStarted = false
     private var showResults = false
-    private val asteroids = AsteroidManager(difficulty)
+    private val asteroids = AsteroidManager(difficulty, 1500)
     private var returnState: GameState = this
 
     override fun begin() {
@@ -50,8 +50,19 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
         background = Background(Game.resources.background)
+        transitionIn = Transition(fromOpenToClose = false)
+        transitionOut = Transition(fromOpenToClose = true)
 
         startFight(difficulty, false)
+
+        transitionIn?.start {
+            fightStartMessage?.startAnimation {
+                fightStartMessage = null
+                fightStarted = true
+                Game.world.shouldUpdate = true
+            }
+            transitionIn = null
+        }
     }
 
     private fun startFight(difficulty: Difficulty, isRetry: Boolean) {
@@ -116,11 +127,13 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
 
         Game.world.shouldUpdate = false
 
-        fightStartMessage = FightStartMessage()
-        fightStartMessage?.startAnimation {
-            fightStartMessage = null
-            fightStarted = true
-            Game.world.shouldUpdate = true
+        if (isRetry) {
+            fightStartMessage = FinalFightStartMessage()
+            fightStartMessage?.startAnimation {
+                fightStartMessage = null
+                fightStarted = true
+                Game.world.shouldUpdate = true
+            }
         }
 
         ingameUI = IngameUI(player.ship, difficulty)
@@ -167,15 +180,14 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
 
-        if (fightStarted)
-            bosses.forEach {
-                it.update(delta)
-            }
-
+        bosses.forEach {
+            it.update(delta, fightStarted)
+        }
         asteroids.update(delta, fightStarted)
         Game.particles.update(delta)
         Game.world.update(delta, fightStarted)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
+        borderIndicator.color.set(player.indicatorColor)
 
         if (!showResults)
             fightDuration += delta
@@ -220,23 +232,18 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         }
 
         pass.render(guiCamera.camera) { renderer: Renderer ->
+            fightStartMessage?.render(delta, renderer)
             ingameUI?.render(delta, renderer)
+            transitionIn?.render(delta, renderer)
+            transitionOut.render(delta, renderer)
+            borderIndicator.render(delta, renderer)
 
-            if (!fightStarted)
-                fightStartMessage?.render(delta, renderer)
-        }
-
-        if (!showResults) //TODO: Rework this, move to UI
-            pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
-                if (player.indicatorColor.a > 0.0f)
-                    renderer.submit(RenderLayers.BORDER_INDICATOR) {
-                        it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
-                    }
-            }
-        else {
-            pass.render(guiCamera.camera) { renderer: Renderer ->
+            if (showResults) {
                 when (resultPanel?.renderAndGetResultState(delta, renderer)) {
-                    ResultPanel.ResultState.RETURN -> returnState = BayState()
+                    ResultPanel.ResultState.RETURN -> transitionOut.start {
+                        returnState = CreditsState()
+                    }
+
                     ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY, true)
                     ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL, true)
                     ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD, true)
