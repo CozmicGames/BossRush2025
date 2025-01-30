@@ -110,7 +110,7 @@ open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElemen
     }
 
     private val selectionPosters = List(4) {
-        object : SelectionPoster(Constants.BOSS_DESCRIPTORS[it], it in Game.game.unlockedBossIndices, onSelect) {
+        object : SelectionPoster(Constants.BOSS_DESCRIPTORS[it], it in Game.player.unlockedBossIndices, onSelect) {
             override var layer: Int
                 get() = this@FightSelectionUI.layer + 1
                 set(value) {}

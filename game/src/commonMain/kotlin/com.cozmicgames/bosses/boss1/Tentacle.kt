@@ -39,8 +39,7 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
     }
 
     fun update(delta: Duration, movement: TentacleMovement) {
-        if (Game.players.isHost)
-            movement.updateParts(delta, this)
+        movement.updateParts(delta, this)
 
         paralyzeTimer -= delta
         if (paralyzeTimer < 0.0.seconds)

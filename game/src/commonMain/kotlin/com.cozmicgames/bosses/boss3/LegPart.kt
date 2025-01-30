@@ -38,86 +38,76 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
     var legRotation = 0.0.degrees
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            val legRotation = if (flip) -legRotation else legRotation
+        val legRotation = if (flip) -legRotation else legRotation
 
-            val parentRotation = parent?.rotation ?: leg.legAngle
-            val parentCos = parentRotation.cosine
-            val parentSin = parentRotation.sine
+        val parentRotation = parent?.rotation ?: leg.legAngle
+        val parentCos = parentRotation.cosine
+        val parentSin = parentRotation.sine
 
-            val pivotX: Float
-            val pivotY: Float
-            val xOffset: Float
-            val yOffset: Float
+        val pivotX: Float
+        val pivotY: Float
+        val xOffset: Float
+        val yOffset: Float
 
-            if (flip) {
-                xOffset = -halfWidth
+        if (flip) {
+            xOffset = -halfWidth
 
-                if (legRotation.degrees >= 0.0f) {
-                    if (parent != null) {
-                        pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * parent.halfHeight) // Lower corner
-                        pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * parent.halfHeight)
-                        yOffset = -parent.halfHeight
-                    } else {
-                        pivotX = leg.x
-                        pivotY = leg.y
-                        yOffset = 0.0f
-                    }
+            if (legRotation.degrees >= 0.0f) {
+                if (parent != null) {
+                    pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * parent.halfHeight) // Lower corner
+                    pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * parent.halfHeight)
+                    yOffset = -parent.halfHeight
                 } else {
-                    if (parent != null) {
-                        pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * -parent.halfHeight) // Upper corner
-                        pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * -parent.halfHeight)
-                        yOffset = parent.halfHeight
-                    } else {
-                        pivotX = leg.x
-                        pivotY = leg.y
-                        yOffset = 0.0f
-                    }
+                    pivotX = leg.x
+                    pivotY = leg.y
+                    yOffset = 0.0f
                 }
             } else {
-                xOffset = halfWidth
-
-                if (legRotation.degrees >= 0.0f) {
-                    if (parent != null) {
-                        pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * -parent.halfHeight) // Lower corner
-                        pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * -parent.halfHeight)
-                        yOffset = parent.halfHeight
-                    } else {
-                        pivotX = leg.x
-                        pivotY = leg.y
-                        yOffset = 0.0f
-                    }
+                if (parent != null) {
+                    pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * -parent.halfHeight) // Upper corner
+                    pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * -parent.halfHeight)
+                    yOffset = parent.halfHeight
                 } else {
-                    if (parent != null) {
-                        pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * parent.halfHeight) // Upper corner
-                        pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * parent.halfHeight)
-                        yOffset = -parent.halfHeight
-                    } else {
-                        pivotX = leg.x
-                        pivotY = leg.y
-                        yOffset = 0.0f
-                    }
+                    pivotX = leg.x
+                    pivotY = leg.y
+                    yOffset = 0.0f
                 }
             }
-
-            rotation = parentRotation + legRotation
-
-            val legCos = rotation.cosine
-            val legSin = rotation.sine
-
-            x = pivotX + legCos * xOffset - legSin * yOffset
-            y = pivotY + legSin * xOffset + legCos * yOffset
-
-            (collider.shape as RectangleCollisionShape).angle = rotation
-            collider.update(x, y)
-
-            Game.players.setGlobalState("boss3leg${leg.index}part${index}X", x)
-            Game.players.setGlobalState("boss3leg${leg.index}part${index}Y", y)
-            Game.players.setGlobalState("boss3leg${leg.index}part${index}Angle", rotation.degrees)
         } else {
-            x = Game.players.getGlobalState("boss3leg${leg.index}part${index}X") ?: 0.0f
-            y = Game.players.getGlobalState("boss3leg${leg.index}part${index}Y") ?: 0.0f
-            rotation = (Game.players.getGlobalState("boss3leg${leg.index}part${index}Angle") ?: 0.0f).degrees
+            xOffset = halfWidth
+
+            if (legRotation.degrees >= 0.0f) {
+                if (parent != null) {
+                    pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * -parent.halfHeight) // Lower corner
+                    pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * -parent.halfHeight)
+                    yOffset = parent.halfHeight
+                } else {
+                    pivotX = leg.x
+                    pivotY = leg.y
+                    yOffset = 0.0f
+                }
+            } else {
+                if (parent != null) {
+                    pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * parent.halfHeight) // Upper corner
+                    pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * parent.halfHeight)
+                    yOffset = -parent.halfHeight
+                } else {
+                    pivotX = leg.x
+                    pivotY = leg.y
+                    yOffset = 0.0f
+                }
+            }
         }
+
+        rotation = parentRotation + legRotation
+
+        val legCos = rotation.cosine
+        val legSin = rotation.sine
+
+        x = pivotX + legCos * xOffset - legSin * yOffset
+        y = pivotY + legSin * xOffset + legCos * yOffset
+
+        (collider.shape as RectangleCollisionShape).angle = rotation
+        collider.update(x, y)
     }
 }

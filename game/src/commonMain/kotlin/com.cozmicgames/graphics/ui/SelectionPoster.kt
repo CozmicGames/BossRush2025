@@ -98,22 +98,20 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
         rewardLabel.getWidth = { width * 0.9f }
         rewardLabel.getHeight = { height * 0.1f }
 
-        if (Game.players.isHost) {
-            playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
-            playEasyButton.getY = { y + 6.0f }
-            playEasyButton.getWidth = { 56.0f }
-            playEasyButton.getHeight = { 56.0f }
+        playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
+        playEasyButton.getY = { y + 6.0f }
+        playEasyButton.getWidth = { 56.0f }
+        playEasyButton.getHeight = { 56.0f }
 
-            playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
-            playNormalButton.getY = { y + 6.0f }
-            playNormalButton.getWidth = { 56.0f }
-            playNormalButton.getHeight = { 56.0f }
+        playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
+        playNormalButton.getY = { y + 6.0f }
+        playNormalButton.getWidth = { 56.0f }
+        playNormalButton.getHeight = { 56.0f }
 
-            playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
-            playHardButton.getY = { y + 6.0f }
-            playHardButton.getWidth = { 56.0f }
-            playHardButton.getHeight = { 56.0f }
-        }
+        playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
+        playHardButton.getY = { y + 6.0f }
+        playHardButton.getWidth = { 56.0f }
+        playHardButton.getHeight = { 56.0f }
 
         lock?.let {
             it.getX = { x + (width - it.width) * 0.5f }
@@ -130,11 +128,9 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
         lock?.let {
             it.startUnlockAnimation {
                 isUnlocked = true
-                if (Game.players.isHost) {
-                    playEasyButton.isEnabled = true
-                    playNormalButton.isEnabled = true
-                    playHardButton.isEnabled = true
-                }
+                playEasyButton.isEnabled = true
+                playNormalButton.isEnabled = true
+                playHardButton.isEnabled = true
                 lock = null
                 callback()
             }
@@ -152,11 +148,9 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
         previewImage.render(delta, renderer)
         rewardLabel.render(delta, renderer)
 
-        if (Game.players.isHost) {
-            playEasyButton.render(delta, renderer)
-            playNormalButton.render(delta, renderer)
-            playHardButton.render(delta, renderer)
-        }
+        playEasyButton.render(delta, renderer)
+        playNormalButton.render(delta, renderer)
+        playHardButton.render(delta, renderer)
 
         if (!isUnlocked) {
             lock?.render(delta, renderer)

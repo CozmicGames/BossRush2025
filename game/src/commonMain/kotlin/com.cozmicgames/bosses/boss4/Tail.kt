@@ -38,8 +38,7 @@ class Tail(val boss: Boss4, val scale: Float, val layer: Int) : Hittable, Player
     }
 
     fun update(delta: Duration, movement: TailMovement) {
-        if (Game.players.isHost)
-            movement.updateParts(delta, this)
+        movement.updateParts(delta, this)
 
         paralyzeTimer -= delta
         if (paralyzeTimer < 0.0.seconds)

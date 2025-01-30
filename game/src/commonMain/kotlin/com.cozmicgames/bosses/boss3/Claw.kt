@@ -2,7 +2,6 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.ProjectileSource
-import com.cozmicgames.events.Events
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Grabbable
@@ -102,7 +101,7 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
 
         closestGrabbable?.let {
             grabbedObject = it
-            Game.events.addSendEvent(Events.grab(it.id, grabbingId))
+            it.onGrabbed(grabbingId)
         }
 
         return closestGrabbable != null
@@ -110,17 +109,13 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
 
     fun releaseGrabbedObject(impulseX: Float, impulseY: Float) {
         grabbedObject?.let {
-            Game.events.addSendEvent(Events.release(it.id, impulseX, impulseY))
+            it.onReleased(impulseX, impulseY)
             grabbedObject = null
             grabCooldown = GRAB_COOLDOWN
         }
     }
 
     fun update(delta: Duration, movement: ClawMovement) {
-        if (Game.players.isHost) {
-            movement.updateClaw(delta, this)
-            Game.players.setGlobalState("boss3clawAngle", clawAngle.degrees)
-        } else
-            clawAngle = (Game.players.getGlobalState("boss3clawAngle") ?: 0.0f).degrees
+        movement.updateClaw(delta, this)
     }
 }

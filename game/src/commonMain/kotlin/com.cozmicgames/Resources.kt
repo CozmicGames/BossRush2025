@@ -59,6 +59,8 @@ class Resources : Releasable {
     lateinit var shopBackgroundNinePatch: NinePatch
     lateinit var walletBackground: Texture
     lateinit var walletBackgroundNinePatch: NinePatch
+    lateinit var highscoreBackground: Texture
+    lateinit var highscoreBackgroundNinePatch: NinePatch
     lateinit var reelgunPreview: Texture
     lateinit var hyperHarpoonPreview: Texture
     lateinit var scattergunPreview: Texture
@@ -240,6 +242,8 @@ class Resources : Releasable {
         shopBackgroundNinePatch = NinePatch(shopBackground, 32, 32, 32, 32)
         walletBackground = context.resourcesVfs["textures/ui/wallet_background.png"].readTexture()
         walletBackgroundNinePatch = NinePatch(walletBackground, 12, 12, 12, 12)
+        highscoreBackground = context.resourcesVfs["textures/ui/highscore_background.png"].readTexture()
+        highscoreBackgroundNinePatch = NinePatch(highscoreBackground, 7, 7, 7, 7)
         reelgunPreview = context.resourcesVfs["textures/weapons/reelgun_preview.png"].readTexture()
         hyperHarpoonPreview = context.resourcesVfs["textures/weapons/hyper_harpoon_preview.png"].readTexture()
         scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
@@ -392,6 +396,7 @@ class Resources : Releasable {
         weaponMask.release()
         shopBackground.release()
         walletBackground.release()
+        highscoreBackground.release()
         reelgunPreview.release()
         hyperHarpoonPreview.release()
         scattergunPreview.release()

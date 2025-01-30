@@ -31,61 +31,51 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
     var partRotation = 0.0.degrees
 
     override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            val partRotation = partRotation
+        val partRotation = partRotation
 
-            val parentRotation = parent?.rotation ?: tail.tailAngle
-            val parentCos = parentRotation.cosine
-            val parentSin = parentRotation.sine
+        val parentRotation = parent?.rotation ?: tail.tailAngle
+        val parentCos = parentRotation.cosine
+        val parentSin = parentRotation.sine
 
-            val pivotX: Float
-            val pivotY: Float
+        val pivotX: Float
+        val pivotY: Float
 
-            val xOffset: Float
-            val yOffset = -halfHeight
+        val xOffset: Float
+        val yOffset = -halfHeight
 
-            if (partRotation.degrees >= 0.0f) {
-                if (parent != null) {
-                    pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * -parent.halfHeight) // Left corner
-                    pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * -parent.halfHeight)
-                    xOffset = halfWidth
-                } else {
-                    pivotX = tail.x + (parentCos * -halfWidth - parentSin * halfHeight)
-                    pivotY = tail.y + (parentSin * -halfWidth + parentCos * halfHeight)
-                    xOffset = halfWidth
-                }
+        if (partRotation.degrees >= 0.0f) {
+            if (parent != null) {
+                pivotX = parent.x + (parentCos * -parent.halfWidth - parentSin * -parent.halfHeight) // Left corner
+                pivotY = parent.y + (parentSin * -parent.halfWidth + parentCos * -parent.halfHeight)
+                xOffset = halfWidth
             } else {
-                if (parent != null) {
-                    pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * -parent.halfHeight) // Right corner
-                    pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * -parent.halfHeight)
-                    xOffset = -halfWidth
-                } else {
-                    pivotX = tail.x + (parentCos * halfWidth - parentSin * halfHeight)
-                    pivotY = tail.y + (parentSin * halfWidth + parentCos * halfHeight)
-                    xOffset = -halfWidth
-                }
+                pivotX = tail.x + (parentCos * -halfWidth - parentSin * halfHeight)
+                pivotY = tail.y + (parentSin * -halfWidth + parentCos * halfHeight)
+                xOffset = halfWidth
             }
-
-            rotation = parentRotation + partRotation
-
-            val partCos = rotation.cosine
-            val partSin = rotation.sine
-
-            x = pivotX + partCos * xOffset - partSin * yOffset
-            y = pivotY + partSin * xOffset + partCos * yOffset
-
-            (collider.shape as RectangleCollisionShape).angle = rotation
-            (collider.shape as RectangleCollisionShape).width = width * (1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS).pow(2.0f)
-            (collider.shape as RectangleCollisionShape).height = height
-            collider.update(x, y)
-
-            Game.players.setGlobalState("boss4tailpart${index}X", x)
-            Game.players.setGlobalState("boss4tailpart${index}Y", y)
-            Game.players.setGlobalState("boss4tailpart${index}Angle", rotation.degrees)
         } else {
-            x = Game.players.getGlobalState("boss4tailpart${index}X") ?: 0.0f
-            y = Game.players.getGlobalState("boss4tailpart${index}Y") ?: 0.0f
-            rotation = (Game.players.getGlobalState("boss4tailpart${index}Angle") ?: 0.0f).degrees
+            if (parent != null) {
+                pivotX = parent.x + (parentCos * parent.halfWidth - parentSin * -parent.halfHeight) // Right corner
+                pivotY = parent.y + (parentSin * parent.halfWidth + parentCos * -parent.halfHeight)
+                xOffset = -halfWidth
+            } else {
+                pivotX = tail.x + (parentCos * halfWidth - parentSin * halfHeight)
+                pivotY = tail.y + (parentSin * halfWidth + parentCos * halfHeight)
+                xOffset = -halfWidth
+            }
         }
+
+        rotation = parentRotation + partRotation
+
+        val partCos = rotation.cosine
+        val partSin = rotation.sine
+
+        x = pivotX + partCos * xOffset - partSin * yOffset
+        y = pivotY + partSin * xOffset + partCos * yOffset
+
+        (collider.shape as RectangleCollisionShape).angle = rotation
+        (collider.shape as RectangleCollisionShape).width = width * (1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS).pow(2.0f)
+        (collider.shape as RectangleCollisionShape).height = height
+        collider.update(x, y)
     }
 }

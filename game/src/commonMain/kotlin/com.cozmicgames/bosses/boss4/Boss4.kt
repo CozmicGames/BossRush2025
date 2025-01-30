@@ -185,211 +185,153 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     override fun update(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            isInvulnerableTimer -= delta
-            if (isInvulnerableTimer <= 0.0.seconds)
-                isInvulnerableTimer = 0.0.seconds
+        isInvulnerableTimer -= delta
+        if (isInvulnerableTimer <= 0.0.seconds)
+            isInvulnerableTimer = 0.0.seconds
 
-            isParalyzedTimer -= delta
-            if (isParalyzedTimer <= 0.0.seconds)
-                isParalyzedTimer = 0.0.seconds
+        isParalyzedTimer -= delta
+        if (isParalyzedTimer <= 0.0.seconds)
+            isParalyzedTimer = 0.0.seconds
 
-            camouflageTimer -= delta
-            if (camouflageTimer <= 0.0.seconds)
-                camouflageTimer = 0.0.seconds
+        camouflageTimer -= delta
+        if (camouflageTimer <= 0.0.seconds)
+            camouflageTimer = 0.0.seconds
 
-            camouflageFactor += (1.0f - (camouflageTimer / CAMOUFLAGE_TIME).toFloat()) * camouflageDirection
+        camouflageFactor += (1.0f - (camouflageTimer / CAMOUFLAGE_TIME).toFloat()) * camouflageDirection
 
-            if (camouflageFactor < 0.0f)
-                camouflageFactor = 0.0f
-            else if (camouflageFactor > 1.0f)
-                camouflageFactor = 1.0f
+        if (camouflageFactor < 0.0f)
+            camouflageFactor = 0.0f
+        else if (camouflageFactor > 1.0f)
+            camouflageFactor = 1.0f
 
-            vortexTimer -= delta
-            if (vortexTimer <= 0.0.seconds) {
-                vortexTimer = 0.0.seconds
-                vortexCallback()
-                vortexCallback = {}
-            }
-
-            if (vortexOpenCloseTime > 0.0.seconds)
-                vortex.size += (1.0f - (vortexTimer / vortexOpenCloseTime).toFloat()) * vortexDirection * vortexTargetSize
-
-            if (vortex.size < 0.0f)
-                vortex.size = 0.0f
-            else if (vortex.size > vortexTargetSize)
-                vortex.size = vortexTargetSize
-
-            Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
-
-            impulseX *= 1.0f - delta.seconds
-            impulseY *= 1.0f - delta.seconds
-            impulseSpin *= 1.0f - delta.seconds * 1.05f
-
-            if (impulseX.isFuzzyZero())
-                impulseX = 0.0f
-
-            if (impulseY.isFuzzyZero())
-                impulseY = 0.0f
-
-            if (impulseSpin.isFuzzyZero())
-                impulseSpin = 0.0f
-
-            x += impulseX * delta.seconds * 300.0f
-            y += impulseY * delta.seconds * 300.0f
-            rotation += impulseSpin.degrees * delta.seconds * 200.0f
-
-            if (fightStarted) {
-                movementController.update(delta)
-                beak.update(delta, movementController.movement.beakMovement)
-                tail.update(delta, movementController.movement.tailMovement)
-            }
-
-            val cos = rotation.cosine
-            val sin = rotation.sine
-
-            head.x = x
-            head.y = y
-            head.rotation = rotation
-
-            eyes.x = head.x
-            eyes.y = head.y
-            eyes.rotation = head.rotation
-
-            val bodyPivotOffsetX = 0.0f
-            val bodyPivotOffsetY = -head.height * 0.5f
-
-            val bodyPivotX = x + cos * bodyPivotOffsetX - sin * bodyPivotOffsetY
-            val bodyPivotY = y + sin * bodyPivotOffsetX + cos * bodyPivotOffsetY
-
-            val bodyOffsetX = 0.0f
-            val bodyOffsetY = -body.height * 0.5f
-
-            val bodyCos = body.rotation.cosine
-            val bodySin = body.rotation.sine
-
-            body.x = bodyPivotX + bodyCos * bodyOffsetX - bodySin * bodyOffsetY
-            body.y = bodyPivotY + bodySin * bodyOffsetX + bodyCos * bodyOffsetY
-            body.rotation = rotation
-
-            val tailPivotOffsetX = 0.0f
-            val tailPivotOffsetY = -body.height * 0.5f
-
-            val tailPivotX = body.x + bodyCos * tailPivotOffsetX - bodySin * tailPivotOffsetY
-            val tailPivotY = body.y + bodySin * tailPivotOffsetX + bodyCos * tailPivotOffsetY
-
-            val tailOffsetX = 0.0f
-            val tailOffsetY = 0.0f
-
-            val tailCos = tail.tailAngle.cosine
-            val tailSin = tail.tailAngle.sine
-
-            tail.x = tailPivotX + tailCos * tailOffsetX - tailSin * tailOffsetY
-            tail.y = tailPivotY + tailSin * tailOffsetX + tailCos * tailOffsetY
-            tail.rotation = rotation
-
-            val leftWingPivotOffsetX = -head.width * 0.5f
-            val leftWingPivotOffsetY = -head.height * 0.5f
-
-            val leftWingPivotX = x + cos * leftWingPivotOffsetX - sin * leftWingPivotOffsetY
-            val leftWingPivotY = y + sin * leftWingPivotOffsetX + cos * leftWingPivotOffsetY
-
-            val leftWingOffsetX = -leftWing.width * 0.5f
-            val leftWingOffsetY = 0.0f
-
-            val leftWingCos = leftWing.rotation.cosine
-            val leftWingSin = leftWing.rotation.sine
-
-            leftWing.x = leftWingPivotX + leftWingCos * leftWingOffsetX - leftWingSin * leftWingOffsetY
-            leftWing.y = leftWingPivotY + leftWingSin * leftWingOffsetX + leftWingCos * leftWingOffsetY
-            leftWing.rotation = rotation
-
-            val rightWingPivotOffsetX = head.width * 0.5f
-            val rightWingPivotOffsetY = -head.height * 0.5f
-
-            val rightWingPivotX = x + cos * rightWingPivotOffsetX - sin * rightWingPivotOffsetY
-            val rightWingPivotY = y + sin * rightWingPivotOffsetX + cos * rightWingPivotOffsetY
-
-            val rightWingOffsetX = rightWing.width * 0.5f
-            val rightWingOffsetY = 0.0f
-
-            val rightWingCos = rightWing.rotation.cosine
-            val rightWingSin = rightWing.rotation.sine
-
-            rightWing.x = rightWingPivotX + rightWingCos * rightWingOffsetX - rightWingSin * rightWingOffsetY
-            rightWing.y = rightWingPivotY + rightWingSin * rightWingOffsetX + rightWingCos * rightWingOffsetY
-            rightWing.rotation = rotation
-
-            val beakOffsetX = 0.0f
-            val beakOffsetY = head.height * 0.3f
-
-            beak.x = head.x + cos * beakOffsetX - sin * beakOffsetY
-            beak.y = head.y + sin * beakOffsetX + cos * beakOffsetY
-            beak.rotation = rotation
-
-            val heartOffsetX = 0.0f
-            val heartOffsetY = head.height * 0.38f
-
-            heart.x = head.x + cos * heartOffsetX - sin * heartOffsetY
-            heart.y = head.y + sin * heartOffsetX + cos * heartOffsetY
-            heart.rotation = rotation
-
-            Game.players.setGlobalState("boss4x", x)
-            Game.players.setGlobalState("boss4y", y)
-            Game.players.setGlobalState("boss4rotation", rotation.degrees)
-
-            Game.players.setGlobalState("boss4headx", head.x)
-            Game.players.setGlobalState("boss4heady", head.y)
-            Game.players.setGlobalState("boss4headrotation", head.rotation.degrees)
-
-            Game.players.setGlobalState("boss4bodyx", body.x)
-            Game.players.setGlobalState("boss4bodyy", body.y)
-            Game.players.setGlobalState("boss4bodyrotation", body.rotation.degrees)
-
-            Game.players.setGlobalState("boss4leftWingx", leftWing.x)
-            Game.players.setGlobalState("boss4leftWingy", leftWing.y)
-            Game.players.setGlobalState("boss4leftWingrotation", leftWing.rotation.degrees)
-
-            Game.players.setGlobalState("boss4rightWingx", rightWing.x)
-            Game.players.setGlobalState("boss4rightWingy", rightWing.y)
-            Game.players.setGlobalState("boss4rightWingrotation", rightWing.rotation.degrees)
-
-            Game.players.setGlobalState("boss4beakx", beak.x)
-            Game.players.setGlobalState("boss4beaky", beak.y)
-            Game.players.setGlobalState("boss4beakrotation", beak.rotation.degrees)
-
-            Game.players.setGlobalState("boss4heartx", heart.x)
-            Game.players.setGlobalState("boss4hearty", heart.y)
-            Game.players.setGlobalState("boss4heartrotation", heart.rotation.degrees)
-        } else {
-            x = Game.players.getGlobalState("boss4x") ?: 0.0f
-            y = Game.players.getGlobalState("boss4y") ?: 0.0f
-            rotation = (Game.players.getGlobalState("boss4rotation") ?: 0.0f).degrees
-
-            head.x = Game.players.getGlobalState("boss4headx") ?: 0.0f
-            head.y = Game.players.getGlobalState("boss4heady") ?: 0.0f
-            head.rotation = (Game.players.getGlobalState("boss4headrotation") ?: 0.0f).degrees
-
-            body.x = Game.players.getGlobalState("boss4bodyx") ?: 0.0f
-            body.y = Game.players.getGlobalState("boss4bodyy") ?: 0.0f
-            body.rotation = (Game.players.getGlobalState("boss4bodyrotation") ?: 0.0f).degrees
-
-            leftWing.x = Game.players.getGlobalState("boss4leftWingx") ?: 0.0f
-            leftWing.y = Game.players.getGlobalState("boss4leftWingy") ?: 0.0f
-            leftWing.rotation = (Game.players.getGlobalState("boss4leftWingrotation") ?: 0.0f).degrees
-
-            rightWing.x = Game.players.getGlobalState("boss4rightWingx") ?: 0.0f
-            rightWing.y = Game.players.getGlobalState("boss4rightWingy") ?: 0.0f
-            rightWing.rotation = (Game.players.getGlobalState("boss4rightWingrotation") ?: 0.0f).degrees
-
-            beak.x = Game.players.getGlobalState("boss4beakx") ?: 0.0f
-            beak.y = Game.players.getGlobalState("boss4beaky") ?: 0.0f
-            beak.rotation = (Game.players.getGlobalState("boss4beakrotation") ?: 0.0f).degrees
-
-            heart.x = Game.players.getGlobalState("boss4heartx") ?: 0.0f
-            heart.y = Game.players.getGlobalState("boss4hearty") ?: 0.0f
-            heart.rotation = (Game.players.getGlobalState("boss4heartrotation") ?: 0.0f).degrees
+        vortexTimer -= delta
+        if (vortexTimer <= 0.0.seconds) {
+            vortexTimer = 0.0.seconds
+            vortexCallback()
+            vortexCallback = {}
         }
+
+        if (vortexOpenCloseTime > 0.0.seconds)
+            vortex.size += (1.0f - (vortexTimer / vortexOpenCloseTime).toFloat()) * vortexDirection * vortexTargetSize
+
+        if (vortex.size < 0.0f)
+            vortex.size = 0.0f
+        else if (vortex.size > vortexTargetSize)
+            vortex.size = vortexTargetSize
+
+        Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
+
+        impulseX *= 1.0f - delta.seconds
+        impulseY *= 1.0f - delta.seconds
+        impulseSpin *= 1.0f - delta.seconds * 1.05f
+
+        if (impulseX.isFuzzyZero())
+            impulseX = 0.0f
+
+        if (impulseY.isFuzzyZero())
+            impulseY = 0.0f
+
+        if (impulseSpin.isFuzzyZero())
+            impulseSpin = 0.0f
+
+        x += impulseX * delta.seconds * 300.0f
+        y += impulseY * delta.seconds * 300.0f
+        rotation += impulseSpin.degrees * delta.seconds * 200.0f
+
+        if (fightStarted) {
+            movementController.update(delta)
+            beak.update(delta, movementController.movement.beakMovement)
+            tail.update(delta, movementController.movement.tailMovement)
+        }
+
+        val cos = rotation.cosine
+        val sin = rotation.sine
+
+        head.x = x
+        head.y = y
+        head.rotation = rotation
+
+        eyes.x = head.x
+        eyes.y = head.y
+        eyes.rotation = head.rotation
+
+        val bodyPivotOffsetX = 0.0f
+        val bodyPivotOffsetY = -head.height * 0.5f
+
+        val bodyPivotX = x + cos * bodyPivotOffsetX - sin * bodyPivotOffsetY
+        val bodyPivotY = y + sin * bodyPivotOffsetX + cos * bodyPivotOffsetY
+
+        val bodyOffsetX = 0.0f
+        val bodyOffsetY = -body.height * 0.5f
+
+        val bodyCos = body.rotation.cosine
+        val bodySin = body.rotation.sine
+
+        body.x = bodyPivotX + bodyCos * bodyOffsetX - bodySin * bodyOffsetY
+        body.y = bodyPivotY + bodySin * bodyOffsetX + bodyCos * bodyOffsetY
+        body.rotation = rotation
+
+        val tailPivotOffsetX = 0.0f
+        val tailPivotOffsetY = -body.height * 0.5f
+
+        val tailPivotX = body.x + bodyCos * tailPivotOffsetX - bodySin * tailPivotOffsetY
+        val tailPivotY = body.y + bodySin * tailPivotOffsetX + bodyCos * tailPivotOffsetY
+
+        val tailOffsetX = 0.0f
+        val tailOffsetY = 0.0f
+
+        val tailCos = tail.tailAngle.cosine
+        val tailSin = tail.tailAngle.sine
+
+        tail.x = tailPivotX + tailCos * tailOffsetX - tailSin * tailOffsetY
+        tail.y = tailPivotY + tailSin * tailOffsetX + tailCos * tailOffsetY
+        tail.rotation = rotation
+
+        val leftWingPivotOffsetX = -head.width * 0.5f
+        val leftWingPivotOffsetY = -head.height * 0.5f
+
+        val leftWingPivotX = x + cos * leftWingPivotOffsetX - sin * leftWingPivotOffsetY
+        val leftWingPivotY = y + sin * leftWingPivotOffsetX + cos * leftWingPivotOffsetY
+
+        val leftWingOffsetX = -leftWing.width * 0.5f
+        val leftWingOffsetY = 0.0f
+
+        val leftWingCos = leftWing.rotation.cosine
+        val leftWingSin = leftWing.rotation.sine
+
+        leftWing.x = leftWingPivotX + leftWingCos * leftWingOffsetX - leftWingSin * leftWingOffsetY
+        leftWing.y = leftWingPivotY + leftWingSin * leftWingOffsetX + leftWingCos * leftWingOffsetY
+        leftWing.rotation = rotation
+
+        val rightWingPivotOffsetX = head.width * 0.5f
+        val rightWingPivotOffsetY = -head.height * 0.5f
+
+        val rightWingPivotX = x + cos * rightWingPivotOffsetX - sin * rightWingPivotOffsetY
+        val rightWingPivotY = y + sin * rightWingPivotOffsetX + cos * rightWingPivotOffsetY
+
+        val rightWingOffsetX = rightWing.width * 0.5f
+        val rightWingOffsetY = 0.0f
+
+        val rightWingCos = rightWing.rotation.cosine
+        val rightWingSin = rightWing.rotation.sine
+
+        rightWing.x = rightWingPivotX + rightWingCos * rightWingOffsetX - rightWingSin * rightWingOffsetY
+        rightWing.y = rightWingPivotY + rightWingSin * rightWingOffsetX + rightWingCos * rightWingOffsetY
+        rightWing.rotation = rotation
+
+        val beakOffsetX = 0.0f
+        val beakOffsetY = head.height * 0.3f
+
+        beak.x = head.x + cos * beakOffsetX - sin * beakOffsetY
+        beak.y = head.y + sin * beakOffsetX + cos * beakOffsetY
+        beak.rotation = rotation
+
+        val heartOffsetX = 0.0f
+        val heartOffsetY = head.height * 0.38f
+
+        heart.x = head.x + cos * heartOffsetX - sin * heartOffsetY
+        heart.y = head.y + sin * heartOffsetX + cos * heartOffsetY
+        heart.rotation = rotation
     }
 
     override fun renderSpecials(delta: Duration, renderer: Renderer) {
@@ -403,11 +345,9 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
         decamouflage(true)
 
-        if (Game.players.isHost) {
-            tail.paralyze(PARALYZED_TIME, false)
-            movementController.onParalyze()
-            isParalyzedTimer = PARALYZED_TIME
-        }
+        tail.paralyze(PARALYZED_TIME, false)
+        movementController.onParalyze()
+        isParalyzedTimer = PARALYZED_TIME
     }
 
     fun hit() {
@@ -420,29 +360,27 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
         decamouflage(true)
 
-        if (Game.players.isHost) {
-            health--
-            if (health < 0) health = 0
+        health--
+        if (health < 0) health = 0
 
-            movementController.onHit()
+        movementController.onHit()
 
-            if (health <= 0) {
-                removeFromPhysics()
-                decamouflage()
-                closeVortex(0.5.seconds)
-                movementController.onDeath()
+        if (health <= 0) {
+            removeFromPhysics()
+            decamouflage()
+            closeVortex(0.5.seconds)
+            movementController.onDeath()
 
-                if (isFinalBattle) {
-                    eyes.texture = Game.resources.boss4eyesDead.slice()
+            if (isFinalBattle) {
+                eyes.texture = Game.resources.boss4eyesDead.slice()
 
-                    Game.world.remove(heart)
-                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
-                }
-            } else {
-                tail.unparalyze()
-                isInvulnerableTimer = INVULNERABLE_TIME
-                isParalyzedTimer = 0.0.seconds
+                Game.world.remove(heart)
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
             }
+        } else {
+            tail.unparalyze()
+            isInvulnerableTimer = INVULNERABLE_TIME
+            isParalyzedTimer = 0.0.seconds
         }
     }
 

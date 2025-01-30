@@ -60,10 +60,6 @@ abstract class ParticleEffect() {
             updater.update(delta, particles)
     }
 
-    abstract fun writeUpdateData()
-
-    abstract fun readUpdateData()
-
     fun render(batch: SpriteBatch) {
         particles.forEach {
             batch.draw(Textures.white, it.x, it.y, it.size * 0.5f, it.size * 0.5f, it.size, it.size, rotation = it.rotation, color = it.color)

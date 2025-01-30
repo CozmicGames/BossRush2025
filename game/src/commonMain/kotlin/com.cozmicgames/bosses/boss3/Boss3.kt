@@ -236,130 +236,88 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     override fun update(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            if (Game.input.isKeyJustPressed(Key.H))
-                movementController.performAttack(GrabAttack())
+        if (Game.input.isKeyJustPressed(Key.H))
+            movementController.performAttack(GrabAttack())
 
-            isInvulnerableTimer -= delta
-            if (isInvulnerableTimer <= 0.0.seconds)
-                isInvulnerableTimer = 0.0.seconds
+        isInvulnerableTimer -= delta
+        if (isInvulnerableTimer <= 0.0.seconds)
+            isInvulnerableTimer = 0.0.seconds
 
-            isParalyzedTimer -= delta
-            if (isParalyzedTimer <= 0.0.seconds)
-                isParalyzedTimer = 0.0.seconds
+        isParalyzedTimer -= delta
+        if (isParalyzedTimer <= 0.0.seconds)
+            isParalyzedTimer = 0.0.seconds
 
-            impulseX *= 1.0f - delta.seconds
-            impulseY *= 1.0f - delta.seconds
-            impulseSpin *= 1.0f - delta.seconds * 1.05f
+        impulseX *= 1.0f - delta.seconds
+        impulseY *= 1.0f - delta.seconds
+        impulseSpin *= 1.0f - delta.seconds * 1.05f
 
-            if (impulseX.isFuzzyZero())
-                impulseX = 0.0f
+        if (impulseX.isFuzzyZero())
+            impulseX = 0.0f
 
-            if (impulseY.isFuzzyZero())
-                impulseY = 0.0f
+        if (impulseY.isFuzzyZero())
+            impulseY = 0.0f
 
-            if (impulseSpin.isFuzzyZero())
-                impulseSpin = 0.0f
+        if (impulseSpin.isFuzzyZero())
+            impulseSpin = 0.0f
 
-            x += impulseX * delta.seconds * 300.0f
-            y += impulseY * delta.seconds * 300.0f
-            rotation += impulseSpin.degrees * delta.seconds * 200.0f
+        x += impulseX * delta.seconds * 300.0f
+        y += impulseY * delta.seconds * 300.0f
+        rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-            if (fightStarted) {
-                movementController.update(delta)
-                beak.update(delta, movementController.movement.beakMovement)
-                legs.forEach {
-                    it.update(delta, movementController.movement.legMovement)
-                }
-                arms.forEach {
-                    it.update(delta, movementController.movement.armMovement)
-                }
+        if (fightStarted) {
+            movementController.update(delta)
+            beak.update(delta, movementController.movement.beakMovement)
+            legs.forEach {
+                it.update(delta, movementController.movement.legMovement)
             }
-
-            val cos = rotation.cosine
-            val sin = rotation.sine
-
-            head.x = x
-            head.y = y
-            head.rotation = rotation
-            head.collider.update(head.x, head.y)
-
-            legs.forEachIndexed { index, leg ->
-                val (offsetX, offsetY) = LEG_OFFSETS[index]
-
-                val tentacleOffsetX = offsetX * head.width * 0.5f
-                val tentacleOffsetY = offsetY * head.height * 0.5f
-
-                leg.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
-                leg.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
-                leg.rotation = rotation
-
-                Game.players.setGlobalState("boss3leg${index}x", leg.x)
-                Game.players.setGlobalState("boss3leg${index}y", leg.y)
-                Game.players.setGlobalState("boss3leg${index}rotation", leg.rotation.degrees)
+            arms.forEach {
+                it.update(delta, movementController.movement.armMovement)
             }
-
-            arms.forEachIndexed { index, arm ->
-                val (offsetX, offsetY) = ARM_OFFSETS[index]
-
-                val armOffsetX = offsetX * head.width * 0.5f
-                val armOffsetY = offsetY * head.height * 0.5f
-
-                arm.x = x + cos * armOffsetX - sin * armOffsetY
-                arm.y = y + sin * armOffsetX + cos * armOffsetY
-                arm.rotation = rotation
-
-                Game.players.setGlobalState("boss3arm${index}x", arm.x)
-                Game.players.setGlobalState("boss3arm${index}y", arm.y)
-                Game.players.setGlobalState("boss3arm${index}rotation", arm.rotation.degrees)
-            }
-
-            val beakOffsetX = 0.0f
-            val beakOffsetY = -0.4f * head.height
-
-            beak.x = x + cos * beakOffsetX - sin * beakOffsetY
-            beak.y = y + sin * beakOffsetX + cos * beakOffsetY
-            beak.rotation = rotation
-
-            Game.players.setGlobalState("boss3beakx", beak.x)
-            Game.players.setGlobalState("boss3beaky", beak.y)
-            Game.players.setGlobalState("boss3beakrotation", beak.rotation.degrees)
-
-            val heartOffsetX = 0.0f
-            val heartOffsetY = -0.4f * head.height
-
-            heart.x = x + cos * heartOffsetX - sin * heartOffsetY
-            heart.y = y + sin * heartOffsetX + cos * heartOffsetY
-            heart.rotation = rotation
-
-            Game.players.setGlobalState("boss3heartx", heart.x)
-            Game.players.setGlobalState("boss3hearty", heart.y)
-            Game.players.setGlobalState("boss3heartrotation", heart.rotation.degrees)
-        } else {
-            x = Game.players.getGlobalState("boss3x") ?: head.x
-            y = Game.players.getGlobalState("boss3y") ?: head.y
-            rotation = (Game.players.getGlobalState("boss3rotation") ?: 0.0f).degrees
-
-            legs.forEachIndexed { index, tentacle ->
-                tentacle.x = Game.players.getGlobalState("boss3leg${index}x") ?: 0.0f
-                tentacle.y = Game.players.getGlobalState("boss3leg${index}y") ?: 0.0f
-                tentacle.rotation = (Game.players.getGlobalState("boss3leg${index}rotation") ?: 0.0f).degrees
-            }
-
-            arms.forEachIndexed { index, arm ->
-                arm.x = Game.players.getGlobalState("boss3arm${index}x") ?: 0.0f
-                arm.y = Game.players.getGlobalState("boss3arm${index}y") ?: 0.0f
-                arm.rotation = (Game.players.getGlobalState("boss3arm${index}rotation") ?: 0.0f).degrees
-            }
-
-            beak.x = Game.players.getGlobalState("boss3beakx") ?: 0.0f
-            beak.y = Game.players.getGlobalState("boss3beaky") ?: 0.0f
-            beak.rotation = (Game.players.getGlobalState("boss3beakrotation") ?: 0.0f).degrees
-
-            heart.x = Game.players.getGlobalState("boss3heartx") ?: 0.0f
-            heart.y = Game.players.getGlobalState("boss3hearty") ?: 0.0f
-            heart.rotation = (Game.players.getGlobalState("boss3heartrotation") ?: 0.0f).degrees
         }
+
+        val cos = rotation.cosine
+        val sin = rotation.sine
+
+        head.x = x
+        head.y = y
+        head.rotation = rotation
+        head.collider.update(head.x, head.y)
+
+        legs.forEachIndexed { index, leg ->
+            val (offsetX, offsetY) = LEG_OFFSETS[index]
+
+            val tentacleOffsetX = offsetX * head.width * 0.5f
+            val tentacleOffsetY = offsetY * head.height * 0.5f
+
+            leg.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
+            leg.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
+            leg.rotation = rotation
+        }
+
+        arms.forEachIndexed { index, arm ->
+            val (offsetX, offsetY) = ARM_OFFSETS[index]
+
+            val armOffsetX = offsetX * head.width * 0.5f
+            val armOffsetY = offsetY * head.height * 0.5f
+
+            arm.x = x + cos * armOffsetX - sin * armOffsetY
+            arm.y = y + sin * armOffsetX + cos * armOffsetY
+            arm.rotation = rotation
+        }
+
+        val beakOffsetX = 0.0f
+        val beakOffsetY = -0.4f * head.height
+
+        beak.x = x + cos * beakOffsetX - sin * beakOffsetY
+        beak.y = y + sin * beakOffsetX + cos * beakOffsetY
+        beak.rotation = rotation
+
+        val heartOffsetX = 0.0f
+        val heartOffsetY = -0.4f * head.height
+
+        heart.x = x + cos * heartOffsetX - sin * heartOffsetY
+        heart.y = y + sin * heartOffsetX + cos * heartOffsetY
+        heart.rotation = rotation
     }
 
     fun paralyze() {
@@ -368,18 +326,16 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
 
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
 
-        if (Game.players.isHost) {
-            legs.forEach {
-                it.paralyze(PARALYZED_TIME, false)
-            }
-
-            arms.forEach {
-                it.paralyze(PARALYZED_TIME, false)
-            }
-
-            movementController.onParalyze()
-            isParalyzedTimer = PARALYZED_TIME
+        legs.forEach {
+            it.paralyze(PARALYZED_TIME, false)
         }
+
+        arms.forEach {
+            it.paralyze(PARALYZED_TIME, false)
+        }
+
+        movementController.onParalyze()
+        isParalyzedTimer = PARALYZED_TIME
     }
 
     fun hit() {
@@ -391,37 +347,35 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
 
-        if (Game.players.isHost) {
-            health--
-            if (health < 0) health = 0
+        health--
+        if (health < 0) health = 0
 
-            movementController.onHit()
+        movementController.onHit()
 
-            if (health <= 0) {
-                removeFromPhysics()
-                movementController.onDeath()
+        if (health <= 0) {
+            removeFromPhysics()
+            movementController.onDeath()
 
-                if (isFinalBattle) {
-                    head.texture = Game.resources.boss3headDead.slice()
-                    arms.forEach {
-                        it.claw.lowerClawPart.texture = Game.resources.boss3clawLowerDead.slice()
-                    }
-
-                    Game.world.remove(heart)
-                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+            if (isFinalBattle) {
+                head.texture = Game.resources.boss3headDead.slice()
+                arms.forEach {
+                    it.claw.lowerClawPart.texture = Game.resources.boss3clawLowerDead.slice()
                 }
-            } else {
-                isInvulnerableTimer = INVULNERABLE_TIME
-                isParalyzedTimer = 0.0.seconds
-            }
 
-            legs.forEach {
-                it.unparalyze()
+                Game.world.remove(heart)
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
             }
+        } else {
+            isInvulnerableTimer = INVULNERABLE_TIME
+            isParalyzedTimer = 0.0.seconds
+        }
 
-            arms.forEach {
-                it.unparalyze()
-            }
+        legs.forEach {
+            it.unparalyze()
+        }
+
+        arms.forEach {
+            it.unparalyze()
         }
     }
 

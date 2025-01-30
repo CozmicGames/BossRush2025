@@ -46,7 +46,8 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     private var returnState: GameState = this
 
     override fun begin() {
-        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+        val player = Game.player
+
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
         background = Background(Game.resources.background)
@@ -66,7 +67,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     }
 
     private fun startFight(difficulty: Difficulty, isRetry: Boolean) {
-        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+        val player = Game.player
 
         this.difficulty = difficulty
         fightDuration = 0.0.seconds
@@ -74,7 +75,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         fightStarted = false
         showResults = false
 
-        Game.game.shootStatistics.reset()
+        Game.player.shootStatistics.reset()
 
         Game.world.clear()
         Game.physics.clear()
@@ -103,27 +104,9 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         bosses[3].x = Game.physics.maxX - 200.0f
         bosses[3].y = Game.physics.maxY - 200.0f
 
-        val numPlayers = Game.players.players.size
-
-        val spawnPositions = if (numPlayers == 1) {
-            arrayOf(Vec2f(0.0f, 0.0f))
-        } else {
-            Array(numPlayers) {
-                val radius = 200.0f
-                val angle = 360.0.degrees / numPlayers * it
-                val spawnX = radius * angle.cosine
-                val spawnY = radius * angle.sine
-                Vec2f(spawnX, spawnY)
-            }
-        }
-
-        Game.players.players.forEachIndexed { index, p ->
-            val spawnPosition = spawnPositions[index]
-            val spawnRotation = 0.0.degrees
-            p.ship.initialize(difficulty, spawnPosition.x, spawnPosition.y, spawnRotation, true)
-            p.ship.addToWorld()
-            p.ship.addToPhysics()
-        }
+        player.ship.initialize(difficulty, 0.0f, 0.0f, 0.0.degrees, true)
+        player.ship.addToWorld()
+        player.ship.addToPhysics()
 
         Game.world.shouldUpdate = false
 
@@ -145,18 +128,10 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+        val player = Game.player
         val playerShip = player.ship
 
-        val inputFrame = InputFrame()
-        Game.input.update(delta, inputFrame)
-        Game.players.getMyPlayerState().let {
-            it.setState("inputX", inputFrame.deltaX)
-            it.setState("inputY", inputFrame.deltaY)
-            it.setState("inputRotation", inputFrame.deltaRotation)
-            it.setState("inputUsePrimary", inputFrame.usePrimary)
-            it.setState("inputUseSecondary", inputFrame.useSecondary)
-        }
+        Game.input.update(delta, player.inputFrame)
 
         var cameraTargetX = playerShip.x
         var cameraTargetY = playerShip.y
@@ -192,7 +167,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         if (!showResults)
             fightDuration += delta
 
-        if (!showResults && (bosses.all { it.isDead } || Game.players.players.all { it.ship.isDead })) {
+        if (!showResults && (bosses.all { it.isDead } || Game.player.ship.isDead)) {
             showResults = true
             Game.world.shouldUpdate = false
 
@@ -201,8 +176,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
                     it.movementController.onFailFight()
             }
 
-            val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
-            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, averagePlayerHealth, Game.game.shootStatistics.shotsFired, Game.game.shootStatistics.shotsHit)
+            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, Game.player.ship.health, Game.player.shootStatistics.shotsFired, Game.player.shootStatistics.shotsHit)
 
             resultPanel = ResultPanel(results)
         }
@@ -263,10 +237,8 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             it.removeFromWorld()
         }
 
-        Game.players.players.forEach {
-            it.ship.removeFromPhysics()
-            it.ship.removeFromWorld()
-        }
+        Game.player.ship.removeFromPhysics()
+        Game.player.ship.removeFromWorld()
     }
 
     override fun equals(other: Any?): Boolean {

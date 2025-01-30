@@ -43,8 +43,7 @@ class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     }
 
     fun update(delta: Duration, movement: LegMovement) {
-        if (Game.players.isHost)
-            movement.updateParts(delta, this)
+        movement.updateParts(delta, this)
 
         paralyzeTimer -= delta
         if (paralyzeTimer < 0.0.seconds)

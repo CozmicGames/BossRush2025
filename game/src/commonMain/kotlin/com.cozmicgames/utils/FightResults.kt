@@ -18,6 +18,8 @@ class FightResults(val duration: Duration, val difficulty: Difficulty, val bossF
 
     val totalPoints get() = (bossDamagePoints + playerHealthPoints + accuracyPoints) / 3
 
+    val percentage get() = (bossDamage + playerHealth + accuracy) / 3.0f
+
     val message
         get() = if (isVictory)
             when (totalPoints) {

@@ -16,11 +16,11 @@ abstract class FightStage : BossStage() {
     protected abstract val stageAttacks: List<StageAttack>
 
     var nextBossMovementDecisionTime = 1.0.seconds
-    private var nextAttackDecisionTime = 2.0.seconds
+    var nextAttackDecisionTime = 2.0.seconds
 
     protected abstract fun decideBossMovement(boss: Boss, controller: BossMovementController)
 
-    private fun decideAttack(boss: Boss, controller: BossMovementController) {
+    protected open fun decideAttack(boss: Boss, controller: BossMovementController) {
         if (controller.isAttacking)
             return
 

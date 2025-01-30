@@ -18,8 +18,12 @@ open class ShopUI : GUIElement() {
             get() = this@ShopUI.layer + 1
             set(value) {}
     }
-    private lateinit var weaponSlots: List<ShopWeaponSlot>
-    private val walletLabel = object : CurrencyLabel({ Game.game.wallet }, 24.0f) {
+    private var weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
+        val slot = ShopWeaponSlot(weapon, index in Game.player.unlockedWeaponIndices)
+        slot.layer = layer + 1
+        slot
+    }
+    private val walletLabel = object : CurrencyLabel({ Game.player.wallet }, 24.0f) {
         override var layer: Int
             get() = this@ShopUI.layer + 2
             set(value) {}
@@ -31,11 +35,6 @@ open class ShopUI : GUIElement() {
     }
 
     init {
-        weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
-            val slot = ShopWeaponSlot(weapon, index in Game.game.unlockedWeaponIndices)
-            slot.layer = layer + 1
-            slot
-        }
 
         val spacing = 10.0f
 
@@ -67,13 +66,6 @@ open class ShopUI : GUIElement() {
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
-        if (Game.game.newlyUnlockedWeaponIndices.isNotEmpty()) {
-            Game.game.newlyUnlockedWeaponIndices.forEach {
-                weaponSlots.getOrNull(it)?.unlock()
-            }
-            Game.game.newlyUnlockedWeaponIndices.clear()
-        }
-
         shopBackground.render(delta, renderer)
         shopLabel.render(delta, renderer)
         weaponSlots.forEach {

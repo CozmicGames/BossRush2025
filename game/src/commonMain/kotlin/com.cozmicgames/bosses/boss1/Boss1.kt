@@ -183,103 +183,71 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     override fun update(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            isInvulnerableTimer -= delta
-            if (isInvulnerableTimer <= 0.0.seconds)
-                isInvulnerableTimer = 0.0.seconds
+        isInvulnerableTimer -= delta
+        if (isInvulnerableTimer <= 0.0.seconds)
+            isInvulnerableTimer = 0.0.seconds
 
-            isParalyzedTimer -= delta
-            if (isParalyzedTimer <= 0.0.seconds)
-                isParalyzedTimer = 0.0.seconds
+        isParalyzedTimer -= delta
+        if (isParalyzedTimer <= 0.0.seconds)
+            isParalyzedTimer = 0.0.seconds
 
-            impulseX *= 1.0f - delta.seconds
-            impulseY *= 1.0f - delta.seconds
-            impulseSpin *= 1.0f - delta.seconds * 1.05f
+        impulseX *= 1.0f - delta.seconds
+        impulseY *= 1.0f - delta.seconds
+        impulseSpin *= 1.0f - delta.seconds * 1.05f
 
-            if (impulseX.isFuzzyZero())
-                impulseX = 0.0f
+        if (impulseX.isFuzzyZero())
+            impulseX = 0.0f
 
-            if (impulseY.isFuzzyZero())
-                impulseY = 0.0f
+        if (impulseY.isFuzzyZero())
+            impulseY = 0.0f
 
-            if (impulseSpin.isFuzzyZero())
-                impulseSpin = 0.0f
+        if (impulseSpin.isFuzzyZero())
+            impulseSpin = 0.0f
 
-            x += impulseX * delta.seconds * 300.0f
-            y += impulseY * delta.seconds * 300.0f
-            rotation += impulseSpin.degrees * delta.seconds * 200.0f
+        x += impulseX * delta.seconds * 300.0f
+        y += impulseY * delta.seconds * 300.0f
+        rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-            if (fightStarted) {
-                movementController.update(delta)
-                tentacles.forEach {
-                    it.update(delta, movementController.movement.tentacleMovement)
-                }
-                beak.update(delta, movementController.movement.beakMovement)
+        if (fightStarted) {
+            movementController.update(delta)
+            tentacles.forEach {
+                it.update(delta, movementController.movement.tentacleMovement)
             }
-
-            val cos = rotation.cosine
-            val sin = rotation.sine
-
-            head.x = x
-            head.y = y
-            head.rotation = rotation
-            head.collider.update(head.x, head.y)
-
-            tentacles.forEachIndexed { index, tentacle ->
-                val (offsetX, offsetY) = TENTACLE_OFFSETS[index]
-
-                val tentacleOffsetX = offsetX * HEAD_SIZE * 0.5f
-                val tentacleOffsetY = offsetY * HEAD_SIZE * 0.5f
-
-                tentacle.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
-                tentacle.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
-                tentacle.rotation = rotation
-
-                Game.players.setGlobalState("boss1tentacle${index}x", tentacle.x)
-                Game.players.setGlobalState("boss1tentacle${index}y", tentacle.y)
-                Game.players.setGlobalState("boss1tentacle${index}rotation", tentacle.rotation.degrees)
-            }
-
-            val beakOffsetX = BEAK_OFFSET_X * HEAD_SIZE * 0.5f
-            val beakOffsetY = BEAK_OFFSET_Y * HEAD_SIZE * 0.5f
-
-            beak.x = x + cos * beakOffsetX - sin * beakOffsetY
-            beak.y = y + sin * beakOffsetX + cos * beakOffsetY
-            beak.rotation = rotation
-
-            Game.players.setGlobalState("boss1beakx", beak.x)
-            Game.players.setGlobalState("boss1beaky", beak.y)
-            Game.players.setGlobalState("boss1beakrotation", beak.rotation.degrees)
-
-            val heartOffsetX = HEART_OFFSET_X * HEAD_SIZE * 0.5f
-            val heartOffsetY = HEART_OFFSET_Y * HEAD_SIZE * 0.5f
-
-            heart.x = x + cos * heartOffsetX - sin * heartOffsetY
-            heart.y = y + sin * heartOffsetX + cos * heartOffsetY
-            heart.rotation = rotation
-
-            Game.players.setGlobalState("boss1heartx", heart.x)
-            Game.players.setGlobalState("boss1hearty", heart.y)
-            Game.players.setGlobalState("boss1heartrotation", heart.rotation.degrees)
-        } else {
-            x = Game.players.getGlobalState("boss1x") ?: head.x
-            y = Game.players.getGlobalState("boss1y") ?: head.y
-            rotation = (Game.players.getGlobalState("boss1rotation") ?: 0.0f).degrees
-
-            tentacles.forEachIndexed { index, tentacle ->
-                tentacle.x = Game.players.getGlobalState("boss1tentacle${index}x") ?: 0.0f
-                tentacle.y = Game.players.getGlobalState("boss1tentacle${index}y") ?: 0.0f
-                tentacle.rotation = (Game.players.getGlobalState("boss1tentacle${index}rotation") ?: 0.0f).degrees
-            }
-
-            beak.x = Game.players.getGlobalState("boss1beakx") ?: 0.0f
-            beak.y = Game.players.getGlobalState("boss1beaky") ?: 0.0f
-            beak.rotation = (Game.players.getGlobalState("boss1beakrotation") ?: 0.0f).degrees
-
-            heart.x = Game.players.getGlobalState("boss1heartx") ?: 0.0f
-            heart.y = Game.players.getGlobalState("boss1hearty") ?: 0.0f
-            heart.rotation = (Game.players.getGlobalState("boss1heartrotation") ?: 0.0f).degrees
+            beak.update(delta, movementController.movement.beakMovement)
         }
+
+        val cos = rotation.cosine
+        val sin = rotation.sine
+
+        head.x = x
+        head.y = y
+        head.rotation = rotation
+        head.collider.update(head.x, head.y)
+
+        tentacles.forEachIndexed { index, tentacle ->
+            val (offsetX, offsetY) = TENTACLE_OFFSETS[index]
+
+            val tentacleOffsetX = offsetX * HEAD_SIZE * 0.5f
+            val tentacleOffsetY = offsetY * HEAD_SIZE * 0.5f
+
+            tentacle.x = x + cos * tentacleOffsetX - sin * tentacleOffsetY
+            tentacle.y = y + sin * tentacleOffsetX + cos * tentacleOffsetY
+            tentacle.rotation = rotation
+        }
+
+        val beakOffsetX = BEAK_OFFSET_X * HEAD_SIZE * 0.5f
+        val beakOffsetY = BEAK_OFFSET_Y * HEAD_SIZE * 0.5f
+
+        beak.x = x + cos * beakOffsetX - sin * beakOffsetY
+        beak.y = y + sin * beakOffsetX + cos * beakOffsetY
+        beak.rotation = rotation
+
+        val heartOffsetX = HEART_OFFSET_X * HEAD_SIZE * 0.5f
+        val heartOffsetY = HEART_OFFSET_Y * HEAD_SIZE * 0.5f
+
+        heart.x = x + cos * heartOffsetX - sin * heartOffsetY
+        heart.y = y + sin * heartOffsetX + cos * heartOffsetY
+        heart.rotation = rotation
     }
 
     fun paralyze() {
@@ -288,14 +256,12 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
 
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
 
-        if (Game.players.isHost) {
-            tentacles.forEach {
-                it.paralyze(PARALYZED_TIME, false)
-            }
-
-            movementController.onParalyze()
-            isParalyzedTimer = PARALYZED_TIME
+        tentacles.forEach {
+            it.paralyze(PARALYZED_TIME, false)
         }
+
+        movementController.onParalyze()
+        isParalyzedTimer = PARALYZED_TIME
     }
 
     fun hit() {
@@ -307,30 +273,28 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
 
-        if (Game.players.isHost) {
-            health--
-            if (health < 0) health = 0
+        health--
+        if (health < 0) health = 0
 
-            movementController.onHit()
+        movementController.onHit()
 
-            if (health <= 0) {
-                removeFromPhysics()
-                movementController.onDeath()
+        if (health <= 0) {
+            removeFromPhysics()
+            movementController.onDeath()
 
-                if (isFinalBattle) {
-                    head.texture = Game.resources.boss1headDead.slice()
+            if (isFinalBattle) {
+                head.texture = Game.resources.boss1headDead.slice()
 
-                    Game.world.remove(heart)
-                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
-                }
-            } else {
-                tentacles.forEach {
-                    it.unparalyze()
-                }
-
-                isInvulnerableTimer = INVULNERABLE_TIME
-                isParalyzedTimer = 0.0.seconds
+                Game.world.remove(heart)
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
             }
+        } else {
+            tentacles.forEach {
+                it.unparalyze()
+            }
+
+            isInvulnerableTimer = INVULNERABLE_TIME
+            isParalyzedTimer = 0.0.seconds
         }
     }
 

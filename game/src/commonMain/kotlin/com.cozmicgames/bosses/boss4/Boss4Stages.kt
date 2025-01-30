@@ -32,6 +32,7 @@ class TransitionStage(override val nextStage: BossStage) : BossStage() {
 
 abstract class Boss4FightStage : FightStage() {
     abstract val maxFollowDistance: Float
+    private var isFirstAttack = true
 
     override fun decideBossMovement(boss: Boss, controller: BossMovementController) {
         val movement = controller.movement as? Boss4Movement ?: throw IllegalStateException("Invalid movement type")
@@ -57,6 +58,32 @@ abstract class Boss4FightStage : FightStage() {
             } else {
                 movement.bossMovement = AimBossMovement(target.x, target.y)
                 nextBossMovementDecisionTime = 3.0.seconds
+            }
+        }
+    }
+
+    override fun decideAttack(boss: Boss, controller: BossMovementController) {
+        if (controller.isAttacking)
+            return
+
+        val probability = Game.random.nextFloat()
+        val totalProbability = stageAttacks.sumOf { it.probability.toDouble() }.toFloat()
+
+        var tries = 0
+        while (tries++ < 10) {
+            val attack = stageAttacks.randomOrNull() ?: return
+            if (isFirstAttack && attack.createAttack(boss) is TeleportAttack)
+                continue
+
+            val attackProbability = attack.probability / totalProbability
+
+            if (probability < attackProbability) {
+                controller.performAttack(attack.createAttack(boss)) {
+                    nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
+                }
+
+                isFirstAttack = false
+                break
             }
         }
     }

@@ -128,7 +128,7 @@ class ExitVortexBoss4BossMovement(private val x: Float, private val y: Float, pr
         if (boss.bossScale < 1.0f)
             boss.bossScale = lerp(0.0f, 1.0f, factor * factor)
 
-        if (isVortexOpen && !wasVortexOpen && timer >= 3.5.seconds) {
+        if (isVortexOpen && !wasVortexOpen && boss.bossScale >= 1.0f) {
             boss.closeVortex(2.0.seconds)
             wasVortexOpen = true
         }
@@ -162,14 +162,12 @@ class TeleportBoss4BossMovement(private val onDone: () -> Unit) : BossMovement {
                 val dy = y - boss.y
                 var minDistance = dx * dx + dy * dy
 
-                Game.players.players.forEach {
-                    val pdx = x - it.ship.x
-                    val pdy = y - it.ship.y
-                    val distance = pdx * pdx + pdy * pdy
+                val pdx = x - Game.player.ship.x
+                val pdy = y - Game.player.ship.y
+                val distance = pdx * pdx + pdy * pdy
 
-                    if (distance < minDistance)
-                        minDistance = distance
-                }
+                if (distance < minDistance)
+                    minDistance = distance
 
                 if (minDistance < bestDistance) {
                     bestX = x

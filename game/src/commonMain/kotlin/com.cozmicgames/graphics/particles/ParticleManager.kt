@@ -42,73 +42,33 @@ class ParticleManager {
     }
 
     fun update(delta: Duration) {
-        if (Game.players.isHost) {
-            if (systemsToAdd.isNotEmpty()) {
-                val toAddBuilder = StringBuilder()
+        if (systemsToAdd.isNotEmpty()) {
+            val toAddBuilder = StringBuilder()
 
-                systemsToAdd.forEachIndexed { index, effect ->
-                    systems += RunningSystem(effect.id, effect)
-                    toAddBuilder.append(effect.name)
-                    toAddBuilder.append(":")
-                    toAddBuilder.append(effect.id)
+            systemsToAdd.forEachIndexed { index, effect ->
+                systems += RunningSystem(effect.id, effect)
+                toAddBuilder.append(effect.name)
+                toAddBuilder.append(":")
+                toAddBuilder.append(effect.id)
 
-                    if (index < systemsToAdd.lastIndex)
-                        toAddBuilder.append(";")
-                }
-                systemsToAdd.clear()
-
-                Game.players.setGlobalState("particleEffectsToAdd", toAddBuilder.toString())
-            } else
-                Game.players.setGlobalState("particleEffectsToAdd", "")
-
-            for (system in systems) {
-                system.effect.update(delta)
-                system.effect.writeUpdateData()
-
-                system.duration += delta
-                val systemDuration = system.effect.duration
-
-                if (system.effect.shouldBeRemoved || (systemDuration != null && system.duration >= systemDuration))
-                    systemsToRemove += system
+                if (index < systemsToAdd.lastIndex)
+                    toAddBuilder.append(";")
             }
-
-            systems -= systemsToRemove
-            systemsToRemove.clear()
-        } else {
-            val toAdd = Game.players.getGlobalState("particleEffectsToAdd") ?: ""
-            val effectDescriptors = toAdd.split(";")
-
-            for (desc in effectDescriptors) {
-                val parts = desc.split(":")
-                if (parts.size != 2)
-                    continue
-
-                val typeName = parts[0]
-                val id = parts[1]
-
-                val supplier = effectSuppliers[typeName] ?: continue
-
-                val effect = supplier()
-                effect.id = id
-
-                systems += RunningSystem(id, effect)
-            }
-
-            for (system in systems) {
-                system.effect.readUpdateData()
-
-                system.duration += delta
-                val systemDuration = system.effect.duration
-
-                if (system.effect.shouldBeRemoved || systemDuration != null && system.duration >= systemDuration) {
-                    systemsToRemove += system
-                    continue
-                }
-            }
-
-            systems -= systemsToRemove
-            systemsToRemove.clear()
+            systemsToAdd.clear()
         }
+
+        for (system in systems) {
+            system.effect.update(delta)
+
+            system.duration += delta
+            val systemDuration = system.effect.duration
+
+            if (system.effect.shouldBeRemoved || (systemDuration != null && system.duration >= systemDuration))
+                systemsToRemove += system
+        }
+
+        systems -= systemsToRemove
+        systemsToRemove.clear()
     }
 
     fun render(batch: SpriteBatch) {

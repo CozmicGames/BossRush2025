@@ -78,19 +78,4 @@ class DeathSplatterEffect() : ParticleEffect() {
             isFirstUpdate = false
         }
     }
-
-    override fun writeUpdateData() {
-        Game.players.setGlobalState("particleEffect${id}x", x)
-        Game.players.setGlobalState("particleEffect${id}y", y)
-        Game.players.setGlobalState("particleEffect${id}direction", direction.degrees)
-        Game.players.setGlobalState("particleEffect${id}remove", shouldBeRemoved)
-    }
-
-    override fun readUpdateData() {
-        x = Game.players.getGlobalState("particleEffect${id}x") ?: 0.0f
-        y = Game.players.getGlobalState("particleEffect${id}y") ?: 0.0f
-        direction = Game.players.getGlobalState<Float>("particleEffect${id}direction")?.degrees ?: 0.0.degrees
-        if (Game.players.getGlobalState<Boolean>("particleEffect${id}remove") == true)
-            setShouldBeRemoved()
-    }
 }

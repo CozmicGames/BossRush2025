@@ -108,15 +108,6 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         isFlipped = !isFlipped
     }
 
-    fun getFilteredPlayerShips(): List<PlayerShip> {
-        val players = Game.players.players
-        val filteredPlayers = mutableListOf<PlayerShip>()
-        for (player in players)
-            if (!isFlipped && player.ship.x < x || isFlipped && player.ship.x > x)
-                filteredPlayers += player.ship
-        return filteredPlayers
-    }
-
     override fun addToWorld() {
         Game.world.add(head)
         Game.world.add(sword)
@@ -182,177 +173,116 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     override fun update(delta: Duration, fightStarted: Boolean) {
-        if (Game.players.isHost) {
-            isInvulnerableTimer -= delta
-            if (isInvulnerableTimer <= 0.0.seconds)
-                isInvulnerableTimer = 0.0.seconds
+        isInvulnerableTimer -= delta
+        if (isInvulnerableTimer <= 0.0.seconds)
+            isInvulnerableTimer = 0.0.seconds
 
-            isParalyzedTimer -= delta
-            if (isParalyzedTimer <= 0.0.seconds)
-                isParalyzedTimer = 0.0.seconds
+        isParalyzedTimer -= delta
+        if (isParalyzedTimer <= 0.0.seconds)
+            isParalyzedTimer = 0.0.seconds
 
-            impulseX *= 1.0f - delta.seconds
-            impulseY *= 1.0f - delta.seconds
-            impulseSpin *= 1.0f - delta.seconds * 1.05f
+        impulseX *= 1.0f - delta.seconds
+        impulseY *= 1.0f - delta.seconds
+        impulseSpin *= 1.0f - delta.seconds * 1.05f
 
-            if (impulseX.isFuzzyZero())
-                impulseX = 0.0f
+        if (impulseX.isFuzzyZero())
+            impulseX = 0.0f
 
-            if (impulseY.isFuzzyZero())
-                impulseY = 0.0f
+        if (impulseY.isFuzzyZero())
+            impulseY = 0.0f
 
-            if (impulseSpin.isFuzzyZero())
-                impulseSpin = 0.0f
+        if (impulseSpin.isFuzzyZero())
+            impulseSpin = 0.0f
 
-            x += impulseX * delta.seconds * 300.0f
-            y += impulseY * delta.seconds * 300.0f
-            rotation += impulseSpin.degrees * delta.seconds * 200.0f
+        x += impulseX * delta.seconds * 300.0f
+        y += impulseY * delta.seconds * 300.0f
+        rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-            if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
-                flip()
+        val playerIsInView = if (isFlipped)
+            Game.player.ship.x > x
+        else
+            Game.player.ship.x < x
 
-            if (fightStarted) {
-                movementController.update(delta)
-                body.update(delta, movementController.movement.bodyMovement)
-                shield.update(delta, movementController.movement.shieldMovement)
-            }
+        if (!isParalyzed && !movementController.isAttacking && !playerIsInView)
+            flip()
 
-            body.x = x
-            body.y = y
-            body.rotation = rotation
-
-            val cos = rotation.cosine
-            val sin = rotation.sine
-
-            val headOffsetX = if (isFlipped) head.width * 0.5f else -head.width * 0.5f
-
-            head.x = x + cos * headOffsetX
-            head.y = y + sin * headOffsetX
-            head.rotation = rotation
-            head.collider.update(head.x, head.y)
-
-            val swordOffsetX = if (isFlipped) head.width * 0.78f + sword.width * 0.5f else -(head.width * 0.78f + sword.width * 0.5f)
-
-            sword.x = x + cos * swordOffsetX
-            sword.y = y + sin * swordOffsetX
-            sword.rotation = rotation
-            (sword.collider.shape as RectangleCollisionShape).angle = rotation
-            sword.collider.update(sword.x, sword.y)
-
-            val shieldOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
-            val shieldOffsetY = -head.height * 0.35f
-
-            shield.x = x + cos * shieldOffsetX - sin * shieldOffsetY
-            shield.y = y + sin * shieldOffsetX + cos * shieldOffsetY
-            shield.rotation = rotation
-            shield.collider.update(shield.x, shield.y)
-
-            val heartOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
-            val heartOffsetY = -head.height * 0.35f
-
-            heart.x = x + cos * heartOffsetX - sin * heartOffsetY
-            heart.y = y + sin * heartOffsetX + cos * heartOffsetY
-            heart.rotation = rotation
-
-            val dorsalFinBodyPart = body.parts[DORSAL_FIN_BODY_PART_INDEX]
-            val dorsalFinOffsetX = dorsalFinBodyPart.width * 0.1f
-            val dorsalFinOffsetY = dorsalFinBodyPart.height * 0.4f
-            val dorsalFinAngle = dorsalFinBodyPart.rotation
-
-            val dorsalFinCos = dorsalFinAngle.cosine
-            val dorsalFinSin = dorsalFinAngle.sine
-
-            dorsalFin.x = dorsalFinBodyPart.x + dorsalFinCos * dorsalFinOffsetX - dorsalFinSin * dorsalFinOffsetY
-            dorsalFin.y = dorsalFinBodyPart.y + dorsalFinSin * dorsalFinOffsetX + dorsalFinCos * dorsalFinOffsetY
-            dorsalFin.rotation = dorsalFinAngle - (if (isFlipped) -(10.0).degrees else 10.0.degrees)
-
-            val sideFinBodyPart = body.parts[SIDE_FIN_BODY_PART_INDEX]
-            val sideFinOffsetX = sideFinBodyPart.width * -0.1f
-            val sideFinOffsetY = -sideFinBodyPart.height * 0.4f
-            val sideFinAngle = sideFinBodyPart.rotation
-
-            val sideFinCos = sideFinAngle.cosine
-            val sideFinSin = sideFinAngle.sine
-
-            sideFin.x = sideFinBodyPart.x + sideFinCos * sideFinOffsetX - sideFinSin * sideFinOffsetY
-            sideFin.y = sideFinBodyPart.y + sideFinSin * sideFinOffsetX + sideFinCos * sideFinOffsetY
-            sideFin.rotation = sideFinAngle - (if (isFlipped) -(8.0).degrees else 8.0.degrees)
-
-            val tailBodyPart = body.parts[TAIL_BODY_PART_INDEX]
-            val tailOffsetX = if (isFlipped) tailBodyPart.width * 0.4f else -tailBodyPart.width * 0.4f
-            val tailAngle = tailBodyPart.rotation
-
-            val tailCos = tailAngle.cosine
-            val tailSin = tailAngle.sine
-
-            tail.x = tailBodyPart.x + tailCos * tailOffsetX
-            tail.y = tailBodyPart.y + tailSin * tailOffsetX
-            tail.rotation = tailAngle
-
-            Game.players.setGlobalState("boss2x", x)
-            Game.players.setGlobalState("boss2y", y)
-            Game.players.setGlobalState("boss2rotation", rotation)
-
-            Game.players.setGlobalState("boss2headX", head.x)
-            Game.players.setGlobalState("boss2headY", head.y)
-            Game.players.setGlobalState("boss2headRotation", head.rotation)
-
-            Game.players.setGlobalState("boss2swordX", sword.x)
-            Game.players.setGlobalState("boss2swordY", sword.y)
-            Game.players.setGlobalState("boss2swordRotation", sword.rotation)
-
-            Game.players.setGlobalState("boss2shieldX", shield.x)
-            Game.players.setGlobalState("boss2shieldY", shield.y)
-            Game.players.setGlobalState("boss2shieldRotation", shield.rotation)
-
-            Game.players.setGlobalState("boss2heartX", heart.x)
-            Game.players.setGlobalState("boss2heartY", heart.y)
-            Game.players.setGlobalState("boss2heartRotation", heart.rotation)
-
-            Game.players.setGlobalState("boss2dorsalfinX", dorsalFin.x)
-            Game.players.setGlobalState("boss2dorsalfinY", dorsalFin.y)
-            Game.players.setGlobalState("boss2dorsalfinRotation", dorsalFin.rotation)
-
-            Game.players.setGlobalState("boss2sidefinX", sideFin.x)
-            Game.players.setGlobalState("boss2sidefinY", sideFin.y)
-            Game.players.setGlobalState("boss2sidefinRotation", sideFin.rotation)
-
-            Game.players.setGlobalState("boss2tailX", tail.x)
-            Game.players.setGlobalState("boss2tailY", tail.y)
-            Game.players.setGlobalState("boss2tailRotation", tail.rotation)
-        } else {
-            x = Game.players.getGlobalState("boss2x") ?: 0.0f
-            y = Game.players.getGlobalState("boss2y") ?: 0.0f
-            rotation = Game.players.getGlobalState("boss2rotation") ?: 0.0.degrees
-
-            head.x = Game.players.getGlobalState("boss2headX") ?: 0.0f
-            head.y = Game.players.getGlobalState("boss2headY") ?: 0.0f
-            head.rotation = Game.players.getGlobalState("boss2headRotation") ?: 0.0.degrees
-
-            sword.x = Game.players.getGlobalState("boss2swordX") ?: 0.0f
-            sword.y = Game.players.getGlobalState("boss2swordY") ?: 0.0f
-            sword.rotation = Game.players.getGlobalState("boss2swordRotation") ?: 0.0.degrees
-
-            shield.x = Game.players.getGlobalState("boss2shieldX") ?: 0.0f
-            shield.y = Game.players.getGlobalState("boss2shieldY") ?: 0.0f
-            shield.rotation = Game.players.getGlobalState("boss2shieldRotation") ?: 0.0.degrees
-
-            heart.x = Game.players.getGlobalState("boss2heartX") ?: 0.0f
-            heart.y = Game.players.getGlobalState("boss2heartY") ?: 0.0f
-            heart.rotation = Game.players.getGlobalState("boss2heartRotation") ?: 0.0.degrees
-
-            dorsalFin.x = Game.players.getGlobalState("boss2dorsalfinX") ?: 0.0f
-            dorsalFin.y = Game.players.getGlobalState("boss2dorsalfinY") ?: 0.0f
-            dorsalFin.rotation = Game.players.getGlobalState("boss2dorsalfinRotation") ?: 0.0.degrees
-
-            sideFin.x = Game.players.getGlobalState("boss2sidefinX") ?: 0.0f
-            sideFin.y = Game.players.getGlobalState("boss2sidefinY") ?: 0.0f
-            sideFin.rotation = Game.players.getGlobalState("boss2sidefinRotation") ?: 0.0.degrees
-
-            tail.x = Game.players.getGlobalState("boss2tailX") ?: 0.0f
-            tail.y = Game.players.getGlobalState("boss2tailY") ?: 0.0f
-            tail.rotation = Game.players.getGlobalState("boss2tailRotation") ?: 0.0.degrees
+        if (fightStarted) {
+            movementController.update(delta)
+            body.update(delta, movementController.movement.bodyMovement)
+            shield.update(delta, movementController.movement.shieldMovement)
         }
+
+        body.x = x
+        body.y = y
+        body.rotation = rotation
+
+        val cos = rotation.cosine
+        val sin = rotation.sine
+
+        val headOffsetX = if (isFlipped) head.width * 0.5f else -head.width * 0.5f
+
+        head.x = x + cos * headOffsetX
+        head.y = y + sin * headOffsetX
+        head.rotation = rotation
+        head.collider.update(head.x, head.y)
+
+        val swordOffsetX = if (isFlipped) head.width * 0.78f + sword.width * 0.5f else -(head.width * 0.78f + sword.width * 0.5f)
+
+        sword.x = x + cos * swordOffsetX
+        sword.y = y + sin * swordOffsetX
+        sword.rotation = rotation
+        (sword.collider.shape as RectangleCollisionShape).angle = rotation
+        sword.collider.update(sword.x, sword.y)
+
+        val shieldOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
+        val shieldOffsetY = -head.height * 0.35f
+
+        shield.x = x + cos * shieldOffsetX - sin * shieldOffsetY
+        shield.y = y + sin * shieldOffsetX + cos * shieldOffsetY
+        shield.rotation = rotation
+        shield.collider.update(shield.x, shield.y)
+
+        val heartOffsetX = if (isFlipped) head.width * 0.25f else -head.width * 0.25f
+        val heartOffsetY = -head.height * 0.35f
+
+        heart.x = x + cos * heartOffsetX - sin * heartOffsetY
+        heart.y = y + sin * heartOffsetX + cos * heartOffsetY
+        heart.rotation = rotation
+
+        val dorsalFinBodyPart = body.parts[DORSAL_FIN_BODY_PART_INDEX]
+        val dorsalFinOffsetX = dorsalFinBodyPart.width * 0.1f
+        val dorsalFinOffsetY = dorsalFinBodyPart.height * 0.4f
+        val dorsalFinAngle = dorsalFinBodyPart.rotation
+
+        val dorsalFinCos = dorsalFinAngle.cosine
+        val dorsalFinSin = dorsalFinAngle.sine
+
+        dorsalFin.x = dorsalFinBodyPart.x + dorsalFinCos * dorsalFinOffsetX - dorsalFinSin * dorsalFinOffsetY
+        dorsalFin.y = dorsalFinBodyPart.y + dorsalFinSin * dorsalFinOffsetX + dorsalFinCos * dorsalFinOffsetY
+        dorsalFin.rotation = dorsalFinAngle - (if (isFlipped) -(10.0).degrees else 10.0.degrees)
+
+        val sideFinBodyPart = body.parts[SIDE_FIN_BODY_PART_INDEX]
+        val sideFinOffsetX = sideFinBodyPart.width * -0.1f
+        val sideFinOffsetY = -sideFinBodyPart.height * 0.4f
+        val sideFinAngle = sideFinBodyPart.rotation
+
+        val sideFinCos = sideFinAngle.cosine
+        val sideFinSin = sideFinAngle.sine
+
+        sideFin.x = sideFinBodyPart.x + sideFinCos * sideFinOffsetX - sideFinSin * sideFinOffsetY
+        sideFin.y = sideFinBodyPart.y + sideFinSin * sideFinOffsetX + sideFinCos * sideFinOffsetY
+        sideFin.rotation = sideFinAngle - (if (isFlipped) -(8.0).degrees else 8.0.degrees)
+
+        val tailBodyPart = body.parts[TAIL_BODY_PART_INDEX]
+        val tailOffsetX = if (isFlipped) tailBodyPart.width * 0.4f else -tailBodyPart.width * 0.4f
+        val tailAngle = tailBodyPart.rotation
+
+        val tailCos = tailAngle.cosine
+        val tailSin = tailAngle.sine
+
+        tail.x = tailBodyPart.x + tailCos * tailOffsetX
+        tail.y = tailBodyPart.y + tailSin * tailOffsetX
+        tail.rotation = tailAngle
     }
 
     fun paralyze() {
@@ -361,10 +291,8 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
 
         addEntityAnimation { ParalyzeAnimation(PARALYZED_TIME, 0.7f) }
 
-        if (Game.players.isHost) {
-            movementController.onParalyze()
-            isParalyzedTimer = PARALYZED_TIME
-        }
+        movementController.onParalyze()
+        isParalyzedTimer = PARALYZED_TIME
     }
 
     fun hit() {
@@ -376,27 +304,25 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
 
-        if (Game.players.isHost) {
-            health--
-            if (health < 0) health = 0
+        health--
+        if (health < 0) health = 0
 
-            movementController.onHit()
+        movementController.onHit()
 
-            if (health <= 0) {
-                removeFromPhysics()
-                movementController.onDeath()
+        if (health <= 0) {
+            removeFromPhysics()
+            movementController.onDeath()
 
-                if (isFinalBattle) {
-                    head.texture = Game.resources.boss2headDead.slice()
-                    sword.texture = Game.resources.boss2swordDead.slice()
+            if (isFinalBattle) {
+                head.texture = Game.resources.boss2headDead.slice()
+                sword.texture = Game.resources.boss2swordDead.slice()
 
-                    Game.world.remove(heart)
-                    Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
-                }
-            } else {
-                isInvulnerableTimer = INVULNERABLE_TIME
-                isParalyzedTimer = 0.0.seconds
+                Game.world.remove(heart)
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
             }
+        } else {
+            isInvulnerableTimer = INVULNERABLE_TIME
+            isParalyzedTimer = 0.0.seconds
         }
     }
 

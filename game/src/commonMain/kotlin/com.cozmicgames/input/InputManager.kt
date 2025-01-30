@@ -76,7 +76,7 @@ class InputManager(private val input: Input) : Input {
     }
 
     fun update(delta: Duration, frame: InputFrame) {
-        val player = Game.players.getMyPlayer() ?: return
+        val player = Game.player
 
         val leftAmount = moveLeftControl.currentValue
         val rightAmount = moveRightControl.currentValue

@@ -6,7 +6,7 @@ import com.littlekt.graphics.HAlign
 import com.littlekt.graphics.VAlign
 import kotlin.time.Duration
 
-open class DurationLabel(duration: Duration) : GUIElement() {
+open class ResultDurationLabel(duration: Duration) : GUIElement() {
     companion object {
         private fun getTimeString(duration: Duration): String {
             return buildString {

@@ -106,26 +106,24 @@ open class FinalFightSelectionPoster(var isUnlocked: Boolean, onSelect: (Int, Di
             preview.getY = { y + height * 0.4f }
         }
 
-        if (Game.players.isHost) {
-            playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
-            playEasyButton.getY = { y + 6.0f }
-            playEasyButton.getWidth = { 56.0f }
-            playEasyButton.getHeight = { 56.0f }
+        playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
+        playEasyButton.getY = { y + 6.0f }
+        playEasyButton.getWidth = { 56.0f }
+        playEasyButton.getHeight = { 56.0f }
 
-            playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
-            playNormalButton.getY = { y + 6.0f }
-            playNormalButton.getWidth = { 56.0f }
-            playNormalButton.getHeight = { 56.0f }
+        playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
+        playNormalButton.getY = { y + 6.0f }
+        playNormalButton.getWidth = { 56.0f }
+        playNormalButton.getHeight = { 56.0f }
 
-            playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
-            playHardButton.getY = { y + 6.0f }
-            playHardButton.getWidth = { 56.0f }
-            playHardButton.getHeight = { 56.0f }
+        playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
+        playHardButton.getY = { y + 6.0f }
+        playHardButton.getWidth = { 56.0f }
+        playHardButton.getHeight = { 56.0f }
 
-            playEasyButton.isEnabled = true
-            playNormalButton.isEnabled = true
-            playHardButton.isEnabled = true
-        }
+        playEasyButton.isEnabled = true
+        playNormalButton.isEnabled = true
+        playHardButton.isEnabled = true
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
@@ -137,10 +135,8 @@ open class FinalFightSelectionPoster(var isUnlocked: Boolean, onSelect: (Int, Di
         divider.render(delta, renderer)
         previews.forEach { it.render(delta, renderer) }
 
-        if (Game.players.isHost) {
-            playEasyButton.render(delta, renderer)
-            playNormalButton.render(delta, renderer)
-            playHardButton.render(delta, renderer)
-        }
+        playEasyButton.render(delta, renderer)
+        playNormalButton.render(delta, renderer)
+        playHardButton.render(delta, renderer)
     }
 }

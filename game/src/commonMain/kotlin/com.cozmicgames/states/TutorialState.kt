@@ -23,7 +23,7 @@ class TutorialState() : GameState {
         private var isFirst = true
 
         override fun shouldFadeOut(): Boolean {
-            val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+            val player = Game.player
             val playerShip = player.ship
 
             val currentX = playerShip.x
@@ -42,7 +42,7 @@ class TutorialState() : GameState {
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.LOOKING.ordinal
+            Game.player.tutorialStage = TutorialStage.LOOKING.ordinal
             nextMessage = LookMessage()
             nextMessageTimer = 1.0.seconds
         }
@@ -53,7 +53,7 @@ class TutorialState() : GameState {
         private var isFirst = true
 
         override fun shouldFadeOut(): Boolean {
-            val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+            val player = Game.player
             val playerShip = player.ship
 
             val currentRotation = playerShip.rotation
@@ -69,7 +69,7 @@ class TutorialState() : GameState {
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.SHOOTING_PRIMARY.ordinal
+            Game.player.tutorialStage = TutorialStage.SHOOTING_PRIMARY.ordinal
             nextMessage = ShootPrimaryMessage()
             nextMessageTimer = 1.0.seconds
         }
@@ -77,14 +77,14 @@ class TutorialState() : GameState {
 
     private inner class ShootPrimaryMessage : TutorialMessage("Blasters up!\nLeft-click and don’t hold back!") {
         override fun shouldFadeOut(): Boolean {
-            val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+            val player = Game.player
             val playerShip = player.ship
 
             return playerShip.tryUsePrimaryWeapon
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.SHOOTING_SECONDARY.ordinal
+            Game.player.tutorialStage = TutorialStage.SHOOTING_SECONDARY.ordinal
             nextMessage = ShootSecondaryMessage()
             nextMessageTimer = 1.0.seconds
         }
@@ -92,14 +92,14 @@ class TutorialState() : GameState {
 
     private inner class ShootSecondaryMessage : TutorialMessage("Swap it up!\nRight-click for your secondary!") {
         override fun shouldFadeOut(): Boolean {
-            val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+            val player = Game.player
             val playerShip = player.ship
 
             return playerShip.tryUseSecondaryWeapon
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.PARALYZE.ordinal
+            Game.player.tutorialStage = TutorialStage.PARALYZE.ordinal
             nextMessage = ParalyzeBossMessage()
             nextMessageTimer = 1.0.seconds
             shouldUpdate = true
@@ -112,7 +112,7 @@ class TutorialState() : GameState {
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.HIT.ordinal
+            Game.player.tutorialStage = TutorialStage.HIT.ordinal
             nextMessage = HitBossMessage()
             nextMessageTimer = 1.0.seconds
         }
@@ -130,7 +130,7 @@ class TutorialState() : GameState {
         }
 
         override fun onFadeOut() {
-            Game.game.tutorialStage = TutorialStage.END.ordinal
+            Game.player.tutorialStage = TutorialStage.END.ordinal
             nextMessage = EndMessage()
             nextMessageTimer = 1.0.seconds
             Game.world.shouldUpdate = false
@@ -179,8 +179,8 @@ class TutorialState() : GameState {
     private var currentMessage: TutorialMessage? = null
 
     override fun begin() {
-        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
-        Game.game.isTutorialMode = true
+        val player = Game.player
+        Game.player.isTutorialMode = true
 
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
@@ -222,18 +222,10 @@ class TutorialState() : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        val player = Game.players.getMyPlayer() ?: throw IllegalStateException("No current player found!")
+        val player = Game.player
         val playerShip = player.ship
 
-        val inputFrame = InputFrame()
-        Game.input.update(delta, inputFrame)
-        Game.players.getMyPlayerState().let {
-            it.setState("inputX", inputFrame.deltaX)
-            it.setState("inputY", inputFrame.deltaY)
-            it.setState("inputRotation", inputFrame.deltaRotation)
-            it.setState("inputUsePrimary", inputFrame.usePrimary)
-            it.setState("inputUseSecondary", inputFrame.useSecondary)
-        }
+        Game.input.update(delta, player.inputFrame)
 
         var cameraTargetX = playerShip.x
         var cameraTargetY = playerShip.y
@@ -310,15 +302,13 @@ class TutorialState() : GameState {
     }
 
     override fun end() {
-        Game.game.isTutorialMode = false
+        Game.player.isTutorialMode = false
 
         boss.removeFromPhysics()
         boss.removeFromWorld()
 
-        Game.players.players.forEach {
-            it.ship.removeFromPhysics()
-            it.ship.removeFromWorld()
-        }
+        Game.player.ship.removeFromPhysics()
+        Game.player.ship.removeFromWorld()
     }
 
     override fun equals(other: Any?): Boolean {

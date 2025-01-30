@@ -5,7 +5,7 @@ import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
-class Beak(val boss: Boss4, val scale: Float, layer: Int): PlayerDamageSource {
+class Beak(val boss: Boss4, val scale: Float, layer: Int) : PlayerDamageSource {
     override val id = "boss1beak"
 
     val leftBeak = BeakPart(this, true, layer)
@@ -20,12 +20,7 @@ class Beak(val boss: Boss4, val scale: Float, layer: Int): PlayerDamageSource {
     override val damageSourceY get() = boss.y
 
     fun update(delta: Duration, movement: BeakMovement) {
-        if (Game.players.isHost) {
-            movement.updateBeak(delta, this)
-
-            Game.players.setGlobalState("boss1beak", beakAngle.degrees)
-        } else
-            beakAngle = (Game.players.getGlobalState("boss1beak") ?: 0.0f).degrees
+        movement.updateBeak(delta, this)
 
         leftBeak.rotation = rotation + beakAngle * 0.5f
         rightBeak.rotation = rotation - beakAngle * 0.5f

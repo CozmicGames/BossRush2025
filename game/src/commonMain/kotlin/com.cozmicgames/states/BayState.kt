@@ -2,14 +2,12 @@ package com.cozmicgames.states
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Transition
 import com.cozmicgames.graphics.ui.*
 import com.littlekt.graphics.MutableColor
-import com.littlekt.input.Key
 import com.littlekt.util.seconds
 import kotlin.math.sin
 import kotlin.time.Duration
@@ -22,7 +20,12 @@ class BayState(isFreePlay: Boolean = false) : GameState {
 
     private val messageBanner = MessageBanner()
     private val fightSelectionUI = FightSelectionUI { index, difficulty ->
-        Game.events.addSendEvent(Events.startFight(index, difficulty))
+        transitionOut.start {
+            returnState = if (index == Constants.FINAL_FIGHT_INDEX)
+                FinalFightState(difficulty)
+            else
+                BossFightState(Constants.BOSS_DESCRIPTORS[index], difficulty)
+        }
     }
 
     private val shop = object : ShopUI() {
@@ -31,7 +34,7 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             set(value) {}
     }
 
-    private val crew = object : CrewUI() {
+    private val highscores = object : HighscoreUI() {
         override var layer: Int
             get() = RenderLayers.UI + 200
             set(value) {}
@@ -58,9 +61,10 @@ class BayState(isFreePlay: Boolean = false) : GameState {
         shop.getY = { 0.0f }
 
         Game.resources.baySound.play(0.4f)
+        Game.resources.themeSound.play(0.5f, true)
 
         transitionIn?.start {
-            canInteract = true //TODO: Use!
+            canInteract = true
             transitionIn = null
         }
     }
@@ -71,15 +75,15 @@ class BayState(isFreePlay: Boolean = false) : GameState {
 
     override fun render(delta: Duration): () -> GameState {
         if (timer > 2.0.seconds) {
-            if (Game.game.newlyUnlockedBossIndex >= 0) {
-                if (Game.game.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
+            if (Game.player.newlyUnlockedBossIndex >= 0) {
+                if (Game.player.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
                     unlockedFinalFight = true
                     fightSelectionUI.transitionToFinalFight()
                 } else
-                    fightSelectionUI.unlock(Game.game.newlyUnlockedBossIndex) {
-                        Game.game.unlockedBossIndices += Game.game.newlyUnlockedBossIndex
+                    fightSelectionUI.unlock(Game.player.newlyUnlockedBossIndex) {
+                        Game.player.unlockedBossIndices += Game.player.newlyUnlockedBossIndex
                     }
-                Game.game.newlyUnlockedBossIndex = -1
+                Game.player.newlyUnlockedBossIndex = -1
             }
         }
 
@@ -87,18 +91,6 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             finalFightIndicatorColor.a = sin(timer.seconds * 5.0f) * 0.5f + 0.5f
 
             borderIndicator.color.set(finalFightIndicatorColor)
-        }
-
-        val potentialStartFightDesc = Constants.BOSS_DESCRIPTORS.getOrNull(Game.game.startFightIndex ?: -1)
-        val potentialStartFightDifficulty = Game.game.startFightDifficulty
-
-        if (potentialStartFightDesc != null && potentialStartFightDifficulty != null) {
-            Game.game.startFightIndex = null
-            Game.game.startFightDifficulty = null
-
-            transitionOut.start {
-                returnState = BossFightState(potentialStartFightDesc, potentialStartFightDifficulty)
-            }
         }
 
         val pass = Game.graphics.beginMainRenderPass()
@@ -112,7 +104,7 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             fightSelectionUI.render(delta, renderer)
 
             shop.render(delta, renderer)
-            crew.render(delta, renderer)
+            highscores.render(delta, renderer)
 
             borderIndicator.render(delta, renderer)
         }

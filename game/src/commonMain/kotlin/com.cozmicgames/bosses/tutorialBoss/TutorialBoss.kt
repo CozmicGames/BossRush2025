@@ -77,15 +77,6 @@ class TutorialBoss : Boss {
         isFlipped = !isFlipped
     }
 
-    fun getFilteredPlayerShips(): List<PlayerShip> {
-        val players = Game.players.players
-        val filteredPlayers = mutableListOf<PlayerShip>()
-        for (player in players)
-            if (!isFlipped && player.ship.x < x || isFlipped && player.ship.x > x)
-                filteredPlayers += player.ship
-        return filteredPlayers
-    }
-
     override fun addToWorld() {
         Game.world.add(head)
         Game.world.add(eyes)
@@ -168,7 +159,12 @@ class TutorialBoss : Boss {
         y += impulseY * delta.seconds * 300.0f
         rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-        if (!isParalyzed && !movementController.isAttacking && getFilteredPlayerShips().size * 2 < Game.players.players.size)
+        val playerIsInView = if (isFlipped)
+            Game.player.ship.x > x
+        else
+            Game.player.ship.x < x
+
+        if (!isParalyzed && !movementController.isAttacking && !playerIsInView)
             flip()
 
         if (fightStarted) {
@@ -257,7 +253,7 @@ class TutorialBoss : Boss {
     }
 
     fun paralyze() {
-        if (Game.game.tutorialStage < TutorialStage.PARALYZE.ordinal)
+        if (Game.player.tutorialStage < TutorialStage.PARALYZE.ordinal)
             return
 
         isParalyzed = true
@@ -268,7 +264,7 @@ class TutorialBoss : Boss {
     }
 
     fun hit() {
-        if (Game.game.tutorialStage < TutorialStage.HIT.ordinal)
+        if (Game.player.tutorialStage < TutorialStage.HIT.ordinal)
             return
 
         if (health <= 0)

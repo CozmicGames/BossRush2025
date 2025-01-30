@@ -1,7 +1,6 @@
 package com.cozmicgames.graphics.ui
 
 import com.cozmicgames.Game
-import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.weapons.Weapon
@@ -24,8 +23,8 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
     }
 
     private var selectionState = when {
-        Game.players.getMyPlayer()?.primaryWeapon == weapon -> SelectionState.PRIMARY
-        Game.players.getMyPlayer()?.secondaryWeapon == weapon -> SelectionState.SECONDARY
+        Game.player.primaryWeapon == weapon -> SelectionState.PRIMARY
+        Game.player.secondaryWeapon == weapon -> SelectionState.SECONDARY
         else -> SelectionState.UNSELECTED
     }
 
@@ -73,7 +72,7 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
 
     fun unlock() {
         Game.resources.unlockSound.play()
-        Game.game.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
+        Game.player.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
         isUnlocking = true
         lock?.startUnlockAnimation {
             isUnlocked = true
@@ -103,11 +102,11 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
             if (isClickedPrimary) {
                 Game.resources.selectPrimarySound.play()
                 selectionState = SelectionState.PRIMARY
-                Game.events.addSendEvent(Events.setPrimaryWeapon(Game.players.getMyPlayerState().id, Weapons.entries.indexOf(weapon)))
+                Game.player.primaryWeapon = weapon
             } else if (isClickedSecondary) {
                 Game.resources.selectSecondarySound.play()
                 selectionState = SelectionState.SECONDARY
-                Game.events.addSendEvent(Events.setSecondaryWeapon(Game.players.getMyPlayerState().id, Weapons.entries.indexOf(weapon)))
+                Game.player.secondaryWeapon = weapon
             }
 
             renderer.submit(layer) {
@@ -136,9 +135,9 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
             val isClicked = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered
 
             if (isClicked && !isUnlocking) {
-                if (Game.players.isHost && Game.game.wallet >= weapon.price) {
-                    Game.game.spendCredits(weapon.price)
-                    Game.events.addSendEvent(Events.unlockWeapon(Weapons.entries.indexOf(weapon)))
+                if (Game.player.wallet >= weapon.price) {
+                    Game.player.spendCredits(weapon.price)
+                    unlock()
                 } else
                     overlayColor.set(Color.RED)
             }

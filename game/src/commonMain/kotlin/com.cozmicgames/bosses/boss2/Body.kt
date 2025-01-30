@@ -37,8 +37,7 @@ class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDama
     }
 
     fun update(delta: Duration, movement: BodyMovement) {
-        if (Game.players.isHost)
-            movement.updateParts(delta, this)
+        movement.updateParts(delta, this)
 
         paralyzeTimer -= delta
         if (paralyzeTimer < 0.0.seconds)
