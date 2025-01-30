@@ -69,6 +69,13 @@ class Resources : Releasable {
     lateinit var checkmark: Texture
     lateinit var playerSlot: Texture
     lateinit var playerSlotEmpty: Texture
+    lateinit var playerSlotBackground: Texture
+    lateinit var weaponSlot: Texture
+    lateinit var weaponSlotEmpty: Texture
+    lateinit var weaponSlotBackground: Texture
+    lateinit var captain: Texture
+    lateinit var crewBackground: Texture
+    lateinit var crewBackgroundNinePatch: NinePatch
 
     lateinit var borderIndicator: Texture
     lateinit var borderIndicatorNinePatch: NinePatch
@@ -243,6 +250,13 @@ class Resources : Releasable {
         checkmark = context.resourcesVfs["textures/ui/checkmark.png"].readTexture()
         playerSlot = context.resourcesVfs["textures/ui/player_slot.png"].readTexture()
         playerSlotEmpty = context.resourcesVfs["textures/ui/player_slot_empty.png"].readTexture()
+        playerSlotBackground = context.resourcesVfs["textures/ui/player_slot_background.png"].readTexture()
+        weaponSlot = context.resourcesVfs["textures/ui/weapon_slot.png"].readTexture()
+        weaponSlotEmpty = context.resourcesVfs["textures/ui/weapon_slot_empty.png"].readTexture()
+        weaponSlotBackground = context.resourcesVfs["textures/ui/weapon_slot_background.png"].readTexture()
+        captain = context.resourcesVfs["textures/ui/captain.png"].readTexture()
+        crewBackground = context.resourcesVfs["textures/ui/crew_background.png"].readTexture()
+        crewBackgroundNinePatch = NinePatch(crewBackground, 36, 36, 36, 36)
 
         transition = context.resourcesVfs["textures/ui/transition.png"].readTexture()
         borderIndicator = context.resourcesVfs["textures/ui/border_indicator.png"].readTexture()
@@ -388,6 +402,12 @@ class Resources : Releasable {
         checkmark.release()
         playerSlot.release()
         playerSlotEmpty.release()
+        playerSlotBackground.release()
+        weaponSlot.release()
+        weaponSlotEmpty.release()
+        weaponSlotBackground.release()
+        captain.release()
+        crewBackground.release()
 
         transition.release()
         borderIndicator.release()

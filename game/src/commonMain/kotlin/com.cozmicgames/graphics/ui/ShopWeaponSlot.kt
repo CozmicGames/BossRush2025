@@ -1,6 +1,7 @@
 package com.cozmicgames.graphics.ui
 
 import com.cozmicgames.Game
+import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.weapons.Weapon
@@ -10,7 +11,7 @@ import com.littlekt.graphics.MutableColor
 import com.littlekt.input.Pointer
 import kotlin.time.Duration
 
-class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSelect: (SelectionState) -> Unit) : GUIElement() {
+class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSelect: (SelectionState) -> Unit) : GUIElement() {
     companion object {
         private val PRIMARY_COLOR = Color.fromHex("0065ff")
         private val SECONDARY_COLOR = Color.fromHex("ff5d00")
@@ -35,17 +36,17 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
 
     private val nameLabel = object : Label(weapon.displayName, 18.0f) {
         override var layer: Int
-            get() = this@WeaponSlot.layer + 2
+            get() = this@ShopWeaponSlot.layer + 2
             set(value) {}
     }
     private var priceLabel = if (!isUnlocked) object : CurrencyLabel(weapon.price, 14.0f) {
         override var layer: Int
-            get() = this@WeaponSlot.layer + 2
+            get() = this@ShopWeaponSlot.layer + 3
             set(value) {}
     } else null
     private var lock = if (!isUnlocked) object : Lock() {
         override var layer: Int
-            get() = this@WeaponSlot.layer + 1
+            get() = this@ShopWeaponSlot.layer + 2
             set(value) {}
     } else null
     private var isUnlocking = false
@@ -54,7 +55,7 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
 
     init {
         nameLabel.getX = { x + (width - nameLabel.width) * 0.5f }
-        nameLabel.getY = { y + height * 0.25f }
+        nameLabel.getY = { y + height * 0.3f }
         nameLabel.getWidth = { width }
         nameLabel.getHeight = { height }
         nameLabel.shadowOffsetX = 1.0f
@@ -72,6 +73,18 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
             it.getY = { y + (height - it.height) * 0.5f }
             it.getWidth = { width * 0.45f }
             it.getHeight = { height * 0.45f }
+        }
+    }
+
+    fun unlock() {
+        Game.resources.unlockSound.play()
+        Game.players.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
+        isUnlocking = true
+        lock?.startUnlockAnimation {
+            isUnlocked = true
+            priceLabel = null
+            lock = null
+            isUnlocking = false
         }
     }
 
@@ -95,9 +108,11 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
             if (isClickedPrimary) {
                 Game.resources.selectPrimarySound.play()
                 selectionState = SelectionState.PRIMARY
+                Game.events.addSendEvent(Events.setPrimaryWeapon(Game.players.getMyPlayerState().id, Weapons.entries.indexOf(weapon)))
             } else if (isClickedSecondary) {
                 Game.resources.selectSecondarySound.play()
                 selectionState = SelectionState.SECONDARY
+                Game.events.addSendEvent(Events.setSecondaryWeapon(Game.players.getMyPlayerState().id, Weapons.entries.indexOf(weapon)))
             }
 
             renderer.submit(layer) {
@@ -126,18 +141,9 @@ class WeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSele
             val isClicked = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered
 
             if (isClicked && !isUnlocking) {
-                Game.resources.unlockSound.play()
-
-                if (Game.players.wallet >= weapon.price) {
+                if (Game.players.isHost && Game.players.wallet >= weapon.price) {
                     Game.players.spendCredits(weapon.price)
-                    Game.players.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
-                    isUnlocking = true
-                    lock?.startUnlockAnimation {
-                        isUnlocked = true
-                        priceLabel = null
-                        lock = null
-                        isUnlocking = false
-                    }
+                    Game.events.addSendEvent(Events.unlockWeapon(Weapons.entries.indexOf(weapon)))
                 } else
                     overlayColor.set(Color.RED)
             }

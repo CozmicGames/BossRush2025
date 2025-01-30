@@ -18,7 +18,7 @@ open class ShopUI : GUIElement() {
             get() = this@ShopUI.layer + 1
             set(value) {}
     }
-    private lateinit var weaponSlots: List<WeaponSlot>
+    private lateinit var weaponSlots: List<ShopWeaponSlot>
     private val walletLabel = object : CurrencyLabel({ Game.players.wallet }, 24.0f) {
         override var layer: Int
             get() = this@ShopUI.layer + 2
@@ -32,24 +32,24 @@ open class ShopUI : GUIElement() {
 
     init {
         weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
-            lateinit var slot: WeaponSlot
-            slot = WeaponSlot(weapon, index in Game.players.unlockedWeaponIndices) { selectionState ->
+            lateinit var slot: ShopWeaponSlot
+            slot = ShopWeaponSlot(weapon, index in Game.players.unlockedWeaponIndices) { selectionState ->
                 val player = Game.players.getMyPlayer() ?: throw IllegalStateException("Player not found")
 
                 weaponSlots.forEach {
                     if (it != slot && it.selectionState == selectionState)
-                        it.selectionState = WeaponSlot.SelectionState.UNSELECTED
+                        it.selectionState = ShopWeaponSlot.SelectionState.UNSELECTED
                 }
 
                 when (selectionState) {
-                    WeaponSlot.SelectionState.PRIMARY -> {
+                    ShopWeaponSlot.SelectionState.PRIMARY -> {
                         player.primaryWeapon = weapon
 
                         if (player.secondaryWeapon == weapon)
                             player.secondaryWeapon = null
                     }
 
-                    WeaponSlot.SelectionState.SECONDARY -> {
+                    ShopWeaponSlot.SelectionState.SECONDARY -> {
                         player.secondaryWeapon = weapon
 
                         if (player.primaryWeapon == weapon)
@@ -93,6 +93,11 @@ open class ShopUI : GUIElement() {
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
+        if (Game.players.newlyUnlockedWeaponIndex >= 0) {
+            weaponSlots.getOrNull(Game.players.newlyUnlockedWeaponIndex)?.unlock()
+            Game.players.newlyUnlockedWeaponIndex = -1
+        }
+
         shopBackground.render(delta, renderer)
         shopLabel.render(delta, renderer)
         weaponSlots.forEach {

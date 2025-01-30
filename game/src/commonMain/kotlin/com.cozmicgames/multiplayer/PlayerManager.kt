@@ -24,6 +24,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
     var newlyUnlockedBossIndex = -1
 
+    var newlyUnlockedWeaponIndex = -1
+
     val players get() = playersInternal as List<Player>
 
     val isHost get() = multiplayer.isHost
@@ -183,6 +185,8 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     fun getMyPlayerState() = multiplayer.getMyPlayerState()
 
     fun getMyPlayer() = playersInternal.find { it.state.id == getMyPlayerState().id }
+
+    fun getByID(id: String) = playersInternal.find { it.state.id == id }
 
     fun <T : Any> getGlobalState(name: String) = multiplayer.getState<T>(name)
 

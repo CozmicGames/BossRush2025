@@ -5,7 +5,9 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.GUIElement
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
+import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.VAlign
+import com.littlekt.graphics.g2d.NinePatch
 import com.littlekt.graphics.g2d.font.BitmapFontCache
 import com.littlekt.graphics.g2d.font.GlyphLayout
 import kotlin.time.Duration
@@ -54,6 +56,10 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
             field = value
             updateLayoutAndCache()
         }
+
+    var background: NinePatch? = null
+
+    val backgroundColor = MutableColor(Color.WHITE)
 
     val textWidth get() = layout.width
     val textHeight get() = layout.height
@@ -107,6 +113,8 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
             return
 
         renderer.submit(layer) {
+            background?.draw(it, x, y, width = width, height = height, color = backgroundColor)
+
             if (shadowOffsetX != 0.0f || shadowOffsetY != 0.0f)
                 shadowCache.draw(it)
 

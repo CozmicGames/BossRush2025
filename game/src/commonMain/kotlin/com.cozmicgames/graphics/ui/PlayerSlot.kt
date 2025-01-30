@@ -17,6 +17,7 @@ open class PlayerSlot(val index: Int) : GUIElement() {
             if (player == null)
                 it.draw(Game.resources.playerSlotEmpty, x, y, width = width, height = height, color = EMPTY_COLOR)
             else {
+                it.draw(Game.resources.playerSlotBackground, x, y, width = width, height = height)
                 it.draw(Game.resources.playerSlot, x, y, width = width, height = height, color = player.color)
 
                 val avatarTexture = player.avatarTexture

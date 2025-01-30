@@ -32,6 +32,12 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             set(value) {}
     }
 
+    private val crew = object : CrewUI() {
+        override var layer: Int
+            get() = RenderLayers.UI + 200
+            set(value) {}
+    }
+
     private val background = Background(Game.resources.background)
     private var transitionIn: Transition? = Transition(fromOpenToClose = false)
     private val transitionOut = Transition(fromOpenToClose = true)
@@ -100,6 +106,7 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             fightSelectionUI.render(delta, renderer)
 
             shop.render(delta, renderer)
+            crew.render(delta, renderer)
 
             borderIndicator.render(delta, renderer)
         }

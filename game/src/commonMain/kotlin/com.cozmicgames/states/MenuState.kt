@@ -23,6 +23,7 @@ class MenuState : GameState {
 
     private lateinit var playerSlots: List<PlayerSlot>
     private lateinit var startButton: TextButton
+    private lateinit var waitingLabel: Label
     private lateinit var tutorialButton: TextButton
     private lateinit var roomCodeLabel: Label
 
@@ -58,14 +59,25 @@ class MenuState : GameState {
         }
         this.playerSlots = playerSlots
 
-        startButton = TextButton("Start", Color.fromHex("33984b"), fontSize = 28.0f) {
-            transitionOut.start { returnState = BayState() }
-        }
+        if (Game.players.isHost) {
+            startButton = TextButton("Start", Color.fromHex("33984b"), fontSize = 28.0f) {
+                transitionOut.start { returnState = BayState() }
+            }
 
-        startButton.getX = { startX + (4 * playerSlotSize + 3 * playerSlotSpacing + playerSlotToButtonSpacing) }
-        startButton.getY = { startY + buttonHeight + buttonSpacing }
-        startButton.getWidth = { buttonWidth }
-        startButton.getHeight = { buttonHeight }
+            startButton.getX = { startX + (4 * playerSlotSize + 3 * playerSlotSpacing + playerSlotToButtonSpacing) }
+            startButton.getY = { startY + buttonHeight + buttonSpacing }
+            startButton.getWidth = { buttonWidth }
+            startButton.getHeight = { buttonHeight }
+        } else {
+            waitingLabel = Label("Waiting", 28.0f)
+            waitingLabel.background = Game.resources.buttonNormalNinePatch
+            waitingLabel.backgroundColor.set(Color.fromHex("33984b"))
+
+            waitingLabel.getX = { startX + (4 * playerSlotSize + 3 * playerSlotSpacing + playerSlotToButtonSpacing) }
+            waitingLabel.getY = { startY + buttonHeight + buttonSpacing }
+            waitingLabel.getWidth = { buttonWidth }
+            waitingLabel.getHeight = { buttonHeight }
+        }
 
         tutorialButton = TextButton("Tutorial", Color.fromHex("e07438"), fontSize = 28.0f) {
             transitionOut.start { returnState = TutorialState() }
