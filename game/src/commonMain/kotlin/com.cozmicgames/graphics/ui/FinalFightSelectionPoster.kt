@@ -14,7 +14,7 @@ import com.littlekt.graphics.Color
 import com.littlekt.resources.Textures
 import kotlin.time.Duration
 
-open class FinalSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean, onSelect: (GameState) -> Unit) : GUIElement() {
+open class FinalFightSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean, onSelect: (GameState) -> Unit) : GUIElement() {
     private open class PreviewImage(val desc: BossDesc) : GUIElement() {
         private val previewImageBorder = object : Image(Textures.white, Color.fromHex("8a4836")) {
             override var layer: Int
@@ -50,34 +50,34 @@ open class FinalSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean,
 
     private val nameLabel = object : Label("Final Fight", 32.0f) {
         override var layer: Int
-            get() = this@FinalSelectionPoster.layer + 1
+            get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
     private val divider = object : Divider() {
         override var layer: Int
-            get() = this@FinalSelectionPoster.layer + 1
+            get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
     private val previews = descs.map {
         object : PreviewImage(it) {
             override var layer: Int
-                get() = this@FinalSelectionPoster.layer + 1
+                get() = this@FinalFightSelectionPoster.layer + 1
                 set(value) {}
         }
     }
     private val playEasyButton = object : PlayButton(Difficulty.EASY, { onSelect(FinalFightState(Difficulty.EASY)) }) {
         override var layer: Int
-            get() = this@FinalSelectionPoster.layer + 1
+            get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
     private val playNormalButton = object : PlayButton(Difficulty.NORMAL, { onSelect(FinalFightState(Difficulty.NORMAL)) }) {
         override var layer: Int
-            get() = this@FinalSelectionPoster.layer + 1
+            get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
     private val playHardButton = object : PlayButton(Difficulty.HARD, { onSelect(FinalFightState(Difficulty.HARD)) }) {
         override var layer: Int
-            get() = this@FinalSelectionPoster.layer + 1
+            get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
 
@@ -108,24 +108,26 @@ open class FinalSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean,
             preview.getY = { y + height * 0.4f }
         }
 
-        playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
-        playEasyButton.getY = { y + 6.0f }
-        playEasyButton.getWidth = { 56.0f }
-        playEasyButton.getHeight = { 56.0f }
+        if (Game.players.isHost) {
+            playEasyButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f }
+            playEasyButton.getY = { y + 6.0f }
+            playEasyButton.getWidth = { 56.0f }
+            playEasyButton.getHeight = { 56.0f }
 
-        playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
-        playNormalButton.getY = { y + 6.0f }
-        playNormalButton.getWidth = { 56.0f }
-        playNormalButton.getHeight = { 56.0f }
+            playNormalButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f }
+            playNormalButton.getY = { y + 6.0f }
+            playNormalButton.getWidth = { 56.0f }
+            playNormalButton.getHeight = { 56.0f }
 
-        playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
-        playHardButton.getY = { y + 6.0f }
-        playHardButton.getWidth = { 56.0f }
-        playHardButton.getHeight = { 56.0f }
+            playHardButton.getX = { x + (width - (56.0f * 3 + 56.0f * 0.15f * 2)) * 0.5f + 56.0f * 1.15f * 2 }
+            playHardButton.getY = { y + 6.0f }
+            playHardButton.getWidth = { 56.0f }
+            playHardButton.getHeight = { 56.0f }
 
-        playEasyButton.isEnabled = true
-        playNormalButton.isEnabled = true
-        playHardButton.isEnabled = true
+            playEasyButton.isEnabled = true
+            playNormalButton.isEnabled = true
+            playHardButton.isEnabled = true
+        }
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
@@ -136,8 +138,11 @@ open class FinalSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean,
         nameLabel.render(delta, renderer)
         divider.render(delta, renderer)
         previews.forEach { it.render(delta, renderer) }
-        playEasyButton.render(delta, renderer)
-        playNormalButton.render(delta, renderer)
-        playHardButton.render(delta, renderer)
+
+        if (Game.players.isHost) {
+            playEasyButton.render(delta, renderer)
+            playNormalButton.render(delta, renderer)
+            playHardButton.render(delta, renderer)
+        }
     }
 }

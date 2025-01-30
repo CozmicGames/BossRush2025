@@ -19,7 +19,7 @@ open class ShopUI : GUIElement() {
             set(value) {}
     }
     private lateinit var weaponSlots: List<ShopWeaponSlot>
-    private val walletLabel = object : CurrencyLabel({ Game.players.wallet }, 24.0f) {
+    private val walletLabel = object : CurrencyLabel({ Game.game.wallet }, 24.0f) {
         override var layer: Int
             get() = this@ShopUI.layer + 2
             set(value) {}
@@ -33,7 +33,7 @@ open class ShopUI : GUIElement() {
     init {
         weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
             lateinit var slot: ShopWeaponSlot
-            slot = ShopWeaponSlot(weapon, index in Game.players.unlockedWeaponIndices) { selectionState ->
+            slot = ShopWeaponSlot(weapon, index in Game.game.unlockedWeaponIndices) { selectionState ->
                 val player = Game.players.getMyPlayer() ?: throw IllegalStateException("Player not found")
 
                 weaponSlots.forEach {
@@ -93,9 +93,9 @@ open class ShopUI : GUIElement() {
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
-        if (Game.players.newlyUnlockedWeaponIndex >= 0) {
-            weaponSlots.getOrNull(Game.players.newlyUnlockedWeaponIndex)?.unlock()
-            Game.players.newlyUnlockedWeaponIndex = -1
+        if (Game.game.newlyUnlockedWeaponIndex >= 0) {
+            weaponSlots.getOrNull(Game.game.newlyUnlockedWeaponIndex)?.unlock()
+            Game.game.newlyUnlockedWeaponIndex = -1
         }
 
         shopBackground.render(delta, renderer)

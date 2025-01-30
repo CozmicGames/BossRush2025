@@ -78,7 +78,7 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val on
 
     fun unlock() {
         Game.resources.unlockSound.play()
-        Game.players.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
+        Game.game.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
         isUnlocking = true
         lock?.startUnlockAnimation {
             isUnlocked = true
@@ -141,8 +141,8 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val on
             val isClicked = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered
 
             if (isClicked && !isUnlocking) {
-                if (Game.players.isHost && Game.players.wallet >= weapon.price) {
-                    Game.players.spendCredits(weapon.price)
+                if (Game.players.isHost && Game.game.wallet >= weapon.price) {
+                    Game.game.spendCredits(weapon.price)
                     Game.events.addSendEvent(Events.unlockWeapon(Weapons.entries.indexOf(weapon)))
                 } else
                     overlayColor.set(Color.RED)

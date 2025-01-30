@@ -62,7 +62,7 @@ class ProjectileManager {
                     Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
 
                 if (projectile.fromSource is PlayerShip)
-                    Game.players.shootStatistics.shotsHit++
+                    Game.game.shootStatistics.shotsHit++
 
                 projectilesToRemove += projectile
                 continue

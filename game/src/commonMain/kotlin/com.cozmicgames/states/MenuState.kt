@@ -1,6 +1,7 @@
 package com.cozmicgames.states
 
 import com.cozmicgames.Game
+import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Transition
@@ -13,7 +14,7 @@ import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
 import kotlin.time.Duration
 
-class MenuState : GameState {
+class MenuState(val fromTutorial: Boolean = false) : GameState {
     private var returnState: GameState = this
 
     private lateinit var guiCamera: GUICamera
@@ -61,7 +62,7 @@ class MenuState : GameState {
 
         if (Game.players.isHost) {
             startButton = TextButton("Start", Color.fromHex("33984b"), fontSize = 28.0f) {
-                transitionOut.start { returnState = BayState() }
+                Game.events.addSendEvent(Events.startGame())
             }
 
             startButton.getX = { startX + (4 * playerSlotSize + 3 * playerSlotSpacing + playerSlotToButtonSpacing) }
@@ -80,6 +81,7 @@ class MenuState : GameState {
         }
 
         tutorialButton = TextButton("Tutorial", Color.fromHex("e07438"), fontSize = 28.0f) {
+            Game.events.addSendEvent(Events.enterTutorial(Game.players.getMyPlayerState().id))
             transitionOut.start { returnState = TutorialState() }
         }
 
@@ -102,12 +104,20 @@ class MenuState : GameState {
 
     override fun render(delta: Duration): () -> GameState {
         if (isFirstFrame) {
-            //TODO: Player overview, start and tutorial button
             logo.startAnimation {
                 showMenu = true
+                Game.players.getMyPlayer()?.isReadyToStart = true
             }
             isFirstFrame = false
         }
+
+        if (Game.players.isHost) {
+            startButton.isEnabled = Game.players.players.all { it.isReadyToStart }
+            //TODO: Otherwise, display message!
+        }
+
+        if (Game.game.startGame)
+            transitionOut.start { returnState = BayState() }
 
         val pass = Game.graphics.beginMainRenderPass()
 
@@ -121,7 +131,11 @@ class MenuState : GameState {
                     it.render(delta, renderer)
                 }
 
-                startButton.render(delta, renderer)
+                if (Game.players.isHost)
+                    startButton.render(delta, renderer)
+                else
+                    waitingLabel.render(delta, renderer)
+
                 tutorialButton.render(delta, renderer)
                 roomCodeLabel.render(delta, renderer)
             }

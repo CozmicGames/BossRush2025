@@ -5,11 +5,12 @@ import com.cozmicgames.bosses.Boss
 import com.cozmicgames.bosses.BossDesc
 import com.cozmicgames.bosses.SpawnPosition
 import com.cozmicgames.entities.worldObjects.AsteroidManager
+import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.*
 import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.input.InputFrame
+import com.cozmicgames.utils.AfterFightAction
 import com.cozmicgames.utils.Difficulty
-import com.cozmicgames.utils.FightResults
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
@@ -69,7 +70,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         fightStarted = false
         showResults = false
 
-        Game.players.shootStatistics.reset()
+        Game.game.shootStatistics.reset()
 
         Game.world.clear()
         Game.physics.clear()
@@ -119,18 +120,17 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             p.ship.addToPhysics()
         }
 
-        Game.world.shouldUpdate = false
-
         if (isRetry) {
             fightStartMessage = FightStartMessage()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
                 fightStarted = true
-                Game.world.shouldUpdate = true
             }
         }
 
         ingameUI = IngameUI(player.ship, difficulty)
+
+        Game.world.shouldUpdate = true
     }
 
     override fun resize(width: Int, height: Int) {
@@ -175,22 +175,28 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
         borderIndicator.color.set(player.indicatorColor)
 
-        if (!showResults)
-            fightDuration += delta
+        if (Game.players.isHost) {
+            if (!showResults)
+                fightDuration += delta
 
-        if (!showResults && (boss.isDead || Game.players.players.all { it.ship.isDead })) {
+            if (!showResults && (boss.isDead || Game.players.players.all { it.ship.isDead })) {
+                Game.world.shouldUpdate = false
+
+                if (!boss.isDead)
+                    boss.movementController.onFailFight()
+                else
+                    Game.events.addSendEvent(Events.unlockBoss(desc.unlockedBossIndex))
+
+                val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
+                Game.events.addSendEvent(Events.results(fightDuration, difficulty, desc.fullHealth, boss.health, averagePlayerHealth, Game.game.shootStatistics.shotsFired, Game.game.shootStatistics.shotsHit))
+            }
+        }
+
+        val potentialResults = Game.game.currentFightResults
+        if (potentialResults != null) {
             showResults = true
-            Game.world.shouldUpdate = false
-
-            if (!boss.isDead)
-                boss.movementController.onFailFight()
-            else
-                Game.players.newlyUnlockedBossIndex = desc.unlockedBossIndex
-
-            val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
-            val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
-
-            resultPanel = ResultPanel(results)
+            resultPanel = ResultPanel(potentialResults)
+            Game.game.currentFightResults = null
         }
 
         val pass = Game.graphics.beginMainRenderPass()
@@ -223,16 +229,28 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             borderIndicator.render(delta, renderer)
 
             if (showResults) {
-                when (resultPanel?.renderAndGetResultState(delta, renderer)) {
-                    ResultPanel.ResultState.RETURN -> transitionOut.start {
-                        returnState = BayState()
+                if (Game.players.isHost)
+                    when (resultPanel?.renderAndGetResultState(delta, renderer)) {
+                        ResultPanel.ResultState.RETURN -> Game.events.addSendEvent(Events.exitFight())
+                        ResultPanel.ResultState.RETRY_EASY -> Game.events.addSendEvent(Events.retry(Difficulty.EASY))
+                        ResultPanel.ResultState.RETRY_NORMAL -> Game.events.addSendEvent(Events.retry(Difficulty.NORMAL))
+                        ResultPanel.ResultState.RETRY_HARD -> Game.events.addSendEvent(Events.retry(Difficulty.HARD))
+                        else -> {}
                     }
+                else
+                    resultPanel?.renderAndGetResultState(delta, renderer)
 
-                    ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY, true)
-                    ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL, true)
-                    ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD, true)
-                    else -> {}
-                }
+                val afterFightAction = Game.game.afterFightAction
+                if (afterFightAction != null)
+                    when (afterFightAction) {
+                        AfterFightAction.EXIT -> transitionOut.start {
+                            returnState = BayState()
+                        }
+
+                        AfterFightAction.RETRY_EASY -> startFight(Difficulty.EASY, true)
+                        AfterFightAction.RETRY_NORMAL -> startFight(Difficulty.NORMAL, true)
+                        AfterFightAction.RETRY_HARD -> startFight(Difficulty.HARD, true)
+                    }
             }
         }
 

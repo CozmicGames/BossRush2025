@@ -42,6 +42,8 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
     private var textX = 0.0f
     private var textY = 0.0f
 
+    var isEnabled = true
+
     init {
         updateLayoutAndCache()
     }
@@ -80,7 +82,7 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
         val isHovered = Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
         val isClicked = Game.input.justTouched && isHovered
 
-        if (isClicked)
+        if (isClicked && isEnabled)
             onClick()
 
         val ninePatch = when {

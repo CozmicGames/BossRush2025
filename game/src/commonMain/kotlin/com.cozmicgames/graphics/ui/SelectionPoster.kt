@@ -123,7 +123,7 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (B
         }
     }
 
-    fun unlock() {
+    fun unlock(callback: () -> Unit) {
         if (isUnlocked || isUnlocking)
             return
 
@@ -136,6 +136,7 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (B
                     playHardButton.isEnabled = true
                 }
                 lock = null
+                callback()
             }
         }
     }

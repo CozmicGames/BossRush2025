@@ -1,7 +1,6 @@
 package com.cozmicgames.multiplayer
 
 import com.cozmicgames.Game
-import com.cozmicgames.utils.ShootStatistics
 import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
 import com.cozmicgames.weapons.AreaEffectType
@@ -14,18 +13,6 @@ import com.littlekt.util.seconds
 import kotlin.time.Duration
 
 class PlayerManager(private val multiplayer: Multiplayer) {
-    val shootStatistics = ShootStatistics()
-    var wallet = 10000
-        private set
-
-    val unlockedBossIndices = hashSetOf(0, 1, 2, 3)
-
-    val unlockedWeaponIndices = hashSetOf(0)
-
-    var newlyUnlockedBossIndex = -1
-
-    var newlyUnlockedWeaponIndex = -1
-
     val players get() = playersInternal as List<Player>
 
     val isHost get() = multiplayer.isHost
@@ -125,7 +112,7 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                     player.state.setState("spawnProjectileSpeed", null)
                     player.state.setState("spawnProjectileSpeedFalloff", null)
 
-                    shootStatistics.shotsFired += spawnProjectileCount
+                    Game.game.shootStatistics.shotsFired += spawnProjectileCount
                 }
 
                 val stopBeamProjectile = player.state.getState<Boolean>("stopBeamProjectile")
@@ -169,8 +156,6 @@ class PlayerManager(private val multiplayer: Multiplayer) {
                 Game.events.sendProcessEvents(player.state)
 
             Game.events.clearProcessEvents()
-
-            setGlobalState("credits", wallet)
         }
 
         for (player in playersInternal) {
@@ -178,8 +163,6 @@ class PlayerManager(private val multiplayer: Multiplayer) {
             player.state.getState<Float>("y")?.let { player.ship.y = it }
             player.state.getState<Float>("rotation")?.let { player.ship.rotation = it.degrees }
         }
-
-        wallet = getGlobalState("credits") ?: 0
     }
 
     fun getMyPlayerState() = multiplayer.getMyPlayerState()
@@ -191,20 +174,4 @@ class PlayerManager(private val multiplayer: Multiplayer) {
     fun <T : Any> getGlobalState(name: String) = multiplayer.getState<T>(name)
 
     fun <T : Any> setGlobalState(name: String, value: T) = multiplayer.setState(name, value)
-
-    fun gainCredits(amount: Int) {
-        if (!isHost)
-            return
-
-        wallet += amount
-        setGlobalState("wallet", wallet)
-    }
-
-    fun spendCredits(amount: Int) {
-        if (!isHost)
-            return
-
-        wallet -= amount
-        setGlobalState("wallet", wallet)
-    }
 }

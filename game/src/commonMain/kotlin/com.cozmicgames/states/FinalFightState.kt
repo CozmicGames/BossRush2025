@@ -74,7 +74,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         fightStarted = false
         showResults = false
 
-        Game.players.shootStatistics.reset()
+        Game.game.shootStatistics.reset()
 
         Game.world.clear()
         Game.physics.clear()
@@ -202,7 +202,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             }
 
             val averagePlayerHealth = round(Game.players.players.sumOf { it.ship.health }.toFloat() / Game.players.players.size).toInt()
-            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, averagePlayerHealth, Game.players.shootStatistics.shotsFired, Game.players.shootStatistics.shotsHit)
+            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, averagePlayerHealth, Game.game.shootStatistics.shotsFired, Game.game.shootStatistics.shotsHit)
 
             resultPanel = ResultPanel(results)
         }

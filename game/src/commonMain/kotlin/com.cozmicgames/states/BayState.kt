@@ -76,16 +76,16 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             unlockedFinalFight = true
         }
 
-        if (timer > 1.0.seconds) {
-            if (Game.players.newlyUnlockedBossIndex >= 0) {
-                if (Game.players.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
+        if (timer > 2.0.seconds) {
+            if (Game.game.newlyUnlockedBossIndex >= 0) {
+                if (Game.game.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
                     unlockedFinalFight = true
                     fightSelectionUI.transitionToFinalFight()
-                } else {
-                    fightSelectionUI.unlock(Game.players.newlyUnlockedBossIndex)
-                    Game.players.unlockedBossIndices += Game.players.newlyUnlockedBossIndex
-                }
-                Game.players.newlyUnlockedBossIndex = -1
+                } else
+                    fightSelectionUI.unlock(Game.game.newlyUnlockedBossIndex) {
+                        Game.game.unlockedBossIndices += Game.game.newlyUnlockedBossIndex
+                    }
+                Game.game.newlyUnlockedBossIndex = -1
             }
         }
 

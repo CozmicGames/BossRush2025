@@ -92,7 +92,7 @@ open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
             labelShadowColor.a = colorFactor
 
             val posterFactor = Easing.CUBIC_IN((timer / TRANSITION_TIME_FINAL_POSTER).toFloat()).clamp(0.0f, 1.0f)
-            finalSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT + (230.0f + Constants.BOSS_SELECTION_POSTER_HEIGHT) * posterFactor }
+            finalFightSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT + (230.0f + Constants.BOSS_SELECTION_POSTER_HEIGHT) * posterFactor }
 
             timer += delta
 
@@ -116,14 +116,14 @@ open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
     }
 
     private val selectionPosters = List(4) {
-        object : SelectionPoster(BOSS_DESCRIPTORS[it], it in Game.players.unlockedBossIndices, onSelect) {
+        object : SelectionPoster(BOSS_DESCRIPTORS[it], it in Game.game.unlockedBossIndices, onSelect) {
             override var layer: Int
                 get() = this@FightSelectionUI.layer + 1
                 set(value) {}
         }
     }
 
-    private val finalSelectionPoster = object : FinalSelectionPoster(BOSS_DESCRIPTORS, false, onSelect) {
+    private val finalFightSelectionPoster = object : FinalFightSelectionPoster(BOSS_DESCRIPTORS, false, onSelect) {
         override var layer: Int
             get() = this@FightSelectionUI.layer + 1
             set(value) {}
@@ -154,16 +154,16 @@ open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
             poster.getY = { 230.0f }
         }
 
-        finalSelectionPoster.getX = { Game.graphics.width * 0.5f - finalSelectionPoster.width * 0.5f }
-        finalSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT }
+        finalFightSelectionPoster.getX = { Game.graphics.width * 0.5f - finalFightSelectionPoster.width * 0.5f }
+        finalFightSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT }
     }
 
     fun transitionToFinalFight() {
         currentTransitionStage = StartTransitionStage()
     }
 
-    fun unlock(index: Int) {
-        selectionPosters[index].unlock()
+    fun unlock(index: Int, callback: () -> Unit) {
+        selectionPosters[index].unlock(callback)
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
@@ -176,6 +176,6 @@ open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
             selectionPosters.forEach { it.render(delta, renderer) }
 
         if (showFinalSelectionPoster)
-            finalSelectionPoster.render(delta, renderer)
+            finalFightSelectionPoster.render(delta, renderer)
     }
 }
