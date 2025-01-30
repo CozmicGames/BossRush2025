@@ -7,6 +7,8 @@ import com.cozmicgames.bosses.SpawnPosition
 import com.cozmicgames.utils.Difficulty
 
 class Boss1Desc : BossDesc {
+    override val index = 0
+
     override val name = "Tentacula"
 
     override val reward = 300

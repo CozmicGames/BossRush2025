@@ -1,8 +1,7 @@
 package com.cozmicgames.graphics.particles
 
 import com.cozmicgames.Game
-import com.cozmicgames.utils.createInstance
-import com.cozmicgames.utils.getClassByName
+import com.cozmicgames.graphics.particles.effects.*
 import com.littlekt.graphics.g2d.SpriteBatch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -12,9 +11,18 @@ class ParticleManager {
         var duration = 0.0.seconds
     }
 
+    private val effectSuppliers = hashMapOf<String, () -> ParticleEffect>()
+
     private val systems = arrayListOf<RunningSystem>()
     private val systemsToAdd = arrayListOf<ParticleEffect>()
     private val systemsToRemove = arrayListOf<RunningSystem>()
+
+    init {
+        effectSuppliers["DEATH_SPLATTER"] = { DeathSplatterEffect() }
+        effectSuppliers["SHOOT_SINGLE"] = { SingleShotEffect() }
+        effectSuppliers["SHOOT_CONTINUOUS"] = { ContinuousShotEffect() }
+        effectSuppliers["TRAIL"] = { TrailEffect() }
+    }
 
     fun add(effect: ParticleEffect) {
         effect.id = Game.random.nextLong().toString()
@@ -40,7 +48,7 @@ class ParticleManager {
 
                 systemsToAdd.forEachIndexed { index, effect ->
                     systems += RunningSystem(effect.id, effect)
-                    toAddBuilder.append(effect::class)
+                    toAddBuilder.append(effect.name)
                     toAddBuilder.append(":")
                     toAddBuilder.append(effect.id)
 
@@ -78,9 +86,9 @@ class ParticleManager {
                 val typeName = parts[0]
                 val id = parts[1]
 
-                val type = getClassByName(typeName) ?: continue
-                val effect = createInstance(type) as? ParticleEffect ?: continue
+                val supplier = effectSuppliers[typeName] ?: continue
 
+                val effect = supplier()
                 effect.id = id
 
                 systems += RunningSystem(id, effect)

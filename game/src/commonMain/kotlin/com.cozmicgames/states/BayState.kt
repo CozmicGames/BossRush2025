@@ -2,6 +2,7 @@ package com.cozmicgames.states
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.events.Events
 import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
@@ -20,10 +21,8 @@ class BayState(isFreePlay: Boolean = false) : GameState {
     private var timer = 0.0.seconds
 
     private val messageBanner = MessageBanner()
-    private val fightSelectionUI = FightSelectionUI { state ->
-        transitionOut.start {
-            returnState = state
-        }
+    private val fightSelectionUI = FightSelectionUI { index, difficulty ->
+        Game.events.addSendEvent(Events.startFight(index, difficulty))
     }
 
     private val shop = object : ShopUI() {
@@ -71,11 +70,6 @@ class BayState(isFreePlay: Boolean = false) : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        if (Game.input.isKeyJustPressed(Key.F)) { //TODO: Remove
-            fightSelectionUI.transitionToFinalFight()
-            unlockedFinalFight = true
-        }
-
         if (timer > 2.0.seconds) {
             if (Game.game.newlyUnlockedBossIndex >= 0) {
                 if (Game.game.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
@@ -93,6 +87,18 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             finalFightIndicatorColor.a = sin(timer.seconds * 5.0f) * 0.5f + 0.5f
 
             borderIndicator.color.set(finalFightIndicatorColor)
+        }
+
+        val potentialStartFightDesc = Constants.BOSS_DESCRIPTORS.getOrNull(Game.game.startFightIndex ?: -1)
+        val potentialStartFightDifficulty = Game.game.startFightDifficulty
+
+        if (potentialStartFightDesc != null && potentialStartFightDifficulty != null) {
+            Game.game.startFightIndex = null
+            Game.game.startFightDifficulty = null
+
+            transitionOut.start {
+                returnState = BossFightState(potentialStartFightDesc, potentialStartFightDifficulty)
+            }
         }
 
         val pass = Game.graphics.beginMainRenderPass()

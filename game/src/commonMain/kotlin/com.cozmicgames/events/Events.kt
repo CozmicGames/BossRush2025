@@ -12,10 +12,6 @@ import kotlin.time.Duration.Companion.milliseconds
 object Events {
     fun startGame() = "startGame"
 
-    fun enterTutorial(id: String) = "enterTutorial:$id"
-
-    fun exitTutorial(id: String) = "exitTutorial:$id"
-
     fun hit(id: String): String = "hit:$id"
 
     fun impulseHit(id: String, x: Float, y: Float, strength: Float): String = "impulseHit:$id,$x,$y,$strength"
@@ -30,7 +26,7 @@ object Events {
 
     fun unlockWeapon(index: Int): String = "unlockWeapon:$index"
 
-    fun startFight(index: Int): String = "startFight:$index"
+    fun startFight(index: Int, difficulty: Difficulty): String = "startFight:$index,${difficulty.ordinal}"
 
     fun retry(difficulty: Difficulty): String = "retry:${difficulty.ordinal}"
 
@@ -46,16 +42,6 @@ object Events {
         when {
             event.startsWith("startGame") -> {
                 Game.game.startGame = true
-            }
-
-            event.startsWith("enterTutorial") -> {
-                val id = event.substringAfter(":")
-                Game.players.getByID(id)?.isReadyToStart = false
-            }
-
-            event.startsWith("exitTutorial") -> {
-                val id = event.substringAfter(":")
-                Game.players.getByID(id)?.isReadyToStart = true
             }
 
             event.startsWith("hit") -> {
@@ -139,12 +125,21 @@ object Events {
             event.startsWith("unlockWeapon") -> {
                 val index = event.substringAfter(":").toIntOrNull()
                 if (index != null)
-                    Game.game.newlyUnlockedWeaponIndex = index
+                    Game.game.newlyUnlockedWeaponIndices += index
             }
 
             event.startsWith("startFight") -> {
-                val index = event.substringAfter(":")
-                Game.game.startFightIndex = index.toIntOrNull()
+                val data = event.substringAfter(":")
+                val parts = data.split(",")
+                if (parts.size == 2) {
+                    val index = parts[0].toIntOrNull()
+                    val difficulty = Difficulty.entries.getOrNull(parts[1].toIntOrNull() ?: -1)
+
+                    if (index != null && difficulty != null) {
+                        Game.game.startFightIndex = index
+                        Game.game.startFightDifficulty = difficulty
+                    }
+                }
             }
 
             event.startsWith("retry") -> {

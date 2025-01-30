@@ -7,6 +7,8 @@ import com.cozmicgames.bosses.SpawnPosition
 import com.cozmicgames.utils.Difficulty
 
 class Boss3Desc : BossDesc {
+    override val index = 2
+
     override val name = "Gravicrab"
 
     override val reward = 400

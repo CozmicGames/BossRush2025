@@ -7,6 +7,8 @@ import com.cozmicgames.bosses.SpawnPosition
 import com.cozmicgames.utils.Difficulty
 
 class Boss2Desc : BossDesc {
+    override val index = 1
+
     override val name = "Nebulancer"
 
     override val reward = 400

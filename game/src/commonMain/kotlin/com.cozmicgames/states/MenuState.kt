@@ -7,6 +7,7 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.Transition
 import com.cozmicgames.graphics.ui.GUICamera
 import com.cozmicgames.graphics.ui.GameLogo
+import com.cozmicgames.graphics.ui.MenuPlayerSlot
 import com.cozmicgames.graphics.ui.PlayerSlot
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.graphics.ui.elements.TextButton
@@ -14,7 +15,7 @@ import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
 import kotlin.time.Duration
 
-class MenuState(val fromTutorial: Boolean = false) : GameState {
+class MenuState() : GameState {
     private var returnState: GameState = this
 
     private lateinit var guiCamera: GUICamera
@@ -22,7 +23,7 @@ class MenuState(val fromTutorial: Boolean = false) : GameState {
     private lateinit var transitionOut: Transition
     private lateinit var logo: GameLogo
 
-    private lateinit var playerSlots: List<PlayerSlot>
+    private lateinit var playerSlots: List<MenuPlayerSlot>
     private lateinit var startButton: TextButton
     private lateinit var waitingLabel: Label
     private lateinit var tutorialButton: TextButton
@@ -48,9 +49,9 @@ class MenuState(val fromTutorial: Boolean = false) : GameState {
         val startY = 40.0f
         val startX = (Game.graphics.width - (4 * playerSlotSize + 3 * playerSlotSpacing + playerSlotToButtonSpacing + buttonWidth)) * 0.5f
 
-        val playerSlots = arrayListOf<PlayerSlot>()
+        val playerSlots = arrayListOf<MenuPlayerSlot>()
         repeat(4) {
-            val slot = PlayerSlot(it)
+            val slot = MenuPlayerSlot(it)
             slot.getX = { startX + it * (playerSlotSize + playerSlotSpacing) }
             slot.getY = { startY }
             slot.getWidth = { playerSlotSize }
@@ -81,7 +82,7 @@ class MenuState(val fromTutorial: Boolean = false) : GameState {
         }
 
         tutorialButton = TextButton("Tutorial", Color.fromHex("e07438"), fontSize = 28.0f) {
-            Game.events.addSendEvent(Events.enterTutorial(Game.players.getMyPlayerState().id))
+            Game.players.getMyPlayerState().setState("readyToStart", false)
             transitionOut.start { returnState = TutorialState() }
         }
 
@@ -106,7 +107,7 @@ class MenuState(val fromTutorial: Boolean = false) : GameState {
         if (isFirstFrame) {
             logo.startAnimation {
                 showMenu = true
-                Game.players.getMyPlayer()?.isReadyToStart = true
+                Game.players.getMyPlayerState().setState("readyToStart", true)
             }
             isFirstFrame = false
         }

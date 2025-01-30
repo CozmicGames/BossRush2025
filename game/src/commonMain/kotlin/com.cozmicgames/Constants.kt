@@ -1,8 +1,19 @@
 package com.cozmicgames
 
+import com.cozmicgames.bosses.boss1.Boss1Desc
+import com.cozmicgames.bosses.boss2.Boss2Desc
+import com.cozmicgames.bosses.boss3.Boss3Desc
+import com.cozmicgames.bosses.boss4.Boss4Desc
 import com.littlekt.graphics.Color
 
 object Constants {
+    val BOSS_DESCRIPTORS = arrayOf(
+        Boss1Desc(),
+        Boss2Desc(),
+        Boss3Desc(),
+        Boss4Desc()
+    )
+
     const val INPUT_RAMP_UP_SPEED = 1.5f
     const val INPUT_RAMP_DOWN_SPEED = 1.0f
 

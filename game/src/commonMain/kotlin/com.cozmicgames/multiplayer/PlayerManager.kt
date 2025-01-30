@@ -167,7 +167,7 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
     fun getMyPlayerState() = multiplayer.getMyPlayerState()
 
-    fun getMyPlayer() = playersInternal.find { it.state.id == getMyPlayerState().id }
+    fun getMyPlayer() = getByID(getMyPlayerState().id)
 
     fun getByID(id: String) = playersInternal.find { it.state.id == id }
 

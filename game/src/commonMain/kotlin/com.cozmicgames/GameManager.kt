@@ -1,6 +1,7 @@
 package com.cozmicgames
 
 import com.cozmicgames.utils.AfterFightAction
+import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.cozmicgames.utils.ShootStatistics
 
@@ -10,6 +11,7 @@ class GameManager {
     var startGame = false
 
     var startFightIndex: Int? = null
+    var startFightDifficulty: Difficulty? = null
     var currentFightResults: FightResults? = null
     var afterFightAction: AfterFightAction? = null
 
@@ -23,7 +25,7 @@ class GameManager {
 
     var newlyUnlockedBossIndex = -1
 
-    var newlyUnlockedWeaponIndex = -1
+    val newlyUnlockedWeaponIndices = hashSetOf<Int>()
 
     fun update() {
         if(Game.players.isHost)

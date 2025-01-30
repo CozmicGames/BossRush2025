@@ -42,6 +42,8 @@ class TrailEffect() : ParticleEffect() {
         this.leftEngine = leftEngine
     }
 
+    override val name = "TRAIL"
+
     override val duration = null
 
     var playerShipId = ""

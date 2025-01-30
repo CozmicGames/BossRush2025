@@ -7,14 +7,12 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Divider
 import com.cozmicgames.graphics.ui.elements.Image
 import com.cozmicgames.graphics.ui.elements.Label
-import com.cozmicgames.states.FinalFightState
-import com.cozmicgames.states.GameState
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.resources.Textures
 import kotlin.time.Duration
 
-open class FinalFightSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boolean, onSelect: (GameState) -> Unit) : GUIElement() {
+open class FinalFightSelectionPoster(var isUnlocked: Boolean, onSelect: (Int, Difficulty) -> Unit) : GUIElement() {
     private open class PreviewImage(val desc: BossDesc) : GUIElement() {
         private val previewImageBorder = object : Image(Textures.white, Color.fromHex("8a4836")) {
             override var layer: Int
@@ -58,24 +56,24 @@ open class FinalFightSelectionPoster(descs: Array<BossDesc>, var isUnlocked: Boo
             get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
-    private val previews = descs.map {
+    private val previews = Constants.BOSS_DESCRIPTORS.map {
         object : PreviewImage(it) {
             override var layer: Int
                 get() = this@FinalFightSelectionPoster.layer + 1
                 set(value) {}
         }
     }
-    private val playEasyButton = object : PlayButton(Difficulty.EASY, { onSelect(FinalFightState(Difficulty.EASY)) }) {
+    private val playEasyButton = object : PlayButton(Difficulty.EASY, { onSelect(Constants.FINAL_FIGHT_INDEX, Difficulty.EASY) }) {
         override var layer: Int
             get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
-    private val playNormalButton = object : PlayButton(Difficulty.NORMAL, { onSelect(FinalFightState(Difficulty.NORMAL)) }) {
+    private val playNormalButton = object : PlayButton(Difficulty.NORMAL, { onSelect(Constants.FINAL_FIGHT_INDEX, Difficulty.NORMAL) }) {
         override var layer: Int
             get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}
     }
-    private val playHardButton = object : PlayButton(Difficulty.HARD, { onSelect(FinalFightState(Difficulty.HARD)) }) {
+    private val playHardButton = object : PlayButton(Difficulty.HARD, { onSelect(Constants.FINAL_FIGHT_INDEX, Difficulty.HARD) }) {
         override var layer: Int
             get() = this@FinalFightSelectionPoster.layer + 1
             set(value) {}

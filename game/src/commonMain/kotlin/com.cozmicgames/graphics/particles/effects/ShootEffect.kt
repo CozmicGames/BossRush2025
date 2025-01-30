@@ -102,6 +102,8 @@ class SingleShotEffect() : ShootEffect() {
         this.baseColor.set(baseColor)
     }
 
+    override val name = "SHOOT_SINGLE"
+
     override val duration = 1.0.seconds
 
     override val isContinouus = false
@@ -114,6 +116,8 @@ class ContinuousShotEffect() : ShootEffect() {
         this.direction = direction
         this.baseColor.set(baseColor)
     }
+
+    override val name = "SHOOT_CONTINUOUS"
 
     override val duration = null
 

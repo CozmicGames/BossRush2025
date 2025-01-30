@@ -11,7 +11,7 @@ import com.littlekt.graphics.MutableColor
 import com.littlekt.input.Pointer
 import kotlin.time.Duration
 
-class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onSelect: (SelectionState) -> Unit) : GUIElement() {
+class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement() {
     companion object {
         private val PRIMARY_COLOR = Color.fromHex("0065ff")
         private val SECONDARY_COLOR = Color.fromHex("ff5d00")
@@ -23,16 +23,11 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val on
         SECONDARY
     }
 
-    var selectionState = when {
+    private var selectionState = when {
         Game.players.getMyPlayer()?.primaryWeapon == weapon -> SelectionState.PRIMARY
         Game.players.getMyPlayer()?.secondaryWeapon == weapon -> SelectionState.SECONDARY
         else -> SelectionState.UNSELECTED
     }
-        set(value) {
-            field = value
-            if (value != SelectionState.UNSELECTED)
-                onSelect(value)
-        }
 
     private val nameLabel = object : Label(weapon.displayName, 18.0f) {
         override var layer: Int

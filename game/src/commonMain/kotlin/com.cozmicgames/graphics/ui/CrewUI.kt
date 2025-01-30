@@ -30,7 +30,7 @@ open class CrewUI : GUIElement() {
 
         val playerSlots = arrayListOf<CrewPlayerSlot>()
         repeat(numPlayers) {
-            val slot = object : CrewPlayerSlot(0) {
+            val slot = object : CrewPlayerSlot(it) {
                 override var layer: Int
                     get() = this@CrewUI.layer + 1
                     set(value) {}

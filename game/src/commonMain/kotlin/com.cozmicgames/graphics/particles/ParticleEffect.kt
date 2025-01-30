@@ -15,6 +15,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 abstract class ParticleEffect() {
+    abstract val name: String
+
     var id = ""
 
     open val duration: Duration? = null

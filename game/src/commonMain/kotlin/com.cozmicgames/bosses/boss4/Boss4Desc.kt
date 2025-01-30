@@ -8,6 +8,8 @@ import com.cozmicgames.bosses.SpawnPosition
 import com.cozmicgames.utils.Difficulty
 
 class Boss4Desc : BossDesc {
+    override val index = 3
+
     override val name = "Voidray"
 
     override val reward = 600

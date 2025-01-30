@@ -32,33 +32,7 @@ open class ShopUI : GUIElement() {
 
     init {
         weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
-            lateinit var slot: ShopWeaponSlot
-            slot = ShopWeaponSlot(weapon, index in Game.game.unlockedWeaponIndices) { selectionState ->
-                val player = Game.players.getMyPlayer() ?: throw IllegalStateException("Player not found")
-
-                weaponSlots.forEach {
-                    if (it != slot && it.selectionState == selectionState)
-                        it.selectionState = ShopWeaponSlot.SelectionState.UNSELECTED
-                }
-
-                when (selectionState) {
-                    ShopWeaponSlot.SelectionState.PRIMARY -> {
-                        player.primaryWeapon = weapon
-
-                        if (player.secondaryWeapon == weapon)
-                            player.secondaryWeapon = null
-                    }
-
-                    ShopWeaponSlot.SelectionState.SECONDARY -> {
-                        player.secondaryWeapon = weapon
-
-                        if (player.primaryWeapon == weapon)
-                            player.primaryWeapon = null
-                    }
-
-                    else -> {}
-                }
-            }
+            val slot = ShopWeaponSlot(weapon, index in Game.game.unlockedWeaponIndices)
             slot.layer = layer + 1
             slot
         }
@@ -93,9 +67,11 @@ open class ShopUI : GUIElement() {
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
-        if (Game.game.newlyUnlockedWeaponIndex >= 0) {
-            weaponSlots.getOrNull(Game.game.newlyUnlockedWeaponIndex)?.unlock()
-            Game.game.newlyUnlockedWeaponIndex = -1
+        if (Game.game.newlyUnlockedWeaponIndices.isNotEmpty()) {
+            Game.game.newlyUnlockedWeaponIndices.forEach {
+                weaponSlots.getOrNull(it)?.unlock()
+            }
+            Game.game.newlyUnlockedWeaponIndices.clear()
         }
 
         shopBackground.render(delta, renderer)

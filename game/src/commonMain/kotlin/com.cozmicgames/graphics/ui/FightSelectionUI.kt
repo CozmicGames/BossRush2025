@@ -9,6 +9,7 @@ import com.cozmicgames.bosses.boss4.Boss4Desc
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.states.GameState
+import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.Easing
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
@@ -17,15 +18,8 @@ import com.littlekt.math.clamp
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
+open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElement() {
     companion object {
-        private val BOSS_DESCRIPTORS = arrayOf(
-            Boss1Desc(),
-            Boss2Desc(),
-            Boss3Desc(),
-            Boss4Desc()
-        )
-
         private val TRANSITION_TIME_PER_POSTER = 0.2.seconds
         private val TRANSITION_TIME_FINAL_POSTER = 0.5.seconds
     }
@@ -116,14 +110,14 @@ open class FightSelectionUI(val onSelect: (GameState) -> Unit) : GUIElement() {
     }
 
     private val selectionPosters = List(4) {
-        object : SelectionPoster(BOSS_DESCRIPTORS[it], it in Game.game.unlockedBossIndices, onSelect) {
+        object : SelectionPoster(Constants.BOSS_DESCRIPTORS[it], it in Game.game.unlockedBossIndices, onSelect) {
             override var layer: Int
                 get() = this@FightSelectionUI.layer + 1
                 set(value) {}
         }
     }
 
-    private val finalFightSelectionPoster = object : FinalFightSelectionPoster(BOSS_DESCRIPTORS, false, onSelect) {
+    private val finalFightSelectionPoster = object : FinalFightSelectionPoster(false, onSelect) {
         override var layer: Int
             get() = this@FightSelectionUI.layer + 1
             set(value) {}

@@ -11,7 +11,7 @@ import com.littlekt.graphics.OrthographicCamera
 import com.littlekt.graphics.Texture
 
 class Player(val state: PlayerState, val color: Color, val avatarIndex: Int, val index: Int) : Releasable {
-    var isReadyToStart = false
+    val isReadyToStart get() = state.getState<Boolean>("readyToStart") == true
 
     var primaryWeapon: Weapon? = Weapons.REELGUN
     var secondaryWeapon: Weapon? = Weapons.REELGUN

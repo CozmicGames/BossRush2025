@@ -5,6 +5,7 @@ import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Texture
 
 interface BossDesc {
+    val index: Int
     val name: String
     val reward: Int
     val preview: Texture

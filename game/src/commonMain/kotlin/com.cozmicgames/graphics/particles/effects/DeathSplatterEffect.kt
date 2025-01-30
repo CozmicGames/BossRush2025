@@ -38,6 +38,8 @@ class DeathSplatterEffect() : ParticleEffect() {
         this.direction = direction
     }
 
+    override val name = "DEATH_SPLATTER"
+
     override val duration = 5.0.seconds
 
     var x = 0.0f
