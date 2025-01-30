@@ -3,16 +3,13 @@ package com.cozmicgames.graphics.ui
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Image
-import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.utils.Easing
-import com.littlekt.graphics.HAlign
 import com.littlekt.graphics.MutableColor
-import com.littlekt.graphics.VAlign
 import com.littlekt.math.clamp
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class SplashScreenLogo : GUIElement() {
+class GameLogo : GUIElement() {
     private interface Stage {
         fun update(delta: Duration): Stage?
     }
@@ -37,34 +34,25 @@ class SplashScreenLogo : GUIElement() {
         override fun update(delta: Duration): Stage {
             timer += delta
 
-            return if (timer > 1.1.seconds) Stage2() else this
+            return if (timer > 0.5.seconds) Stage2() else this
         }
     }
 
     private inner class Stage2 : Stage {
         var timer = 0.0.seconds
 
-        override fun update(delta: Duration): Stage {
+        override fun update(delta: Duration): Stage? {
             val factor = (timer / 0.7.seconds).toFloat().clamp(0.0f, 1.0f)
 
-            color.a = 1.0f - Easing.QUAD_IN_OUT(factor)
+            offsetY = Easing.QUAD_IN_OUT(factor) * 100.0f
 
             timer += delta
 
-            return if (timer > 0.7.seconds) Stage3() else this
+            return if (timer > 0.7.seconds) null else this
         }
     }
 
-    private inner class Stage3 : Stage {
-        var timer = 0.0.seconds
-
-        override fun update(delta: Duration): Stage? {
-            timer += delta
-
-            return if (timer > 0.5.seconds) null else this
-        }
-    }
-
+    private var offsetY = 0.0f
     private val color = MutableColor(1.0f, 1.0f, 1.0f, 0.0f)
     private val image = Image(Game.resources.logo, color)
     private var stage: Stage? = Stage0()
@@ -74,7 +62,7 @@ class SplashScreenLogo : GUIElement() {
 
     init {
         image.getX = { Game.graphics.width * 0.5f - image.width * 0.5f }
-        image.getY = { Game.graphics.height * 0.5f - image.height * 0.5f }
+        image.getY = { Game.graphics.height * 0.5f - image.height * 0.5f + offsetY }
         image.getWidth = { Game.resources.logo.width.toFloat() }
         image.getHeight = { Game.resources.logo.height.toFloat() }
     }

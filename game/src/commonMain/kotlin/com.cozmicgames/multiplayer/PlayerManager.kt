@@ -6,6 +6,9 @@ import com.cozmicgames.weapons.AreaEffectGrowthType
 import com.cozmicgames.weapons.AreaEffectSourceType
 import com.cozmicgames.weapons.AreaEffectType
 import com.cozmicgames.weapons.ProjectileType
+import com.littlekt.graphics.Color
+import com.littlekt.graphics.MutableColor
+import com.littlekt.graphics.toRgba8888
 import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
 import kotlin.time.Duration
@@ -21,20 +24,65 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
     var newlyUnlockedBossIndex = -1
 
-    private val playersInternal = arrayListOf<Player>()
-
     val players get() = playersInternal as List<Player>
 
     val isHost get() = multiplayer.isHost
 
-    init {
-        multiplayer.onPlayerJoin {
-            val player = Player(it)
-            playersInternal += player
+    val roomCode get() = multiplayer.roomCode
 
-            it.onQuit {
-                playersInternal.remove(player)
-                Game.world.remove(player.ship)
+    private val playersInternal = arrayListOf<Player>()
+
+    private val availablePlayerColors = arrayListOf<Color>()
+
+    private val availableAvatarIndices = arrayListOf<Int>()
+
+    init {
+        availablePlayerColors += Color.fromHex("df0024")
+        availablePlayerColors += Color.fromHex("f3c300")
+        availablePlayerColors += Color.fromHex("00ab9f")
+        availablePlayerColors += Color.fromHex("2e6db4")
+
+        repeat(108) {
+            availableAvatarIndices += it
+        }
+
+        multiplayer.onPlayerJoin {
+            if (isHost) {
+                val color = availablePlayerColors.removeAt((0 until availablePlayerColors.size).random())
+                val avatarIndex = availableAvatarIndices.removeAt((0 until availableAvatarIndices.size).random())
+                val playerIndex = if (it == getMyPlayerState())
+                    -1
+                else
+                    playersInternal.size
+
+                it.setState("playerProfileColor", color.toRgba8888())
+                it.setState("playerProfileAvatarIndex", avatarIndex)
+                it.setState("playerIndex", playerIndex)
+
+                val player = Player(it, color, avatarIndex, playerIndex)
+                playersInternal += player
+                playersInternal.sortBy { p -> p.index }
+
+                it.onQuit {
+                    playersInternal.remove(player)
+                    Game.world.remove(player.ship)
+                    availablePlayerColors += player.color
+                    availableAvatarIndices += player.avatarIndex
+                }
+            } else {
+                val color = MutableColor().setRgba8888(it.getState("playerProfileColor") ?: 0)
+                val avatarIndex = it.getState("playerProfileAvatarIndex") ?: 0
+                val playerIndex = it.getState("playerIndex") ?: 0
+
+                val player = Player(it, color, avatarIndex, playerIndex)
+                playersInternal += player
+                playersInternal.sortBy { p -> p.index }
+
+                it.onQuit {
+                    //TODO: What if host quits?
+                    playersInternal.remove(player)
+                    Game.world.remove(player.ship)
+                }
             }
         }
     }

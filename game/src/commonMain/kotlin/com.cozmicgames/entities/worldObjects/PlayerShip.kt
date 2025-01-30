@@ -266,9 +266,9 @@ class PlayerShip(private val player: Player) : WorldObject(player.state.id), Pro
             else -> Game.resources.playerShipBaseFast
         }
 
-        darkColor.set(player.state.color.lighten(-0.15f))
-        mainColor.set(player.state.color)
-        lightColor.set(player.state.color.lighten(0.15f))
+        darkColor.set(player.color.lighten(-0.15f))
+        mainColor.set(player.color)
+        lightColor.set(player.color.lighten(0.15f))
 
         darkColor.mul(color)
         mainColor.mul(color)

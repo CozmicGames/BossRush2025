@@ -7,6 +7,9 @@ class PlayroomMultiplayer : Multiplayer {
     override val isHost: Boolean
         get() = js("isHost()") as Boolean
 
+    override val roomCode: String
+        get() = js("getRoomCode()") as String
+
     override fun onPlayerJoin(callback: (playerState: PlayerState) -> Unit) {
         val wrappedCallback = { wrappedState: dynamic ->
             callback(PlayroomPlayerState(wrappedState))

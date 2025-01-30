@@ -11,8 +11,15 @@ import com.littlekt.graphics.g2d.NinePatch
 import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.graphics.g2d.font.BitmapFont
 import com.littlekt.graphics.slice
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class Resources : Releasable {
+    private class AvatarTextureRequest(val index: Int, val callback: (Texture) -> Unit)
+
+    private val avatarTextureRequests = arrayListOf<AvatarTextureRequest>()
+
     /**
      * UI
      */
@@ -60,6 +67,8 @@ class Resources : Releasable {
     lateinit var currencyIcon: Texture
     lateinit var messageBannerBackground: Texture
     lateinit var checkmark: Texture
+    lateinit var playerSlot: Texture
+    lateinit var playerSlotEmpty: Texture
 
     lateinit var borderIndicator: Texture
     lateinit var borderIndicatorNinePatch: NinePatch
@@ -232,6 +241,8 @@ class Resources : Releasable {
         currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
         messageBannerBackground = context.resourcesVfs["textures/ui/message_banner_background.png"].readTexture()
         checkmark = context.resourcesVfs["textures/ui/checkmark.png"].readTexture()
+        playerSlot = context.resourcesVfs["textures/ui/player_slot.png"].readTexture()
+        playerSlotEmpty = context.resourcesVfs["textures/ui/player_slot_empty.png"].readTexture()
 
         transition = context.resourcesVfs["textures/ui/transition.png"].readTexture()
         borderIndicator = context.resourcesVfs["textures/ui/border_indicator.png"].readTexture()
@@ -316,6 +327,23 @@ class Resources : Releasable {
         boss4tailSlices = boss4tail.slice(boss4tail.width, boss4tail.height / Constants.BOSS4_TAIL_PARTS).map { it[0] }.toTypedArray()
     }
 
+    fun requestAvatarTexture(index: Int, callback: (Texture) -> Unit) {
+        avatarTextureRequests += AvatarTextureRequest(index, callback)
+    }
+
+    fun update(context: Context) {
+        val avatarTextureRequests = avatarTextureRequests.toList()
+        this.avatarTextureRequests.clear()
+
+        if (avatarTextureRequests.isNotEmpty())
+            CoroutineScope(Dispatchers.Unconfined).launch {
+                avatarTextureRequests.forEach { request ->
+                    val texture = context.resourcesVfs["avatars/avatar${request.index}.png"].readTexture()
+                    request.callback(texture)
+                }
+            }
+    }
+
     override fun release() {
         hoverSound.release()
         clickSound.release()
@@ -358,9 +386,11 @@ class Resources : Releasable {
         currencyIcon.release()
         messageBannerBackground.release()
         checkmark.release()
+        playerSlot.release()
+        playerSlotEmpty.release()
+
         transition.release()
         borderIndicator.release()
-
         debug.release()
 
         energyBall.release()

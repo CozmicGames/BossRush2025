@@ -3,6 +3,8 @@ package com.cozmicgames.multiplayer
 interface Multiplayer {
     val isHost: Boolean
 
+    val roomCode: String
+
     fun onPlayerJoin(callback: (playerState: PlayerState) -> Unit)
 
     fun getMyPlayerState(): PlayerState

@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Ready for Baittle</title>
-  <link rel="icon" href="icon.png">
+  <link rel="icon" href="textures/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <style>
     body {
       background: #1A1A23;
@@ -15,16 +18,107 @@
       padding: 15px;
       border-radius: 5px;
     }
+
+    .menu {
+      text-align: center;
+    }
+
     #error-message {
       font-size: 24px;
       display: none;
     }
+
+    .launch-btn {
+      width: 300px;
+      padding: 10px;
+      font-size: 18px;
+      background-color: #134c4c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 10px;
+      border-radius: 0px;
+      font-family: "Jersey 10", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .launch-btn:hover {
+      background-color: #1e6f50;
+    }
+
+    .input-group {
+      display: flex;
+      justify-content: center;
+    }
+
+    .room-code {
+      width: 130px;
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 0px;
+      text-align: center;
+      font-family: "Jersey 10", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .join-btn {
+      width: 150px;
+      padding: 10px;
+      font-size: 18px;
+      background-color: #00396d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 0px;
+      font-family: "Jersey 10", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .join-btn:hover {
+      background-color: #0069aa;
+    }
+
     #canvas {
       border: 1px solid #000000;
+      display: none;
+    }
+
+    #room-full-message {
+        display: none;
+        color: red;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    #return-button {
+        display: none;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: blue;
+        color: white;
+        border: none;
+        cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <div class="menu">
+    <button class="launch-btn" onclick="launchGame()">Launch Game</button>
+
+    <div class="input-group">
+      <input class="room-code" type="text" placeholder="Room Code" id="room-code">
+      <button class="join-btn" onclick="joinGame()">Join Game</button>
+    </div>
+  </div>
+
+  <div id="room-full-message">
+    <p>This room is full. Please try again.</p>
+    <button id="return-button" onclick="returnFromRoomFull()">Return</button>
+  </div>
   <div id="canvas-container" style="text-align:center;">
     <p id="error-message">
       Your browser does not currently support WebGPU. You must use Chrome Canary, Edge Canary, or Firefox Nightly and
@@ -36,6 +130,11 @@
     </div>
   </div>
 </body>
+
+<script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/playroomkit/multiplayer.umd.js"></script>
+
 <script type="application/javascript">
   if (!navigator.gpu) {
      document.body.className = 'error';
@@ -43,39 +142,79 @@
      document.getElementById('error-message').style.display = "initial";
  }
 </script>
-<!-- Uncomment the below script tag if you want simple FPS tracking on screen -->
-<script type="text/javascript" src="https://mrdoob.github.io/stats.js/build/stats.min.js" onload="if (navigator.gpu) {
-var stats = new Stats();
-document.getElementById('content').appendChild(stats.dom);
-requestAnimationFrame(function loop() {
-stats.update();
-requestAnimationFrame(loop)
-});
-}"></script>
 
-<script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/playroomkit/multiplayer.umd.js"></script>
 <script type="text/javascript">
   window._USETEMPSTORAGE = true;
 
-  const { onPlayerJoin, insertCoin, isHost, myPlayer, getState, setState } = Playroom;
+  const { onPlayerJoin, insertCoin, isHost, myPlayer, getState, setState, getRoomCode } = Playroom;
 
-  insertCoin().then(async () => {
-      console.log("Coin inserted. Loading game script...");
+  function showRoomFull() {
+    document.getElementById("launch-button").style.display = "none";
+    document.getElementById("join-button").style.display = "none";
+    document.getElementById("room-code").style.display = "none";
 
-      const script = document.createElement("script");
-      script.src = "game.js";
-      script.type = "text/javascript";
-      script.onload = function() {
-          console.log("Game script loaded and executed.");
-      };
+    document.getElementById("room-full-message").style.display = "inline-block";
+    document.getElementById("return-button").style.display = "inline-block";
+  }
 
-      script.onerror = function() {
-          console.error("Error loading game script.");
-      };
+  function returnFromRoomFull() {
+    document.getElementById("launch-button").style.display = "inline-block";
+    document.getElementById("join-button").style.display = "inline-block";
+    document.getElementById("room-code").style.display = "inline-block";
 
-      document.head.appendChild(script);
-  });
+    document.getElementById("room-full-message").style.display = "none";
+    document.getElementById("return-button").style.display = "none";
+  }
+
+  function startGame() {
+    document.querySelector(".menu").style.display = "none";
+    document.getElementById("canvas").style.display = "inline-block";
+
+    console.log("Loading game script...");
+
+    const script = document.createElement("script");
+    script.src = "game.js";
+    script.type = "text/javascript";
+    script.onload = function() {
+        console.log("Game script loaded and executed.");
+    };
+
+    script.onerror = function() {
+        console.error("Error loading game script.");
+    };
+
+    document.head.appendChild(script);
+  }
+
+  function launchGame() {
+    try {
+      insertCoin({
+        skipLobby: true,
+        maxPlayersPerRoom: 4,
+      }).then(async () => {
+        startGame();
+      });
+    } catch (error) {
+      if (error.message === "ROOM_LIMIT_EXCEEDED") {
+        showRoomFull();
+      }
+    }
+  }
+
+  function joinGame() {
+    try {
+      insertCoin({
+        roomCode: document.getElementById("room-code").value,
+        skipLobby: true,
+        maxPlayersPerRoom: 4,
+      }).then(async () => {
+        startGame();
+      });
+    } catch (error) {
+      if (error.message === "ROOM_LIMIT_EXCEEDED") {
+        showRoomFull();
+      }
+    }
+  }
 </script>
 </html>

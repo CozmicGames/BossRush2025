@@ -13,7 +13,6 @@ import com.cozmicgames.weapons.AreaEffectManager
 import com.cozmicgames.weapons.ProjectileManager
 import com.littlekt.Context
 import com.littlekt.ContextListener
-import com.littlekt.async.newSingleThreadAsyncContext
 import com.littlekt.log.Logger
 import com.littlekt.util.seconds
 import kotlin.js.Date
@@ -60,14 +59,14 @@ class Game(players: PlayerManager, context: Context) : ContextListener(context) 
             g.resize(width, height)
         }
 
-        currentGameState = SplashScreenState()
+        currentGameState = MenuState()
 
         var isFirstUpdate = true
 
-        newSingleThreadAsyncContext()
-
         onUpdate { delta ->
             upTime += delta
+
+            resources.update(this)
 
             events.processEvents()
 
