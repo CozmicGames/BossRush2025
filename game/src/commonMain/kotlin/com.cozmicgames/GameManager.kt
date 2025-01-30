@@ -28,10 +28,10 @@ class GameManager {
     val newlyUnlockedWeaponIndices = hashSetOf<Int>()
 
     fun update() {
-        if(Game.players.isHost)
-            Game.players.setGlobalState("credits", wallet)
+        if (Game.players.isHost)
+            Game.players.setGlobalState("wallet", wallet)
         else
-            wallet = Game.players.getGlobalState("credits") ?: 0
+            wallet = Game.players.getGlobalState("wallet") ?: 0
     }
 
     fun gainCredits(amount: Int) {

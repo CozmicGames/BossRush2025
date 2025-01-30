@@ -19,91 +19,90 @@ class ProjectileManager {
     private val projectilesToRemove = arrayListOf<Projectile>()
 
     fun update(delta: Duration) {
-        if (!Game.players.isHost)
-            return
+        if (Game.players.isHost) {
+            for (projectile in projectiles) {
+                if (projectile.type.baseType is BeamProjectileType) {
+                    projectile.startX = projectile.fromSource.muzzleX
+                    projectile.startY = projectile.fromSource.muzzleY
+                    projectile.direction = projectile.fromSource.muzzleRotation
+                }
 
-        for (projectile in projectiles) {
-            if (projectile.type.baseType is BeamProjectileType) {
-                projectile.startX = projectile.fromSource.muzzleX
-                projectile.startY = projectile.fromSource.muzzleY
-                projectile.direction = projectile.fromSource.muzzleRotation
-            }
+                val projectileAngle = projectile.direction
+                val projectileDirectionX = projectileAngle.cosine
+                val projectileDirectionY = projectileAngle.sine
 
-            val projectileAngle = projectile.direction
-            val projectileDirectionX = projectileAngle.cosine
-            val projectileDirectionY = projectileAngle.sine
+                if (projectile.type.baseType is BeamProjectileType) {
+                    if (projectile.type.baseType.getLifetime(projectile.distance) <= 0.0f) {
+                        projectilesToRemove += projectile
+                        continue
+                    }
+                }
 
-            if (projectile.type.baseType is BeamProjectileType) {
-                if (projectile.type.baseType.getLifetime(projectile.distance) <= 0.0f) {
+                var distance = projectile.speed * delta.seconds
+                projectile.speed *= 1.0f - projectile.speedFalloff * delta.seconds
+
+                val filter = { checkCollider: Collider ->
+                    checkCollider.userData != projectile.fromSource && (checkCollider.userData as? ProjectileSource)?.projectileSourceId != projectile.fromSource.projectileSourceId
+                }
+
+                val nearestCollider = when (projectile.type.baseType) {
+                    is BulletProjectileType -> Game.physics.getNearestLineCollision(projectile.currentX, projectile.currentY, projectile.currentX + projectileDirectionX * distance, projectile.currentY + projectileDirectionY * distance, filter) { collisionDistance ->
+                        distance = collisionDistance
+                    }
+
+                    is BeamProjectileType -> Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectileDirectionX * (projectile.distance + distance), projectile.startY + projectileDirectionY * (projectile.distance + distance), filter) { collisionDistance ->
+                        distance = collisionDistance
+                    }
+                }
+
+                if (nearestCollider != null) {
+                    if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit)
+                        Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
+
+                    if (projectile.fromSource is PlayerShip)
+                        Game.game.shootStatistics.shotsHit++
+
                     projectilesToRemove += projectile
                     continue
                 }
-            }
 
-            var distance = projectile.speed * delta.seconds
-            projectile.speed *= 1.0f - projectile.speedFalloff * delta.seconds
-
-            val filter = { checkCollider: Collider ->
-                checkCollider.userData != projectile.fromSource && (checkCollider.userData as? ProjectileSource)?.projectileSourceId != projectile.fromSource.projectileSourceId
-            }
-
-            val nearestCollider = when (projectile.type.baseType) {
-                is BulletProjectileType -> Game.physics.getNearestLineCollision(projectile.currentX, projectile.currentY, projectile.currentX + projectileDirectionX * distance, projectile.currentY + projectileDirectionY * distance, filter) { collisionDistance ->
-                    distance = collisionDistance
+                if (projectile.currentX < Game.physics.minX - 100000.0f || projectile.currentX > Game.physics.maxX + 100000.0f || projectile.currentY < Game.physics.minY - 100000.0f || projectile.currentY > Game.physics.maxY + 100000.0f) {
+                    projectilesToRemove += projectile
+                    continue
                 }
 
-                is BeamProjectileType -> Game.physics.getNearestLineCollision(projectile.startX, projectile.startY, projectile.startX + projectileDirectionX * (projectile.distance + distance), projectile.startY + projectileDirectionY * (projectile.distance + distance), filter) { collisionDistance ->
-                    distance = collisionDistance
-                }
-            }
+                when (projectile.type.baseType) {
+                    is BulletProjectileType -> {
+                        projectile.currentX += projectileDirectionX * distance
+                        projectile.currentY += projectileDirectionY * distance
+                    }
 
-            if (nearestCollider != null) {
-                if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit)
-                    Game.events.addSendEvent(Events.hit(nearestCollider.userData.id))
-
-                if (projectile.fromSource is PlayerShip)
-                    Game.game.shootStatistics.shotsHit++
-
-                projectilesToRemove += projectile
-                continue
-            }
-
-            if (projectile.currentX < Game.physics.minX - 100000.0f || projectile.currentX > Game.physics.maxX + 100000.0f || projectile.currentY < Game.physics.minY - 100000.0f || projectile.currentY > Game.physics.maxY + 100000.0f) {
-                projectilesToRemove += projectile
-                continue
-            }
-
-            when (projectile.type.baseType) {
-                is BulletProjectileType -> {
-                    projectile.currentX += projectileDirectionX * distance
-                    projectile.currentY += projectileDirectionY * distance
+                    is BeamProjectileType -> {
+                        projectile.currentX = projectile.startX + projectileDirectionX * (projectile.distance + distance)
+                        projectile.currentY = projectile.startY + projectileDirectionY * (projectile.distance + distance)
+                    }
                 }
 
-                is BeamProjectileType -> {
-                    projectile.currentX = projectile.startX + projectileDirectionX * (projectile.distance + distance)
-                    projectile.currentY = projectile.startY + projectileDirectionY * (projectile.distance + distance)
+                projectile.onUpdate(delta)
+            }
+
+            projectilesToRemove.forEach {
+                it.onRemove()
+            }
+            projectiles -= projectilesToRemove
+            projectilesToRemove.clear()
+
+            Game.players.setGlobalState("renderProjectileCount", projectiles.size)
+
+            projectiles.forEachIndexed { index, projectile ->
+                Game.players.setGlobalState("renderProjectileType$index", projectile.type.ordinal)
+                if (projectile.type == ProjectileType.ENERGY_BEAM) {
+                    Game.players.setGlobalState("renderProjectileStartX$index", projectile.startX)
+                    Game.players.setGlobalState("renderProjectileStartY$index", projectile.startY)
                 }
+                Game.players.setGlobalState("renderProjectileCurrentX$index", projectile.currentX)
+                Game.players.setGlobalState("renderProjectileCurrentY$index", projectile.currentY)
             }
-
-            projectile.onUpdate(delta)
-        }
-
-        projectilesToRemove.forEach {
-            it.onRemove()
-        }
-        projectiles -= projectilesToRemove
-        projectilesToRemove.clear()
-
-        Game.players.setGlobalState("renderProjectileCount", projectiles.size)
-
-        projectiles.forEachIndexed { index, projectile ->
-            Game.players.setGlobalState("renderProjectileType$index", projectile.type.ordinal)
-            if (projectile.type == ProjectileType.ENERGY_BEAM) {
-                Game.players.setGlobalState("renderProjectileStartX$index", projectile.startX)
-                Game.players.setGlobalState("renderProjectileStartY$index", projectile.startY)
-            }
-            Game.players.setGlobalState("renderProjectileCurrentX$index", projectile.currentX)
-            Game.players.setGlobalState("renderProjectileCurrentY$index", projectile.currentY)
         }
     }
 

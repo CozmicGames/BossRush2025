@@ -26,7 +26,7 @@ class PlayroomMultiplayer : Multiplayer {
         return js("getState(name)") as? T
     }
 
-    override fun <T : Any> setState(name: String, value: T) {
-        js("setState(name, value)")
+    override fun <T : Any> setState(name: String, value: T, reliable: Boolean) {
+        js("setState(name, value, reliable)")
     }
 }

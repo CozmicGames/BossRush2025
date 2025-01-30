@@ -173,5 +173,5 @@ class PlayerManager(private val multiplayer: Multiplayer) {
 
     fun <T : Any> getGlobalState(name: String) = multiplayer.getState<T>(name)
 
-    fun <T : Any> setGlobalState(name: String, value: T) = multiplayer.setState(name, value)
+    fun <T : Any> setGlobalState(name: String, value: T) = multiplayer.setState(name, value, false)
 }
