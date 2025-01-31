@@ -32,7 +32,7 @@ class MessageBanner : GUIElement() {
         )
     }
 
-    private val background = Image(Game.resources.messageBannerBackground)
+    private val background = Image(Game.textures.messageBannerBackground)
     private val messageLabel = Label("Welcome to the bay!", 32.0f)
     private var messageX = 0.0f
     private val possibleMessages = arrayListOf<String>()

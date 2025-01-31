@@ -35,8 +35,8 @@ open class CurrencyLabel(val getAmount: () -> Int, val size: Float) : GUIElement
         label.render(delta, renderer)
 
         renderer.submit(layer) {
-            it.draw(Game.resources.currencyIcon, x + size * 0.45f + 1.5f, y - 1.5f, width = size, height = size, color = Color.BLACK)
-            it.draw(Game.resources.currencyIcon, x + size * 0.45f, y, width = size, height = size)
+            it.draw(Game.textures.currencyIcon, x + size * 0.45f + 1.5f, y - 1.5f, width = size, height = size, color = Color.BLACK)
+            it.draw(Game.textures.currencyIcon, x + size * 0.45f, y, width = size, height = size)
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlin.time.Duration.Companion.seconds
 
 enum class Weapons : Weapon {
     REELGUN {
-        override val previewTexture get() = Game.resources.reelgunPreview
+        override val previewTexture get() = Game.textures.reelgunPreview
         override val price = 0
         override val displayName = "Reelgun"
         override val fireRate = 0.2.seconds
@@ -19,7 +19,7 @@ enum class Weapons : Weapon {
         override val isRandomSpread = true
     },
     HYPER_HARPOON {
-        override val previewTexture get() = Game.resources.hyperHarpoonPreview
+        override val previewTexture get() = Game.textures.hyperHarpoonPreview
         override val price = 500
         override val displayName = "Hyper\nHarpoon"
         override val fireRate = 0.5.seconds
@@ -32,7 +32,7 @@ enum class Weapons : Weapon {
         override val isRandomSpread = false
     },
     BAITBLASTER {
-        override val previewTexture get() = Game.resources.baitblasterPreview
+        override val previewTexture get() = Game.textures.baitblasterPreview
         override val price = 1000
         override val displayName = "Baitblaster"
         override val fireRate = 10.seconds
@@ -45,7 +45,7 @@ enum class Weapons : Weapon {
         override val isRandomSpread = false
     },
     SHOCKMINE {
-        override val previewTexture get() = Game.resources.shockminePreview
+        override val previewTexture get() = Game.textures.shockminePreview
         override val price = 1000
         override val displayName = "Shockmine"
         override val fireRate = 10.seconds

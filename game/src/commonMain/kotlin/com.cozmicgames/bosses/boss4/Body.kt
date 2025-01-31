@@ -19,11 +19,11 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
 
     override val collider = Collider(CircleCollisionShape(width * 0.4f), this)
 
-    override val width get() = Game.resources.boss4body.width * bodyScale * boss.bossScale
+    override val width get() = Game.textures.boss4body.width * bodyScale * boss.bossScale
 
-    override val height get() = Game.resources.boss4body.height * bodyScale * boss.bossScale
+    override val height get() = Game.textures.boss4body.height * bodyScale * boss.bossScale
 
-    override val texture = Game.resources.boss4body.slice()
+    override val texture = Game.textures.boss4body.slice()
 
     override val baseColor get() = boss.camouflageColor
 
@@ -33,7 +33,7 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
     val centerCollider = Collider(CircleCollisionShape(width * 0.7f), this)
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         //boss.paralyze() //TODO: Paralyze?
     }
@@ -46,8 +46,8 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
         boss.impulseSpin = strength * 0.15f
     }
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         val centerColliderOffsetX = 0.0f
         val centerColliderOffsetY = height * 0.5f

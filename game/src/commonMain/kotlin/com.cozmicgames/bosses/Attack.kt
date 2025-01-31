@@ -35,10 +35,10 @@ abstract class Attack {
     }
 
     fun cancel(runAfterAttackListeners: Boolean) {
-        setDone()
-
         if (!runAfterAttackListeners)
             afterAttackActions.clear()
+
+        setDone()
     }
 
     open fun onStart(boss: Boss) {}

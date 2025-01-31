@@ -13,7 +13,7 @@ class Boss2Desc : BossDesc {
 
     override val reward = 400
 
-    override val preview get() = Game.resources.boss2preview
+    override val preview get() = Game.textures.boss2preview
 
     override val fullHealth get() = Boss2.FULL_HEALTH
 

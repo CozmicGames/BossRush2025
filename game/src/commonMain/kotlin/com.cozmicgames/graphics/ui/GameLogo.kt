@@ -54,7 +54,7 @@ class GameLogo : GUIElement() {
 
     private var offsetY = 0.0f
     private val color = MutableColor(1.0f, 1.0f, 1.0f, 0.0f)
-    private val image = Image(Game.resources.logo, color)
+    private val image = Image(Game.textures.logo, color)
     private var stage: Stage? = Stage0()
     private var onFinish: () -> Unit = {}
     private var isAnimationStarted = false
@@ -63,8 +63,8 @@ class GameLogo : GUIElement() {
     init {
         image.getX = { Game.graphics.width * 0.5f - image.width * 0.5f }
         image.getY = { Game.graphics.height * 0.5f - image.height * 0.5f + offsetY }
-        image.getWidth = { Game.resources.logo.width.toFloat() }
-        image.getHeight = { Game.resources.logo.height.toFloat() }
+        image.getWidth = { Game.textures.logo.width.toFloat() }
+        image.getHeight = { Game.textures.logo.height.toFloat() }
     }
 
     fun startAnimation(onFinish: () -> Unit) {

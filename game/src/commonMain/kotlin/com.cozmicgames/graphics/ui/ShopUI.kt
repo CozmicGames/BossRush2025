@@ -8,7 +8,7 @@ import com.cozmicgames.weapons.Weapons
 import kotlin.time.Duration
 
 open class ShopUI : GUIElement() {
-    private val shopBackground = object : NinepatchImage(Game.resources.shopBackgroundNinePatch) {
+    private val shopBackground = object : NinepatchImage(Game.textures.shopBackgroundNinePatch) {
         override var layer: Int
             get() = this@ShopUI.layer
             set(value) {}
@@ -28,7 +28,7 @@ open class ShopUI : GUIElement() {
             get() = this@ShopUI.layer + 2
             set(value) {}
     }
-    private val walletBackground = object : NinepatchImage(Game.resources.walletBackgroundNinePatch) {
+    private val walletBackground = object : NinepatchImage(Game.textures.walletBackgroundNinePatch) {
         override var layer: Int
             get() = this@ShopUI.layer + 1
             set(value) {}

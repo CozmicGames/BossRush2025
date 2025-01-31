@@ -68,7 +68,7 @@ class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDama
         if (boss.isInvulnerable)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         paralyze()
     }

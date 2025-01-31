@@ -18,13 +18,13 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, Pl
 
     override val renderLayer = layer
 
-    override val width get() = Game.resources.boss1heart.width * 2.0f * size
+    override val width get() = Game.textures.boss1heart.width * 2.0f * size
 
-    override val height get() = Game.resources.boss1heart.height * 2.0f * size
+    override val height get() = Game.textures.boss1heart.height * 2.0f * size
 
-    override val collider = Collider(CircleCollisionShape(Game.resources.boss1heart.width * 1.5f), this)
+    override val collider = Collider(CircleCollisionShape(Game.textures.boss1heart.width * 1.5f), this)
 
-    override val texture = Game.resources.boss1heart.slice()
+    override val texture = Game.textures.boss1heart.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
@@ -32,10 +32,11 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, Pl
     private var size = 1.0f
     private var timer = 0.0.seconds
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         timer += delta
 
-        size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f
+        if (!boss.isDead)
+            size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f
 
         collider.x = x
         collider.y = y

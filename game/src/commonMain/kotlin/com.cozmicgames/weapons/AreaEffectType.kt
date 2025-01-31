@@ -10,7 +10,7 @@ enum class AreaEffectType {
 
         override fun render(batch: SpriteBatch, x: Float, y: Float, radius: Float, alpha: Float) {
             val color = Color(BASE_COLOR.r, BASE_COLOR.g, BASE_COLOR.b, alpha * 0.6f)
-            batch.draw(Game.resources.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
+            batch.draw(Game.textures.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
         }
     },
     SHOCKWAVE {
@@ -18,7 +18,7 @@ enum class AreaEffectType {
 
         override fun render(batch: SpriteBatch, x: Float, y: Float, radius: Float, alpha: Float) {
             val color = Color(BASE_COLOR.r, BASE_COLOR.g, BASE_COLOR.b, alpha * 0.6f)
-            batch.draw(Game.resources.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
+            batch.draw(Game.textures.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
         }
     },
     SHOCKWAVE_WITH_DAMAGE {
@@ -26,7 +26,7 @@ enum class AreaEffectType {
 
         override fun render(batch: SpriteBatch, x: Float, y: Float, radius: Float, alpha: Float) {
             val color = Color(BASE_COLOR.r, BASE_COLOR.g, BASE_COLOR.b, alpha * 0.6f)
-            batch.draw(Game.resources.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
+            batch.draw(Game.textures.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
         }
     },
     GRAVITY_WAVE {
@@ -34,7 +34,7 @@ enum class AreaEffectType {
 
         override fun render(batch: SpriteBatch, x: Float, y: Float, radius: Float, alpha: Float) {
             val color = Color(BASE_COLOR.r, BASE_COLOR.g, BASE_COLOR.b, alpha * 0.6f)
-            batch.draw(Game.resources.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
+            batch.draw(Game.textures.shockwave, x, y, originX = radius, originY = radius, width = radius * 2.0f, height = radius * 2.0f, color = color)
         }
     };
 

@@ -13,7 +13,7 @@ import kotlin.time.Duration
 class CreditsState : GameState {
     private lateinit var guiCamera: GUICamera
     private var returnState: GameState = this
-    private val background = Background(Game.resources.background)
+    private val background = Background(Game.textures.background)
     private var transitionIn: Transition? = Transition(fromOpenToClose = false)
     private val transitionOut = Transition(fromOpenToClose = true)
 

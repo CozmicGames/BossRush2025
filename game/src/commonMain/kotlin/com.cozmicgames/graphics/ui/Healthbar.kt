@@ -23,9 +23,9 @@ open class Healthbar(private val difficulty: Difficulty) : GUIElement() {
                 val y = this.y
 
                 if (i < health)
-                    Game.resources.playerHealthIndicatorNinepatch.draw(it, x, y, barWidth, barHeight)
+                    Game.textures.playerHealthIndicatorNinepatch.draw(it, x + barWidth * 0.05f, y, barWidth * 0.9f, barHeight)
                 else
-                    Game.resources.playerHealthEmptyIndicatorNinepatch.draw(it, x, y, barWidth, barHeight)
+                    Game.textures.playerHealthEmptyIndicatorNinepatch.draw(it, x + barWidth * 0.05f, y, barWidth * 0.9f, barHeight)
             }
         }
     }

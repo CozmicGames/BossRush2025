@@ -10,4 +10,9 @@ class Boss4MovementController(boss: Boss4) : BossMovementController(boss, Boss4F
     override val movement = Boss4Movement()
 
     override val previousMovement = Boss4Movement()
+
+    override fun onEndFightAction() {
+        if (boss !is Boss4) return
+        boss.decamouflage(true)
+    }
 }

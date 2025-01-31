@@ -1,5 +1,6 @@
 package com.cozmicgames.states
 
+import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.bosses.boss1.Boss1
@@ -9,16 +10,11 @@ import com.cozmicgames.bosses.boss4.Boss4
 import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.*
 import com.cozmicgames.graphics.ui.*
-import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
-import com.littlekt.math.Vec2f
-import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
-import com.littlekt.math.geom.sine
 import com.littlekt.math.isFuzzyZero
 import kotlin.math.min
-import kotlin.math.round
 import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -48,19 +44,21 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     override fun begin() {
         val player = Game.player
 
+        player.currentFightIndex = Constants.FINAL_FIGHT_INDEX
+
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
-        background = Background(Game.resources.background)
+        background = Background(Game.textures.background)
         transitionIn = Transition(fromOpenToClose = false)
         transitionOut = Transition(fromOpenToClose = true)
 
         startFight(difficulty, false)
 
         transitionIn?.start {
+            ingameUI?.slideIn()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
                 fightStarted = true
-                Game.world.shouldUpdate = true
             }
             transitionIn = null
         }
@@ -108,18 +106,16 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         player.ship.addToWorld()
         player.ship.addToPhysics()
 
-        Game.world.shouldUpdate = false
+        ingameUI = IngameUI(player.ship, difficulty)
 
         if (isRetry) {
+            ingameUI?.slideIn()
             fightStartMessage = FinalFightStartMessage()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
                 fightStarted = true
-                Game.world.shouldUpdate = true
             }
         }
-
-        ingameUI = IngameUI(player.ship, difficulty)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -169,11 +165,10 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
 
         if (!showResults && (bosses.all { it.isDead } || Game.player.ship.isDead)) {
             showResults = true
-            Game.world.shouldUpdate = false
+            ingameUI?.slideOut()
 
             bosses.forEach {
-                if (!it.isDead)
-                    it.movementController.onFailFight()
+                it.movementController.onEndFight()
             }
 
             val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, Game.player.ship.health, Game.player.shootStatistics.shotsFired, Game.player.shootStatistics.shotsHit)

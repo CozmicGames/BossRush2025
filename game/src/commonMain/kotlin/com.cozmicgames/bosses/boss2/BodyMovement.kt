@@ -90,6 +90,16 @@ open class HitBodyMovement(val target: BossTarget?, val smoothFactor: Float) : B
     }
 }
 
+open class KeepBodyMovement : BodyMovement {
+    override fun updateParts(delta: Duration, body: Body) {
+        body.parts.forEach {
+            it.partRotation = lerpAngle(it.partRotation, 0.0.degrees, 0.1f)
+        }
+    }
+
+    override fun reset() {}
+}
+
 open class CompoundBodyMovement(movements: List<BodyMovement> = emptyList()) : BodyMovement {
     private val movements = movements.toMutableList()
 
@@ -135,4 +145,4 @@ class IdleBodyMovement : WaveBodyMovement(3.0.degrees, 1.5f, 0.1f)
 
 class ParalyzedBodyMovement : WaveBodyMovement(2.0.degrees, 0.5f, 0.1f)
 
-class DeadBodyMovement : CurlBodyMovement(30.0.degrees, 0.1f)
+class DeadBodyMovement : KeepBodyMovement()

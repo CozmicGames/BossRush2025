@@ -21,6 +21,12 @@ sealed interface TentacleMovement {
 
 private const val TENTACLE_PARALYZED_FACTOR = 0.05f
 
+class KeepTentacleMovement : TentacleMovement {
+    override fun updateParts(delta: Duration, tentacle: Tentacle) {
+        // Do nothing
+    }
+}
+
 class SwayTentacleMovement(val maxAngle: Angle, val frequency: Float, val smoothFactor: Float) : TentacleMovement {
     private val randomOffset = Game.random.nextFloat() * 2.0f * PI_F
     private var time = 0.0.seconds
@@ -209,7 +215,6 @@ class IdleTentacleMovement : CompoundTentacleMovement(
 
 class DeadTentacleMovement : CompoundTentacleMovement(
     listOf(
-        SwayTentacleMovement(15.0.degrees, 0.1f, 0.2f),
-        HangTentacleMovement()
+        KeepTentacleMovement()
     )
 )

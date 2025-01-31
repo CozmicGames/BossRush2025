@@ -40,7 +40,7 @@ class BayState(isFreePlay: Boolean = false) : GameState {
             set(value) {}
     }
 
-    private val background = Background(Game.resources.background)
+    private val background = Background(Game.textures.background)
     private var transitionIn: Transition? = Transition(fromOpenToClose = false)
     private val transitionOut = Transition(fromOpenToClose = true)
     private val borderIndicator = BorderIndicator()
@@ -60,8 +60,8 @@ class BayState(isFreePlay: Boolean = false) : GameState {
         shop.getX = { Game.graphics.width - shop.width }
         shop.getY = { 0.0f }
 
-        Game.resources.baySound.play(0.4f)
-        Game.resources.themeSound.play(0.5f, true)
+        Game.audio.baySound.play(0.4f)
+        Game.audio.themeSound.play(0.5f, true)
 
         transitionIn?.start {
             canInteract = true

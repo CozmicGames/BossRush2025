@@ -5,6 +5,7 @@ import com.cozmicgames.bosses.*
 class Boss1Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss1BossMovement()
     var tentacleMovement: TentacleMovement = IdleTentacleMovement()
+
     var beakMovement: BeakMovement = IdleBeakMovement()
 
     override fun set(movement: Movement) {

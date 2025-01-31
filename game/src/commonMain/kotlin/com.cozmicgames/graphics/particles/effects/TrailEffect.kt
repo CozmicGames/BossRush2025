@@ -5,9 +5,6 @@ import com.cozmicgames.Game
 import com.cozmicgames.graphics.particles.ParticleEffect
 import com.cozmicgames.utils.toHsv
 import com.littlekt.graphics.Color
-import com.littlekt.graphics.MutableColor
-import com.littlekt.graphics.toRgba8888
-import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -74,6 +71,11 @@ class TrailEffect() : ParticleEffect() {
 
         if (currentPlayerShipX != previousPlayerShipX || currentPlayerShipY != previousPlayerShipY)
             shouldSpawn = true
+
+        if (shouldSpawn && !Game.audio.enginesSound.isLooping)
+            Game.audio.enginesSound.play(0.4f, true)
+        else if (!shouldSpawn)
+            Game.audio.enginesSound.stop()
 
         previousPlayerShipX = currentPlayerShipX
         previousPlayerShipY = currentPlayerShipY

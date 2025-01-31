@@ -43,11 +43,11 @@ open class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
         overlayColor.set(OVERLAY_CANT_USE_COLOR).mix(OVERLAY_NORMAL_COLOR, cooldown.currentValue, overlayColor)
 
         renderer.submit(layer) {
-            val background = Game.resources.weaponBackgroundNinePatch
+            val background = Game.textures.weaponBackgroundNinePatch
             background.draw(it, x, y, width, height)
             it.draw(weapon.previewTexture, x + width * 0.15f, y + width * 0.15f, width = width * 0.7f, height = height * 0.7f)
 
-            val selectionBackground = Game.resources.weaponSelectedNinePatch
+            val selectionBackground = Game.textures.weaponSelectedNinePatch
             val color = when (type) {
                 Type.PRIMARY -> PRIMARY_COLOR
                 Type.SECONDARY -> SECONDARY_COLOR
@@ -55,7 +55,7 @@ open class FightWeaponSlot(val weapon: Weapon, val type: Type) : GUIElement() {
 
             selectionBackground.draw(it, x, y, width, height, color = color)
 
-            Game.resources.weaponMaskNinePatch.draw(it, x, y, width, height, color = overlayColor)
+            Game.textures.weaponMaskNinePatch.draw(it, x, y, width, height, color = overlayColor)
 
         }
 

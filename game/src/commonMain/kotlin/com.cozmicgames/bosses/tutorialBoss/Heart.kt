@@ -18,15 +18,15 @@ class Heart(private val boss: TutorialBoss, layer: Int) : EnemyPart("bossTutoria
 
     override val renderLayer = layer
 
-    override val width get() = Game.resources.boss1heart.width * 2.0f * size
+    override val width get() = Game.textures.boss1heart.width * 2.0f * size
 
-    override val height get() = Game.resources.boss1heart.height * 2.0f * size
+    override val height get() = Game.textures.boss1heart.height * 2.0f * size
 
     override val flipX get() = boss.isFlipped
 
-    override val collider = Collider(CircleCollisionShape(Game.resources.boss1heart.width * 1.7f), this)
+    override val collider = Collider(CircleCollisionShape(Game.textures.boss1heart.width * 1.7f), this)
 
-    override val texture = Game.resources.boss1heart.slice()
+    override val texture = Game.textures.boss1heart.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
@@ -34,7 +34,7 @@ class Heart(private val boss: TutorialBoss, layer: Int) : EnemyPart("bossTutoria
     private var size = 1.0f
     private var timer = 0.0.seconds
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         timer += delta
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f

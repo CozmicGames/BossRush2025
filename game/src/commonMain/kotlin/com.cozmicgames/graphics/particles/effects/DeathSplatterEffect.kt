@@ -17,8 +17,8 @@ class DeathSplatterEffect() : ParticleEffect() {
         private const val MIN_BRIGHTNESS = 0.6f
         private const val MAX_BRIGHTNESS = 1.2f
 
-        private const val MIN_ALPHA = 0.3f
-        private const val MAX_ALPHA = 0.7f
+        private const val MIN_ALPHA = 0.8f
+        private const val MAX_ALPHA = 1.0f
 
         private const val MIN_SIZE = 15.0f
         private const val MAX_SIZE = 25.0f
@@ -26,10 +26,10 @@ class DeathSplatterEffect() : ParticleEffect() {
         private val MIN_LIFETIME = 3.0.seconds
         private val MAX_LIFETIME = 5.0.seconds
 
-        private val MIN_SPEED = 200.0f
-        private val MAX_SPEED = 250.0f
+        private val MIN_SPEED = 100.0f
+        private val MAX_SPEED = 200.0f
 
-        private val SPREAD = 120.0.degrees
+        private val SPREAD = 110.0.degrees
     }
 
     constructor(x: Float, y: Float, direction: Angle): this() {
@@ -71,7 +71,7 @@ class DeathSplatterEffect() : ParticleEffect() {
         }
 
         if (isFirstUpdate) {
-            repeat(10) {
+            repeat(50) {
                 spawn()
             }
 

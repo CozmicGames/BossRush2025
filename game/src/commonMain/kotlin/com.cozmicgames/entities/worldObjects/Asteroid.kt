@@ -11,7 +11,7 @@ import com.littlekt.math.geom.sine
 import com.littlekt.util.seconds
 import kotlin.time.Duration
 
-class AsteroidWorldObject(index: Int) : WorldObject("asteroid$index"), PlayerDamageSource {
+class Asteroid(index: Int) : WorldObject("asteroid$index"), PlayerDamageSource {
     companion object {
         private const val MIN_SIZE = 32.0f
         private const val MAX_SIZE = 128.0f
@@ -28,6 +28,8 @@ class AsteroidWorldObject(index: Int) : WorldObject("asteroid$index"), PlayerDam
 
     override val damageSourceX get() = x
     override val damageSourceY get() = y
+
+    override var canDamage = false
 
     var size = 0.0f
 
@@ -52,7 +54,9 @@ class AsteroidWorldObject(index: Int) : WorldObject("asteroid$index"), PlayerDam
         collider = Collider(CircleCollisionShape(size * 0.5f), this)
     }
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        canDamage = isFighting
+
         rotation += rotationSpeed.degrees * delta.seconds
 
         x += directionX * speed * delta.seconds
@@ -63,7 +67,7 @@ class AsteroidWorldObject(index: Int) : WorldObject("asteroid$index"), PlayerDam
 
     override fun render(renderer: Renderer) {
         renderer.submit(RenderLayers.ASTEROIDS) {
-            it.draw(Game.resources.asteroid0, x, y, size * 0.5f, size * 0.5f, width = size, height = size, rotation = rotation)
+            it.draw(Game.textures.asteroid0, x, y, size * 0.5f, size * 0.5f, width = size, height = size, rotation = rotation)
         }
     }
 }

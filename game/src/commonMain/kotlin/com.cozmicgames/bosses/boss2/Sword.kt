@@ -12,15 +12,15 @@ import kotlin.math.sqrt
 class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2sword"), PlayerDamageSource, ProjectileSource, Hittable {
     override val renderLayer = layer
 
-    override val width = Game.resources.boss2sword.width * scale
+    override val width = Game.textures.boss2sword.width * scale
 
-    override val height = Game.resources.boss2sword.height * scale
+    override val height = Game.textures.boss2sword.height * scale
 
     override val flipX get() = boss.isFlipped
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.4f), this)
 
-    override var texture = Game.resources.boss2sword.slice()
+    override var texture = Game.textures.boss2sword.slice()
 
     override val damageSourceX get() = boss.x
 
@@ -45,6 +45,6 @@ class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
     }
 }

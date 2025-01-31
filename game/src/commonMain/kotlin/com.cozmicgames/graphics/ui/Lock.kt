@@ -24,12 +24,12 @@ open class Lock : GUIElement() {
     private var onAnimationFinish: () -> Unit = {}
     private var shackleOffset = 0.0f
 
-    private val body = object : Image(Game.resources.lockBody, color) {
+    private val body = object : Image(Game.textures.lockBody, color) {
         override var layer: Int
             get() = this@Lock.layer + 1
             set(value) {}
     }
-    private val shackle = object : Image(Game.resources.lockShackle, color) {
+    private val shackle = object : Image(Game.textures.lockShackle, color) {
         override var layer: Int
             get() = this@Lock.layer
             set(value) {}

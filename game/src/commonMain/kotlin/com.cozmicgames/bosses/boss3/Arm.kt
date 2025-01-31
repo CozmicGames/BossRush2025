@@ -41,7 +41,7 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     init {
         val parts = arrayListOf<ArmPart>()
 
-        parts.add(ArmPart(this, null, flip, 0, Game.resources.boss3arm, scale, layer))
+        parts.add(ArmPart(this, null, flip, 0, Game.textures.boss3arm, scale, layer))
         parts.add(Claw(this, parts[0], flip, 0, scale * 1.5f, layer))
 
         this.parts = parts
@@ -79,7 +79,7 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
         if (boss.isInvulnerable)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         paralyze()
     }

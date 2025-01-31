@@ -69,7 +69,7 @@ class Tail(val boss: Boss4, val scale: Float, val layer: Int) : Hittable, Player
         if (boss.isInvulnerable)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         paralyze()
     }

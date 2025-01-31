@@ -1,6 +1,5 @@
 package com.cozmicgames.bosses.boss3
 
-import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
@@ -36,8 +35,12 @@ open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean,
     private val halfHeight get() = height * 0.5f
 
     var armRotation = 0.0.degrees
+        set(value) {
+            if (value < 90.0.degrees && value > (-90.0).degrees)
+                field = value
+        }
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val armRotation = if (flip) -armRotation else armRotation
 
         val parentRotation = parent?.rotation ?: arm.armAngle

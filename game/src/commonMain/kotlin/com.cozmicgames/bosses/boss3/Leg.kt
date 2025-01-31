@@ -30,9 +30,9 @@ class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     init {
         val parts = arrayListOf<LegPart>()
         val textures = arrayOf(
-            Game.resources.boss3legUpper,
-            Game.resources.boss3legLower,
-            Game.resources.boss3foot
+            Game.textures.boss3legUpper,
+            Game.textures.boss3legLower,
+            Game.textures.boss3foot
         )
 
         repeat(3) {
@@ -71,7 +71,7 @@ class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         paralyze()
     }

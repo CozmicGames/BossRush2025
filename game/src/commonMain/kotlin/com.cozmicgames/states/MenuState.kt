@@ -26,7 +26,7 @@ class MenuState() : GameState {
 
     override fun begin() {
         guiCamera = GUICamera()
-        background = Background(Game.resources.background)
+        background = Background(Game.textures.background)
         transitionOut = Transition(fromOpenToClose = true)
         logo = GameLogo()
 

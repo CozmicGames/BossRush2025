@@ -49,10 +49,10 @@ class Vortex {
         val numLayers = 35
 
         val textures = arrayOf(
-            Game.resources.vortex0,
-            Game.resources.vortex1,
-            Game.resources.vortex2,
-            Game.resources.vortex3
+            Game.textures.vortex0,
+            Game.textures.vortex1,
+            Game.textures.vortex2,
+            Game.textures.vortex3
         )
 
         repeat(numLayers) {
@@ -78,7 +78,7 @@ class Vortex {
         if (size > 0.0f) {
             renderer.submit(RenderLayers.VORTEX) {
                 val baseSize = size * 0.7f
-                it.draw(Game.resources.vortexBase, x, y, baseSize * 0.5f, baseSize * 0.5f, baseSize, baseSize, color = BASE_COLOR)
+                it.draw(Game.textures.vortexBase, x, y, baseSize * 0.5f, baseSize * 0.5f, baseSize, baseSize, color = BASE_COLOR)
             }
 
             for (layer in layers) {

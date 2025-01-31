@@ -19,13 +19,13 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
 
     override val renderLayer = layer
 
-    override val width = Game.resources.boss3head.width * scale
+    override val width = Game.textures.boss3head.width * scale
 
-    override val height = Game.resources.boss3head.height * scale
+    override val height = Game.textures.boss3head.height * scale
 
     override val collider = Collider(getRectangleCollisionShape(0.5f, 0.3f), this)
 
-    override var texture = Game.resources.boss3head.slice()
+    override var texture = Game.textures.boss3head.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
@@ -38,8 +38,8 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
 
     val blockingCollider = Collider(getRectangleCollisionShape(0.9f, 0.3f), null)
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         val cos = rotation.cosine
         val sin = rotation.sine
@@ -64,7 +64,7 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         boss.paralyze()
     }

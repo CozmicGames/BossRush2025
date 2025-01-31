@@ -12,7 +12,7 @@ import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Float, layer: Int) : ArmPart(arm, parent, flip, index, Game.resources.boss3clawBase, partScale, layer), ProjectileSource, GrabbingObject {
+class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Float, layer: Int) : ArmPart(arm, parent, flip, index, Game.textures.boss3clawBase, partScale, layer), ProjectileSource, GrabbingObject {
     companion object {
         private val GRAB_COOLDOWN = 2.0.seconds
     }
@@ -58,8 +58,8 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
     private var grabbedObject: Grabbable? = null
     private var grabCooldown = 0.0.seconds
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         upperClawPart.rotation = rotation - clawAngle * 0.2f
         lowerClawPart.rotation = rotation + clawAngle * 0.8f
@@ -113,9 +113,5 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
             grabbedObject = null
             grabCooldown = GRAB_COOLDOWN
         }
-    }
-
-    fun update(delta: Duration, movement: ClawMovement) {
-        movement.updateClaw(delta, this)
     }
 }

@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.entities.Entity
 import com.cozmicgames.entities.worldObjects.AreaEffectSource
+import com.cozmicgames.entities.worldObjects.animations.DeadAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
@@ -76,6 +77,7 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     override val isParalyzed get() = isParalyzedTimer > 0.0.seconds
 
     val camouflageColor = MutableColor(Color.WHITE)
+    val eyesCamouflageColor = MutableColor(Color.WHITE)
     var camouflageFactor = 0.0f
 
     val isCamouflaged get() = camouflageFactor > 0.0f
@@ -184,7 +186,7 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         Game.physics.removeHittable(heart)
     }
 
-    override fun update(delta: Duration, fightStarted: Boolean) {
+    override fun update(delta: Duration, isFighting: Boolean) {
         isInvulnerableTimer -= delta
         if (isInvulnerableTimer <= 0.0.seconds)
             isInvulnerableTimer = 0.0.seconds
@@ -219,7 +221,8 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         else if (vortex.size > vortexTargetSize)
             vortex.size = vortexTargetSize
 
-        Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.8f, camouflageColor)
+        Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.9f, camouflageColor)
+        Color.WHITE.mix(Color.CLEAR, camouflageFactor * 0.5f, eyesCamouflageColor)
 
         impulseX *= 1.0f - delta.seconds
         impulseY *= 1.0f - delta.seconds
@@ -238,11 +241,9 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         y += impulseY * delta.seconds * 300.0f
         rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-        if (fightStarted) {
-            movementController.update(delta)
-            beak.update(delta, movementController.movement.beakMovement)
-            tail.update(delta, movementController.movement.tailMovement)
-        }
+        movementController.update(delta, isFighting)
+        beak.update(delta, movementController.movement.beakMovement)
+        tail.update(delta, movementController.movement.tailMovement)
 
         val cos = rotation.cosine
         val sin = rotation.sine
@@ -354,7 +355,7 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         if (isInvulnerable || health <= 0)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
@@ -369,13 +370,13 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             removeFromPhysics()
             decamouflage()
             closeVortex(0.5.seconds)
-            movementController.onDeath()
 
             if (isFinalBattle) {
-                eyes.texture = Game.resources.boss4eyesDead.slice()
+                eyes.texture = Game.textures.boss4eyesDead.slice()
 
                 Game.world.remove(heart)
                 Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                addEntityAnimation { DeadAnimation() }
             }
         } else {
             tail.unparalyze()
@@ -427,8 +428,8 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     fun decamouflage(immidiate: Boolean = false) {
-        if (!isCamouflaged)
-            return
+        //if (!isCamouflaged)
+        //    return
 
         if (immidiate) {
             camouflageTimer = 0.0.seconds
@@ -440,8 +441,8 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     fun openVortex(x: Float, y: Float, size: Float, duration: Duration, callback: () -> Unit = {}) {
-        if (isVortexOpen)
-            return
+        //if (isVortexOpen)
+        //    return
 
         vortex.x = x
         vortex.y = y
@@ -453,8 +454,8 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
     }
 
     fun closeVortex(duration: Duration) {
-        if (!isVortexOpen)
-            return
+        //if (!isVortexOpen)
+        //    return
 
         if (duration == 0.0.seconds) {
             vortexTimer = 0.0.seconds

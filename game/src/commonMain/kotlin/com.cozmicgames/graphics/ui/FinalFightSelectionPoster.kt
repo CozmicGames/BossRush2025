@@ -128,7 +128,7 @@ open class FinalFightSelectionPoster(var isUnlocked: Boolean, onSelect: (Int, Di
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         renderer.submit(layer) {
-            Game.resources.fightSelectionPosterNinePatch.draw(it, x, y, width, height)
+            Game.textures.fightSelectionPosterNinePatch.draw(it, x, y, width, height)
         }
 
         nameLabel.render(delta, renderer)

@@ -17,8 +17,6 @@ class World {
         return targets.filter { it.appeal == highestAppeal }.random()
     }
 
-    var shouldUpdate = false
-
     fun add(worldObject: WorldObject) {
         objects += worldObject
         worldObject.onAddToWorld()
@@ -45,12 +43,9 @@ class World {
         bossTargetsInternal.clear()
     }
 
-    fun update(delta: Duration, fightStarted: Boolean) {
-        if (!shouldUpdate)
-            return
-
+    fun update(delta: Duration, isFighting: Boolean) {
         for (entity in objects) {
-            entity.update(delta, fightStarted)
+            entity.update(delta, isFighting)
         }
     }
 

@@ -46,11 +46,11 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
 
     override val collider = if (index < Constants.BOSS2_BODY_PARTS - 1) Collider(getRectangleCollisionShape(scaleY = COLLIDER_SCALES[index]), body) else null
 
-    override val texture = Game.resources.boss2bodySlices[index]
+    override val texture = Game.textures.boss2bodySlices[index]
 
-    override val width get() = Game.resources.boss2body.width * body.scale / Constants.BOSS2_BODY_PARTS
+    override val width get() = Game.textures.boss2body.width * body.scale / Constants.BOSS2_BODY_PARTS
 
-    override val height get() = Game.resources.boss2body.height * body.scale
+    override val height get() = Game.textures.boss2body.height * body.scale
 
     override val flipX get() = body.boss.isFlipped
 
@@ -60,7 +60,7 @@ class BodyPart(val body: Body, val parent: BodyPart? = null, val index: Int, lay
 
     var partRotation = 0.0.degrees
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val partRotation = if (body.boss.isFlipped) -partRotation else partRotation
 
         val parentRotation = parent?.rotation ?: body.rotation

@@ -19,19 +19,19 @@ class Head(private val boss: Boss4, private val headScale: Float, layer: Int) : 
 
     override val collider = Collider(CircleCollisionShape(width * 0.4f), this)
 
-    override val width get() = Game.resources.boss4head.width * headScale * boss.bossScale
+    override val width get() = Game.textures.boss4head.width * headScale * boss.bossScale
 
-    override val height get() = Game.resources.boss4head.height * headScale * boss.bossScale
+    override val height get() = Game.textures.boss4head.height * headScale * boss.bossScale
 
-    override val texture = Game.resources.boss4head.slice()
+    override val texture = Game.textures.boss4head.slice()
 
     override val baseColor get() = boss.camouflageColor
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         val colliderOffsetX = 0.0f
         val colliderOffsetY = height * 0.09f
@@ -47,7 +47,7 @@ class Head(private val boss: Boss4, private val headScale: Float, layer: Int) : 
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         boss.paralyze()
     }

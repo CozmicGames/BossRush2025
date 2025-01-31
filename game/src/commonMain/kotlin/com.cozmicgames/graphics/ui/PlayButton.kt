@@ -6,7 +6,7 @@ import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 
 open class PlayButton(difficulty: Difficulty, onClick: () -> Unit) : IconButton(
-    Game.resources.playIcon, when (difficulty) {
+    Game.textures.playIcon, when (difficulty) {
         Difficulty.EASY -> Color.fromHex("33984b")
         Difficulty.NORMAL -> Color.fromHex("ffdd25")
         Difficulty.HARD -> Color.fromHex("d31321")

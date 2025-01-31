@@ -4,7 +4,6 @@ import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.TutorialStage
 import com.cozmicgames.bosses.Boss
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
@@ -141,7 +140,7 @@ class TutorialBoss : Boss {
         Game.physics.removeCollider(tail.collider)
     }
 
-    override fun update(delta: Duration, fightStarted: Boolean) {
+    override fun update(delta: Duration, isFighting: Boolean) {
         impulseX *= 1.0f - delta.seconds
         impulseY *= 1.0f - delta.seconds
         impulseSpin *= 1.0f - delta.seconds * 1.05f
@@ -167,8 +166,8 @@ class TutorialBoss : Boss {
         if (!isParalyzed && !movementController.isAttacking && !playerIsInView)
             flip()
 
-        if (fightStarted) {
-            movementController.update(delta)
+        if (isFighting) {
+            movementController.update(delta, isFighting)
             body.update(delta, movementController.movement.bodyMovement)
             mouth.update(delta, movementController.movement.mouthMovement)
         }
@@ -270,7 +269,7 @@ class TutorialBoss : Boss {
         if (health <= 0)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
@@ -278,14 +277,12 @@ class TutorialBoss : Boss {
         health--
         if (health < 0) health = 0
 
-        eyes.texture = Game.resources.bossTutorialEyesDead.slice()
+        eyes.texture = Game.textures.bossTutorialEyesDead.slice()
 
         movementController.onHit()
 
-        if (health <= 0) {
+        if (health <= 0)
             removeFromPhysics()
-            movementController.onDeath()
-        }
     }
 
     fun addEntityAnimation(block: () -> WorldObjectAnimation) {

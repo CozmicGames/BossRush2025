@@ -71,7 +71,7 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
     }
 
     fun unlock() {
-        Game.resources.unlockSound.play()
+        Game.audio.unlockSound.play()
         Game.player.unlockedWeaponIndices += Weapons.entries.indexOf(weapon)
         isUnlocking = true
         lock?.startUnlockAnimation {
@@ -91,7 +91,7 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
         val isHovered = Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
 
         if (!wasHovered && isHovered)
-            Game.resources.hoverSound.play(0.1f)
+            Game.audio.hoverSound.play(0.1f)
 
         wasHovered = isHovered
 
@@ -100,22 +100,22 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
             val isClickedSecondary = (Game.input.isJustTouched(Pointer.MOUSE_MIDDLE) || Game.input.isJustTouched(Pointer.MOUSE_RIGHT)) && isHovered
 
             if (isClickedPrimary) {
-                Game.resources.selectPrimarySound.play()
+                Game.audio.selectPrimarySound.play()
                 selectionState = SelectionState.PRIMARY
                 Game.player.primaryWeapon = weapon
             } else if (isClickedSecondary) {
-                Game.resources.selectSecondarySound.play()
+                Game.audio.selectSecondarySound.play()
                 selectionState = SelectionState.SECONDARY
                 Game.player.secondaryWeapon = weapon
             }
 
             renderer.submit(layer) {
-                val background = if (isHovered) Game.resources.weaponBackgroundHoveredNinePatch else Game.resources.weaponBackgroundNinePatch
+                val background = if (isHovered) Game.textures.weaponBackgroundHoveredNinePatch else Game.textures.weaponBackgroundNinePatch
                 background.draw(it, x, y, width, height)
                 it.draw(weapon.previewTexture, x + width * 0.15f, y + width * 0.15f, width = width * 0.7f, height = height * 0.7f)
 
                 if (selectionState != SelectionState.UNSELECTED) {
-                    val selectionBackground = Game.resources.weaponSelectedNinePatch
+                    val selectionBackground = Game.textures.weaponSelectedNinePatch
                     val color = if (selectionState == SelectionState.PRIMARY) PRIMARY_COLOR else SECONDARY_COLOR
 
                     selectionBackground.draw(it, x, y, width, height, color = color)
@@ -123,13 +123,13 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
             }
         } else {
             renderer.submit(layer) {
-                val background = if (isHovered) Game.resources.weaponBackgroundHoveredNinePatch else Game.resources.weaponBackgroundNinePatch
+                val background = if (isHovered) Game.textures.weaponBackgroundHoveredNinePatch else Game.textures.weaponBackgroundNinePatch
                 background.draw(it, x, y, width, height)
                 it.draw(weapon.previewTexture, x + width * 0.15f, y + width * 0.15f, width = width * 0.7f, height = height * 0.7f)
 
                 overlayColor.mix(Color.WHITE, 0.2f, overlayColor)
 
-                Game.resources.weaponMaskNinePatch.draw(it, x, y, width, height, color = MutableColor(lock?.color ?: Color.WHITE).mul(overlayColor).mix(Color(0.3f, 0.3f, 0.3f, 0.5f), 0.7f))
+                Game.textures.weaponMaskNinePatch.draw(it, x, y, width, height, color = MutableColor(lock?.color ?: Color.WHITE).mul(overlayColor).mix(Color(0.3f, 0.3f, 0.3f, 0.5f), 0.7f))
             }
 
             val isClicked = Game.input.isJustTouched(Pointer.MOUSE_LEFT) && isHovered

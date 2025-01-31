@@ -6,7 +6,6 @@ import com.cozmicgames.bosses.tutorialBoss.TutorialBoss
 import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.*
 import com.cozmicgames.graphics.ui.*
-import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.Weapons
 import com.littlekt.math.geom.abs
@@ -133,7 +132,6 @@ class TutorialState() : GameState {
             Game.player.tutorialStage = TutorialStage.END.ordinal
             nextMessage = EndMessage()
             nextMessageTimer = 1.0.seconds
-            Game.world.shouldUpdate = false
         }
     }
 
@@ -170,6 +168,7 @@ class TutorialState() : GameState {
     private var ingameUI: IngameUI? = null
 
     private var shouldUpdate = false
+    private var isFighting = false
 
     private val asteroids = AsteroidManager(Difficulty.EASY, 300)
     private var returnState: GameState = this
@@ -184,7 +183,7 @@ class TutorialState() : GameState {
 
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
-        background = Background(Game.resources.background)
+        background = Background(Game.textures.background)
         transitionIn = Transition(false)
         transitionOut = Transition(true)
 
@@ -206,13 +205,12 @@ class TutorialState() : GameState {
         player.ship.addToWorld()
         player.ship.addToPhysics()
 
-        Game.world.shouldUpdate = true
-
         ingameUI = IngameUI(player.ship, Difficulty.EASY)
 
         transitionIn?.start {
             nextMessage = MoveMessage()
             transitionIn = null
+            isFighting = true
         }
     }
 
@@ -243,10 +241,10 @@ class TutorialState() : GameState {
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
 
-        boss.update(delta, true)
-        asteroids.update(delta, true)
+        boss.update(delta, isFighting)
+        asteroids.update(delta, isFighting)
         Game.particles.update(delta)
-        Game.world.update(delta, true)
+        Game.world.update(delta, isFighting)
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
 
         nextMessageTimer -= delta
@@ -292,7 +290,7 @@ class TutorialState() : GameState {
         pass.render(Game.graphics.mainViewport.camera) { renderer: Renderer ->
             if (player.indicatorColor.a > 0.0f)
                 renderer.submit(RenderLayers.BORDER_INDICATOR) {
-                    it.draw(Game.resources.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
+                    it.draw(Game.textures.borderIndicator, -Game.graphics.width.toFloat() * 0.5f, -Game.graphics.height.toFloat() * 0.5f, width = Game.graphics.width.toFloat(), height = Game.graphics.height.toFloat(), color = player.indicatorColor)
                 }
         }
 

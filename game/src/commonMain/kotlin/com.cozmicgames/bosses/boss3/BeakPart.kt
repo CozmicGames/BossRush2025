@@ -14,11 +14,11 @@ import kotlin.time.Duration
 class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPart("boss3beak${if (left) "left" else "right"}"), ProjectileSource {
     override val renderLayer = layer
 
-    override val texture = Game.resources.boss1beak.slice()
+    override val texture = Game.textures.boss1beak.slice()
 
-    override val width get() = Game.resources.boss1beak.width * beak.beakScale
+    override val width get() = Game.textures.boss1beak.width * beak.beakScale
 
-    override val height get() = Game.resources.boss1beak.height * beak.beakScale
+    override val height get() = Game.textures.boss1beak.height * beak.beakScale
 
     override val flipX get() = !left
 
@@ -30,7 +30,7 @@ class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPar
     override val projectileSourceId = "boss3"
     override val isStunMode = false
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
         val pivotY = beak.y
 

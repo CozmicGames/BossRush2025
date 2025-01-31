@@ -14,7 +14,7 @@ import kotlin.time.Duration
 class ClawPart(val claw: Claw, private val flip: Boolean, private val isUpper: Boolean, private val partScale: Float, layer: Int) : EnemyPart("boss3claw${if (isUpper) "upper" else "lower"}"), ProjectileSource {
     override val renderLayer = layer - 1
 
-    override var texture = if (isUpper) Game.resources.boss3clawUpper.slice() else Game.resources.boss3clawLower.slice()
+    override var texture = if (isUpper) Game.textures.boss3clawUpper.slice() else Game.textures.boss3clawLower.slice()
 
     override val width get() = texture.width * partScale
 
@@ -30,7 +30,7 @@ class ClawPart(val claw: Claw, private val flip: Boolean, private val isUpper: B
     override val projectileSourceId = "boss3"
     override val isStunMode = false
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val pivotOffsetX = (if (isUpper) claw.width * 0.48f else claw.width * 0.27f) * (if (flip) -1.0f else 1.0f)
         val pivotOffsetY = (if (isUpper) claw.height * 0.18f else -claw.height * 0.25f)
 

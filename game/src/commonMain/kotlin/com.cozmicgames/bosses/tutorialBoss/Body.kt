@@ -65,7 +65,7 @@ class Body(val boss: TutorialBoss, val scale: Float, layer: Int) : Hittable, Pla
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         paralyze()
     }

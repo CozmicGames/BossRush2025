@@ -33,37 +33,37 @@ class ResultPanel(private val results: FightResults) {
 
     private val titleLabel = object : Label(if (results.isVictory) "Catched!" else "Failed!", 72.0f) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val resultsDivider = object : Divider() {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val durationLabel = object : ResultDurationLabel(results.duration) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val damageResultLabel = object : ResultLabel("Damage", "${ceil(results.bossDamage * 100).toInt()} %") {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val healthResultLabel = object : ResultLabel("Health", "${ceil(results.playerHealth * 100).toInt()} %") {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val accuracyResultLabel = object : ResultLabel("Accuracy", "${ceil(results.accuracy * 100).toInt()} %") {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val messageLabel = object : ResultMessageLabel(results.message) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val ratingBanner = object : RatingBanner(results.totalPoints, {
@@ -71,45 +71,45 @@ class ResultPanel(private val results: FightResults) {
         messageLabel.startAnimation()
     }) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val returnLabel = object : Label("Return", 32.0f) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val retryLabel = object : Label("Retry", 32.0f) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val returnButton = object : ReturnButton({
         resultState = ResultState.RETURN
     }) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val playEasyButton = object : PlayButton(Difficulty.EASY, {
         resultState = ResultState.RETRY_EASY
     }) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val playNormalButton = object : PlayButton(Difficulty.NORMAL, {
         resultState = ResultState.RETRY_NORMAL
     }) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
     private val playHardButton = object : PlayButton(Difficulty.HARD, {
         resultState = ResultState.RETRY_HARD
     }) {
         override var layer: Int
-            get() = RenderLayers.UI + 1
+            get() = RenderLayers.UI + 1000
             set(value) {}
     }
 
@@ -200,8 +200,8 @@ class ResultPanel(private val results: FightResults) {
         }
 
         renderer.submit(RenderLayers.UI) {
-            Game.resources.resultBackgroundNinePatch.draw(it, x, y, width, height)
-            Game.resources.ratingBackgroundNinePatch.draw(it, x + width * 0.1f, y + height * 0.5f, width * 0.8f, height * 0.315f)
+            Game.textures.resultBackgroundNinePatch.draw(it, x, y, width, height)
+            Game.textures.ratingBackgroundNinePatch.draw(it, x + width * 0.1f, y + height * 0.5f, width * 0.8f, height * 0.315f)
         }
 
         titleLabel.render(delta, renderer)

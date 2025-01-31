@@ -30,7 +30,7 @@ open class HighscoreUI : GUIElement() {
                 get() = this@HighscoreEntry.layer + 1
                 set(value) {}
         }
-        val difficultyIcon = object : Image(Game.resources.playIcon, difficultyIconColor) {
+        val difficultyIcon = object : Image(Game.textures.playIcon, difficultyIconColor) {
             override var layer: Int
                 get() = this@HighscoreEntry.layer + 1
                 set(value) {}
@@ -78,7 +78,7 @@ open class HighscoreUI : GUIElement() {
 
         override fun renderElement(delta: Duration, renderer: Renderer) {
             renderer.submit(layer) {
-                Game.resources.highscoreBackgroundNinePatch.draw(it, x, y, width, height)
+                Game.textures.highscoreBackgroundNinePatch.draw(it, x, y, width, height)
             }
 
             val place = places[place]
@@ -159,7 +159,7 @@ open class HighscoreUI : GUIElement() {
         this.places[2] = places.getOrNull(2)
 
         renderer.submit(layer) {
-            Game.resources.crewBackgroundNinePatch.draw(it, Game.graphics.width - 380.0f, 0.0f, 360.0f, 220.0f)
+            Game.textures.crewBackgroundNinePatch.draw(it, Game.graphics.width - 380.0f, 0.0f, 360.0f, 220.0f)
         }
 
         highscoreEntries.forEach {

@@ -9,9 +9,11 @@ class Eyes(private val boss: Boss4, private val eyesScale: Float, layer: Int) : 
 
     override val collider = null
 
-    override val width get() = Game.resources.boss4eyes.width * eyesScale * boss.bossScale
+    override val width get() = Game.textures.boss4eyes.width * eyesScale * boss.bossScale
 
-    override val height get() = Game.resources.boss4eyes.height * eyesScale * boss.bossScale
+    override val height get() = Game.textures.boss4eyes.height * eyesScale * boss.bossScale
 
-    override var texture = Game.resources.boss4eyes.slice()
+    override var texture = Game.textures.boss4eyes.slice()
+
+    override val baseColor get() = boss.eyesCamouflageColor
 }

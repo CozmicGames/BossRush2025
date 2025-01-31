@@ -5,7 +5,7 @@ import com.cozmicgames.bosses.*
 class Boss3Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss3BossMovement()
     var beakMovement: BeakMovement = IdleBeakMovement()
-    var legMovement: LegMovement = DefendLegMovement()
+    var legMovement: LegMovement = IdleLegMovement()
     var armMovement: ArmMovement = IdleArmMovement()
 
     override fun set(movement: Movement) {
@@ -28,6 +28,7 @@ class Boss3Movement : Movement {
     override fun setToParalyzed(boss: Boss) {
         bossMovement = ParalyzedBossMovement(boss.rotation)
         beakMovement = ParalyzedBeakMovement()
+        armMovement = ParalyzedArmMovement()
     }
 
     override fun setToFail(boss: Boss) {

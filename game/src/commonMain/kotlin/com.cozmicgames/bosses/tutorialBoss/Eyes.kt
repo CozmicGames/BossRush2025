@@ -9,11 +9,11 @@ class Eyes(private val boss: TutorialBoss, private val eyesScale: Float, layer: 
 
     override val collider = null
 
-    override val width get() = Game.resources.bossTutorialEyes.width * eyesScale
+    override val width get() = Game.textures.bossTutorialEyes.width * eyesScale
 
-    override val height get() = Game.resources.bossTutorialEyes.height * eyesScale
+    override val height get() = Game.textures.bossTutorialEyes.height * eyesScale
 
-    override var texture = Game.resources.bossTutorialEyes.slice()
+    override var texture = Game.textures.bossTutorialEyes.slice()
 
     override val flipX get() = boss.isFlipped
 }

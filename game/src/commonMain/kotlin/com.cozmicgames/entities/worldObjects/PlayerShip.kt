@@ -99,8 +99,9 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
 
     private val leftTrailEffect = TrailEffect(id, true)
     private val rightTrailEffect = TrailEffect(id, false)
+    private var isEngineSoundPlaying = false
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         invulnerabilityTimer -= delta
         if (invulnerabilityTimer < 0.0.seconds)
             invulnerabilityTimer = 0.0.seconds
@@ -125,7 +126,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
         tryUsePrimaryWeapon = false
         tryUseSecondaryWeapon = false
 
-        if (fightStarted && !isGrabbed) {
+        if (isFighting && !isGrabbed) {
             deltaX += player.inputFrame.deltaX
             deltaY += player.inputFrame.deltaY
 
@@ -175,8 +176,11 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
         player.indicatorColor.set(Constants.INDICATOR_COLOR_BORDER)
         player.indicatorColor.a = 1.0f - minSpeedScale
 
-        val moveX = speedScaleX * deltaX * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
-        val moveY = speedScaleY * deltaY * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
+        deltaX *= speedScaleX
+        deltaY *= speedScaleY
+
+        val moveX = deltaX * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
+        val moveY = deltaY * movementSpeed * Constants.PLAYER_SHIP_BASE_MOVEMENT_SPEED
         val moveRotation = deltaRotation.degrees * rotationSpeed * Constants.PLAYER_SHIP_BASE_ROTATION_SPEED
 
         x += moveX
@@ -213,7 +217,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
         if (fireSecondaryCooldown < 0.0.seconds)
             fireSecondaryCooldown = 0.0.seconds
 
-        if (fightStarted)
+        if (isFighting)
             player.ship.checkCollision()
     }
 
@@ -222,7 +226,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
             return
 
         Game.physics.checkCollision(collider, { it != collider }) {
-            if (it.userData is PlayerDamageSource) {
+            if (it.userData is PlayerDamageSource && it.userData.canDamage) {
                 onDamageHit()
 
                 if (!Game.player.isTutorialMode)
@@ -238,9 +242,9 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
 
     override fun render(renderer: Renderer) {
         val baseTexture = when (flySpeed) {
-            in 0.0f..1.0f -> Game.resources.playerShipBaseStill
-            in 1.0f..3.0f -> Game.resources.playerShipBaseSlow
-            else -> Game.resources.playerShipBaseFast
+            in 0.0f..1.0f -> Game.textures.playerShipBaseStill
+            in 1.0f..3.0f -> Game.textures.playerShipBaseSlow
+            else -> Game.textures.playerShipBaseFast
         }
 
         darkColor.set(player.color.lighten(-0.15f))
@@ -256,15 +260,15 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
         }
 
         renderer.submit(RenderLayers.PLAYER + 1) {
-            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, lightColor)
+            it.draw(Game.textures.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, lightColor)
         }
 
         renderer.submit(RenderLayers.PLAYER + 2) {
-            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, mainColor)
+            it.draw(Game.textures.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, mainColor)
         }
 
         renderer.submit(RenderLayers.PLAYER + 3) {
-            it.draw(Game.resources.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, darkColor)
+            it.draw(Game.textures.playerShipTemplate, x, y, Constants.PLAYER_SHIP_WIDTH * 0.5f, Constants.PLAYER_SHIP_HEIGHT * 0.5f, Constants.PLAYER_SHIP_WIDTH, Constants.PLAYER_SHIP_HEIGHT, scale, scale, rotation, darkColor)
         }
     }
 
@@ -292,12 +296,12 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
 
         when (weapon.projectileType.baseType) {
             is BulletProjectileType -> {
-                Game.resources.shootSound.play(0.5f)
+                Game.audio.shootSound.play(0.5f)
                 setCooldown(weapon.fireRate)
             }
 
             is BeamProjectileType -> {
-                Game.resources.beamSound.play(0.8f)
+                Game.audio.beamSound.play(0.8f)
                 isBeamProjectileFiring = true
                 setCooldown(0.0.seconds)
             }
@@ -325,7 +329,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
             setCooldown(weapon.fireRate)
 
             isBeamProjectileFiring = false
-            Game.resources.beamSound.stop()
+            Game.audio.beamSound.stop()
         }
     }
 
@@ -333,7 +337,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
         if (isInvulnerable || isDead)
             return
 
-        Game.resources.hitShipSound.play(0.5f)
+        Game.audio.hitShipSound.play(0.5f)
 
         health--
         if (health <= 0) {

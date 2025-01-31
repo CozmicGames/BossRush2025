@@ -12,17 +12,17 @@ import kotlin.time.Duration
 class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPart("boss1beak${if (left) "left" else "right"}") {
     override val renderLayer = layer
 
-    override val texture = Game.resources.boss1beak.slice()
+    override val texture = Game.textures.boss1beak.slice()
 
-    override val width get() = Game.resources.boss1beak.width * 2.0f
+    override val width get() = Game.textures.boss1beak.width * 2.0f
 
-    override val height get() = Game.resources.boss1beak.height * 2.0f
+    override val height get() = Game.textures.boss1beak.height * 2.0f
 
     override val flipX get() = !left
 
     override val collider = Collider(getRectangleCollisionShape(scaleX = 0.5f), beak)
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val pivotX = beak.x + (if (left) -width else width) * 0.1f
         val pivotY = beak.y
 

@@ -2,11 +2,10 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Game
 import com.cozmicgames.utils.Difficulty
-import com.littlekt.math.geom.degrees
 import kotlin.time.Duration
 
 class AsteroidManager(val difficulty: Difficulty, val maxAsteroids: Int) {
-    private val asteroids = Array(maxAsteroids) { AsteroidWorldObject(it) }
+    private val asteroids = Array(maxAsteroids) { Asteroid(it) }
     private val activeAsteroids = BooleanArray(maxAsteroids)
 
     fun initialize() {
@@ -26,11 +25,11 @@ class AsteroidManager(val difficulty: Difficulty, val maxAsteroids: Int) {
         }
     }
 
-    fun update(delta: Duration, fightStarted: Boolean) {
+    fun update(delta: Duration, isFighting: Boolean) {
         activeAsteroids.forEachIndexed { index, isActive ->
             if (isActive) {
                 val asteroid = asteroids[index]
-                asteroid.update(delta, fightStarted)
+                asteroid.update(delta, isFighting)
 
                 if (asteroid.x > Game.physics.maxX + 500.0f) {
                     Game.world.remove(asteroid)

@@ -49,7 +49,7 @@ class Transition(fromOpenToClose: Boolean) {
             val centerY = (Game.graphics.height - centerHeight) * 0.5f
 
             if (centerScale > 0.0f)
-                it.draw(Game.resources.transition, centerX - 1.0f, centerY - 1.0f, width = centerWidth + 2.0f, height = centerHeight + 2.0f, color = COLOR)
+                it.draw(Game.textures.transition, centerX - 1.0f, centerY - 1.0f, width = centerWidth + 2.0f, height = centerHeight + 2.0f, color = COLOR)
 
             val leftRightWidth = (Game.graphics.width - centerWidth) * 0.5f
 

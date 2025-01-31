@@ -1,6 +1,5 @@
 package com.cozmicgames.bosses.boss3
 
-import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
@@ -37,7 +36,7 @@ class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val 
 
     var legRotation = 0.0.degrees
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val legRotation = if (flip) -legRotation else legRotation
 
         val parentRotation = parent?.rotation ?: leg.legAngle

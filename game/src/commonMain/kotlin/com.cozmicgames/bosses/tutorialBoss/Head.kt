@@ -14,21 +14,21 @@ import kotlin.time.Duration
 class Head(private val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialHead"), Hittable, PlayerDamageSource {
     override val renderLayer = layer
 
-    override val width = Game.resources.bossTutorialHead.width * scale
+    override val width = Game.textures.bossTutorialHead.width * scale
 
-    override val height = Game.resources.bossTutorialHead.height * scale
+    override val height = Game.textures.bossTutorialHead.height * scale
 
     override val flipX get() = boss.isFlipped
 
     override val collider = Collider(getCircleCollisionShape(0.75f), this)
 
-    override var texture = Game.resources.bossTutorialHead.slice()
+    override var texture = Game.textures.bossTutorialHead.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         val headColliderOffsetX = width * -0.3f * (if (boss.isFlipped) 1.0f else -1.0f)
         val headColliderOffsetY = 0.0f
@@ -43,7 +43,7 @@ class Head(private val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         boss.paralyze()
     }

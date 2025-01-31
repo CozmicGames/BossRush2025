@@ -1,5 +1,6 @@
 package com.cozmicgames.bosses
 
+import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -62,7 +63,20 @@ abstract class FightStage : BossStage() {
 class EndStage : BossStage() {
     override val nextStage: BossStage? = null
 
+    private var isFirstUpdate = true
+
     override fun update(delta: Duration, controller: BossMovementController): BossStage {
+        if (isFirstUpdate) {
+            if (controller.boss.isDead)
+                if (Game.player.currentFightIndex != Constants.FINAL_FIGHT_INDEX)
+                    controller.movement.setToParalyzed(controller.boss)
+                else
+                    controller.movement.setToDead(controller.boss)
+            else
+                controller.movement.setToFail(controller.boss)
+            isFirstUpdate = false
+        }
+
         return this
     }
 }

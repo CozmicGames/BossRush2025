@@ -10,6 +10,7 @@ import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.cozmicgames.utils.HighscoreEntry
+import com.littlekt.input.Key
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.radians
@@ -30,29 +31,34 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
     private var resultPanel: ResultPanel? = null
     private var fightStartMessage: FightStartMessage? = FightStartMessage()
     private var ingameUI: IngameUI? = null
+    private var ingameMenu: IngameMenu? = null
     private val borderIndicator = BorderIndicator()
 
     private var fightDuration = 0.0.seconds
-    private var fightStarted = false
+    private var isFighting = false
+    private var isPaused = false
+    private var checkMenuResults = false
     private var showResults = false
     private val asteroids = AsteroidManager(difficulty, 700)
     private var returnState: GameState = this
 
     override fun begin() {
         val player = Game.player
+        player.currentFightIndex = desc.index
+
         playerCamera = PlayerCamera(player.camera)
         guiCamera = GUICamera()
-        background = Background(Game.resources.background)
+        background = Background(Game.textures.background)
         transitionIn = Transition(fromOpenToClose = false)
         transitionOut = Transition(fromOpenToClose = true)
 
         startFight(difficulty, false)
 
         transitionIn?.start {
+            ingameUI?.slideIn()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
-                fightStarted = true
-                Game.world.shouldUpdate = true
+                isFighting = true
             }
             transitionIn = null
         }
@@ -64,7 +70,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         this.difficulty = difficulty
         fightDuration = 0.0.seconds
         resultPanel = null
-        fightStarted = false
+        isFighting = false
         showResults = false
 
         Game.player.shootStatistics.reset()
@@ -93,17 +99,16 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         player.ship.addToWorld()
         player.ship.addToPhysics()
 
+        ingameUI = IngameUI(player.ship, difficulty)
+
         if (isRetry) {
+            ingameUI?.slideIn()
             fightStartMessage = FightStartMessage()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
-                fightStarted = true
+                isFighting = true
             }
         }
-
-        ingameUI = IngameUI(player.ship, difficulty)
-
-        Game.world.shouldUpdate = true
     }
 
     override fun resize(width: Int, height: Int) {
@@ -133,23 +138,98 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
 
-        boss.update(delta, fightStarted)
-        asteroids.update(delta, fightStarted)
-        Game.particles.update(delta)
-        Game.world.update(delta, fightStarted)
+        if (!isPaused) {
+            boss.update(delta, isFighting)
+            asteroids.update(delta, isFighting)
+            Game.particles.update(delta)
+            Game.world.update(delta, isFighting)
+        }
+
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
         borderIndicator.color.set(player.indicatorColor)
+
+        if (isFighting && !showResults && (Game.input.isKeyJustPressed(Key.ESCAPE) || Game.input.isKeyJustPressed(Key.BACKSPACE))) {
+            if (ingameMenu == null) {
+                Game.audio.stopLoopingSounds()
+
+                isPaused = true
+                checkMenuResults = true
+                ingameMenu = IngameMenu()
+                ingameMenu?.slideIn()
+                ingameUI?.slideOut()
+            } else {
+                ingameMenu?.slideOut {
+                    isPaused = false
+                    checkMenuResults = false
+                    ingameMenu = null
+                    ingameUI?.slideIn()
+                }
+            }
+        }
+
+        if (checkMenuResults)
+            when (ingameMenu?.resultState) {
+                IngameMenu.ResultState.CONTINUE -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        ingameUI?.slideIn()
+                    }
+                }
+
+                IngameMenu.ResultState.RETURN -> {
+                    checkMenuResults = false
+
+                    transitionOut.start {
+                        returnState = BayState()
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_EASY -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.EASY, true)
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_NORMAL -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.NORMAL, true)
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_HARD -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.HARD, true)
+                    }
+                }
+
+                else -> {}
+            }
 
         if (!showResults)
             fightDuration += delta
 
         if (!showResults && (boss.isDead || Game.player.ship.isDead)) {
             showResults = true
-            Game.world.shouldUpdate = false
+            ingameUI?.slideOut()
 
-            if (!boss.isDead)
-                boss.movementController.onFailFight()
-            else
+            boss.movementController.onEndFight()
+
+            if (boss.isDead)
                 Game.player.newlyUnlockedBossIndex = desc.unlockedBossIndex
 
             val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, Game.player.ship.health, Game.player.shootStatistics.shotsFired, Game.player.shootStatistics.shotsHit)
@@ -202,6 +282,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         pass.render(guiCamera.camera) { renderer: Renderer ->
             fightStartMessage?.render(delta, renderer)
             ingameUI?.render(delta, renderer)
+            ingameMenu?.render(delta, renderer)
             transitionIn?.render(delta, renderer)
             transitionOut.render(delta, renderer)
             borderIndicator.render(delta, renderer)

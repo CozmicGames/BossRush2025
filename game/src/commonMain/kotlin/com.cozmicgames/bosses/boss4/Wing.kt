@@ -20,13 +20,13 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
 
     override val collider = Collider(RectangleCollisionShape(width, height * 0.15f, 0.0.degrees), this)
 
-    override val width get() = Game.resources.boss4wing.width * wingScale * boss.bossScale
+    override val width get() = Game.textures.boss4wing.width * wingScale * boss.bossScale
 
-    override val height get() = Game.resources.boss4wing.height * wingScale * boss.bossScale
+    override val height get() = Game.textures.boss4wing.height * wingScale * boss.bossScale
 
     override val flipX = !left
 
-    override val texture = Game.resources.boss4wing.slice()
+    override val texture = Game.textures.boss4wing.slice()
 
     override val baseColor get() = boss.camouflageColor
 
@@ -36,7 +36,7 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
     val lowerCollider = Collider(RectangleCollisionShape(width, height * 0.15f, 0.0.degrees), this)
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         //boss.paralyze() //TODO: Paralyze?
     }
@@ -49,8 +49,8 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
         boss.impulseSpin = strength * 0.15f
     }
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
-        super.updateWorldObject(delta, fightStarted)
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
+        super.updateWorldObject(delta, isFighting)
 
         val mainColliderOffsetX = if (left) 0.1f * width else -0.1f * width
         val mainColliderOffsetY = 0.1f * height

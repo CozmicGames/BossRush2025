@@ -15,11 +15,11 @@ import kotlin.time.Duration
 class Shield(val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2mouth"), PlayerDamageSource, ProjectileSource, Hittable {
     override val renderLayer = layer
 
-    override val texture = Game.resources.shield.slice()
+    override val texture = Game.textures.shield.slice()
 
-    override val width = Game.resources.shield.width * scale
+    override val width = Game.textures.shield.width * scale
 
-    override val height = Game.resources.shield.height * scale
+    override val height = Game.textures.shield.height * scale
 
     override val mixColor = MutableColor(Color.WHITE)
 
@@ -58,6 +58,6 @@ class Shield(val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2mouth"
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
     }
 }

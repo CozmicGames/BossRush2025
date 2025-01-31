@@ -47,7 +47,7 @@ open class RatingBanner(val rating: Int, private val onAnimationFinished: () -> 
         }
 
         renderer.submit(layer) {
-            it.draw(Game.resources.resultBanner, x, y, width = width, height = height)
+            it.draw(Game.textures.resultBanner, x, y, width = width, height = height)
         }
 
         stars.forEach { it.render(delta, renderer) }

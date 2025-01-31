@@ -1,7 +1,9 @@
 package com.cozmicgames
 
+import com.cozmicgames.audio.Audio
 import com.cozmicgames.entities.worldObjects.World
 import com.cozmicgames.graphics.Graphics2D
+import com.cozmicgames.graphics.Textures
 import com.cozmicgames.graphics.particles.ParticleManager
 import com.cozmicgames.input.ControlManager
 import com.cozmicgames.input.InputManager
@@ -24,12 +26,13 @@ class Game(context: Context) : ContextListener(context) {
         lateinit var logger: Logger
         lateinit var input: InputManager
         lateinit var graphics: Graphics2D
+        lateinit var audio: Audio
         val random = Random(Date.now().toLong())
         val player = Player()
         val particles = ParticleManager()
         val physics = PhysicsWorld(1500.0f, 1500.0f)
         val controls = ControlManager()
-        val resources = Resources()
+        val textures = Textures()
         val projectiles = ProjectileManager()
         val areaEffects = AreaEffectManager()
         val world = World()
@@ -41,11 +44,15 @@ class Game(context: Context) : ContextListener(context) {
         Companion.context = this
         Companion.logger = logger
 
-        resources.load(this)
+        audio = Audio()
 
         Companion.input = InputManager(input)
         val g = Graphics2D(this)
         Companion.graphics = g
+
+        g.load(this)
+        textures.load(this)
+        audio.load(this)
 
         onResize { width, height ->
             g.resize(width, height)
@@ -57,8 +64,6 @@ class Game(context: Context) : ContextListener(context) {
 
         onUpdate { delta ->
             upTime += delta
-
-            resources.update(this)
 
             projectiles.update(delta)
             areaEffects.update(delta)
@@ -81,7 +86,8 @@ class Game(context: Context) : ContextListener(context) {
         }
 
         onRelease {
-            resources.release()
+            audio.release()
+            textures.release()
             g.release()
         }
     }

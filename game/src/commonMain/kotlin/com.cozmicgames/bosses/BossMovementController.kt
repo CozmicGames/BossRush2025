@@ -20,6 +20,7 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
 
     private val transform = BossTransform()
     private var currentStage: BossStage = startStage
+    private var isFightEnded = false
 
     fun performAttack(attack: Attack, onDone: () -> Unit = {}) {
         previousMovement.set(movement)
@@ -29,7 +30,7 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
 
         attack.afterAttack {
             movement.set(previousMovement)
-            movement.resetAfterAttack( boss, attack)
+            movement.resetAfterAttack(boss, attack)
             onDone()
         }
 
@@ -52,14 +53,9 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
         currentStage = currentStage.nextStage ?: EndStage()
     }
 
-    fun onDeath() {
-        cancelAttack(false)
-        currentStage = EndStage()
-        movement.setToDead(boss)
-    }
-
-    open fun update(delta: Duration) {
-        currentStage = currentStage.update(delta, this)
+    open fun update(delta: Duration, isFighting: Boolean) {
+        if (isFighting)
+            currentStage = currentStage.update(delta, this)
 
         if (currentAttack?.isDone(delta) == true)
             currentAttack = null
@@ -75,8 +71,17 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
         boss.rotation += dr * rotationSpeed * delta.seconds * transform.rotationSpeedModifier
     }
 
-    fun onFailFight() {
+    fun onEndFight() {
+        if (isFightEnded)
+            return
+
+        cancelAttack(false)
         currentStage = EndStage()
-        movement.setToFail(boss)
+
+        onEndFightAction()
+
+        isFightEnded = true
     }
+
+    protected open fun onEndFightAction() {}
 }

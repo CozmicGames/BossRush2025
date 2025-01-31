@@ -5,6 +5,11 @@ import com.cozmicgames.bosses.*
 class Boss2Movement : Movement {
     override var bossMovement: BossMovement = IdleBoss2BossMovement()
     var bodyMovement: BodyMovement = IdleBodyMovement()
+        set(value) {
+            field = value
+            println("Setting body movement to ${value::class.simpleName}")
+        }
+
     var shieldMovement: ShieldMovement = IdleShieldMovement()
 
     override fun set(movement: Movement) {

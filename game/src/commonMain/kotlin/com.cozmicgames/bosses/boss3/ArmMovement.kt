@@ -45,6 +45,7 @@ class ShootClawMovement(val frequency: Duration, val shotCount: Int = 1, val spr
                 for (i in 0 until shotCount) {
                     val angle = (if (arm.flip) arm.claw.muzzleRotation - spread * 0.5f else arm.claw.muzzleRotation - spread * 0.5f) + spread / (shotCount - 1) * i
                     Game.projectiles.spawnProjectile(arm.claw, ProjectileType.ENERGY_BALL, arm.claw.muzzleX, arm.claw.muzzleY, angle, 500.0f, 0.0f)
+                    Game.audio.shootSound.play(0.7f)
                 }
 
             timer = 0.0.seconds
@@ -230,10 +231,16 @@ class IdleArmMovement : CompoundArmMovement(
         IdleClawMovement(0.2f, 0.2f)
     )
 )
+class ParalyzedArmMovement : CompoundArmMovement(
+    listOf(
+        StretchOutArmMovement(0.2f),
+        OpenClawMovement(0.5f)
+    )
+)
 
 class DeadArmMovement : CompoundArmMovement(
     listOf(
         KeepArmMovement(),
-        OpenClawMovement(0.5f)
+        OpenClawMovement(0.2f)
     )
 )

@@ -12,13 +12,13 @@ open class RatingStar(val isFull: Boolean, val onAnimationFinish: () -> Unit) : 
         private val ANIMATION_FULL_TIME = 0.4.seconds
     }
 
-    private inner class EmptyStar : Image(Game.resources.starEmpty) {
+    private inner class EmptyStar : Image(Game.textures.starEmpty) {
         override var layer
             get() = this@RatingStar.layer + 1
             set(value) {}
     }
 
-    private inner class StarFull : Image(Game.resources.starFull) {
+    private inner class StarFull : Image(Game.textures.starFull) {
         override var layer
             get() = this@RatingStar.layer + 2
             set(value) {}

@@ -3,16 +3,15 @@ package com.cozmicgames
 import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.input.InputFrame
 import com.cozmicgames.utils.HighscoreEntries
-import com.cozmicgames.utils.HighscoreEntry
 import com.cozmicgames.utils.ShootStatistics
 import com.cozmicgames.weapons.Weapon
 import com.cozmicgames.weapons.Weapons
+import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.OrthographicCamera
-import kotlin.time.Duration.Companion.seconds
 
 class Player {
-    val color = MutableColor()
+    val color = Color.fromHex("47b16f")
     val inputFrame = InputFrame()
 
     var primaryWeapon: Weapon? = Weapons.REELGUN
@@ -31,23 +30,16 @@ class Player {
         HighscoreEntries()
     }
 
-    var wallet = 10000
+    var wallet = 100
         private set
 
-    val unlockedBossIndices = hashSetOf(0)
+    val unlockedBossIndices = hashSetOf(0,1,2,3)
 
     val unlockedWeaponIndices = hashSetOf(0)
 
-    var newlyUnlockedBossIndex = -1
+    var newlyUnlockedBossIndex = Constants.FINAL_FIGHT_INDEX//-1
 
-    init {
-        highscores[0].easy = HighscoreEntry(135.4.seconds, 0.54f)
-
-        val r = Game.random.nextFloat()
-        val g = Game.random.nextFloat()
-        val b = Game.random.nextFloat()
-        color.set(r, g, b, 1.0f)
-    }
+    var currentFightIndex = 0
 
     fun gainCredits(amount: Int) {
         wallet += amount

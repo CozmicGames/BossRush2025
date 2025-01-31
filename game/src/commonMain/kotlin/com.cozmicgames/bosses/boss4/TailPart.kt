@@ -16,13 +16,13 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
 
     override val collider = Collider(getRectangleCollisionShape(scaleX = (1.0f - index.toFloat() / Constants.BOSS4_TAIL_PARTS).pow(2.0f)), tail)
 
-    override val texture = Game.resources.boss4tailSlices[index]
+    override val texture = Game.textures.boss4tailSlices[index]
 
     override val baseColor get() = tail.boss.camouflageColor
 
-    override val width get() = Game.resources.boss4tail.width * tail.scale * tail.boss.bossScale
+    override val width get() = Game.textures.boss4tail.width * tail.scale * tail.boss.bossScale
 
-    override val height get() = Game.resources.boss4tail.height * tail.scale * tail.boss.bossScale / Constants.BOSS4_TAIL_PARTS
+    override val height get() = Game.textures.boss4tail.height * tail.scale * tail.boss.bossScale / Constants.BOSS4_TAIL_PARTS
 
     private val halfWidth get() = width * 0.5f
 
@@ -30,7 +30,7 @@ class TailPart(val tail: Tail, val parent: TailPart? = null, val index: Int, lay
 
     var partRotation = 0.0.degrees
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val partRotation = partRotation
 
         val parentRotation = parent?.rotation ?: tail.tailAngle

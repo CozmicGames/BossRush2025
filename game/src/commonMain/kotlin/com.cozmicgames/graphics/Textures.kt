@@ -1,30 +1,19 @@
-package com.cozmicgames
+package com.cozmicgames.graphics
 
+import com.cozmicgames.Constants
 import com.littlekt.Context
 import com.littlekt.Releasable
-import com.littlekt.audio.AudioClip
-import com.littlekt.file.vfs.readAudioClip
-import com.littlekt.file.vfs.readBitmapFont
 import com.littlekt.file.vfs.readTexture
 import com.littlekt.graphics.Texture
 import com.littlekt.graphics.g2d.NinePatch
 import com.littlekt.graphics.g2d.TextureSlice
-import com.littlekt.graphics.g2d.font.BitmapFont
 import com.littlekt.graphics.slice
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class Resources : Releasable {
-    private class AvatarTextureRequest(val index: Int, val callback: (Texture) -> Unit)
-
-    private val avatarTextureRequests = arrayListOf<AvatarTextureRequest>()
-
+class Textures : Releasable {
     /**
      * UI
      */
     lateinit var logo: Texture
-    lateinit var font: BitmapFont
     lateinit var buttonNormal: Texture
     lateinit var buttonNormalNinePatch: NinePatch
     lateinit var buttonHovered: Texture
@@ -78,22 +67,14 @@ class Resources : Releasable {
     lateinit var captain: Texture
     lateinit var crewBackground: Texture
     lateinit var crewBackgroundNinePatch: NinePatch
+    lateinit var fightBackground: Texture
+    lateinit var fightBackgroundNinePatch: NinePatch
 
     lateinit var borderIndicator: Texture
     lateinit var borderIndicatorNinePatch: NinePatch
     lateinit var transition: Texture
     lateinit var debug: Texture
     lateinit var debugNinePatch: NinePatch
-
-    lateinit var hoverSound: AudioClip
-    lateinit var clickSound: AudioClip
-    lateinit var unlockSound: AudioClip
-    lateinit var selectPrimarySound: AudioClip
-    lateinit var selectSecondarySound: AudioClip
-    lateinit var themeSound: AudioClip
-    lateinit var hitShipSound: AudioClip
-    lateinit var hitEnemySound: AudioClip
-    lateinit var baySound: AudioClip
 
     /**
      * Projectiles and area effects
@@ -103,9 +84,6 @@ class Resources : Releasable {
     lateinit var baitBall: Texture
     lateinit var shockwave: Texture
     lateinit var shield: Texture
-
-    lateinit var shootSound: AudioClip
-    lateinit var beamSound: AudioClip
 
     /**
      * World
@@ -196,18 +174,7 @@ class Resources : Releasable {
     lateinit var boss4tailSlices: Array<TextureSlice>
 
     suspend fun load(context: Context) {
-        hoverSound = context.resourcesVfs["audio/hover.ogg"].readAudioClip()
-        clickSound = context.resourcesVfs["audio/click.ogg"].readAudioClip()
-        unlockSound = context.resourcesVfs["audio/unlock.ogg"].readAudioClip()
-        selectPrimarySound = context.resourcesVfs["audio/select_primary.ogg"].readAudioClip()
-        selectSecondarySound = context.resourcesVfs["audio/select_secondary.ogg"].readAudioClip()
-        themeSound = context.resourcesVfs["audio/theme.wav"].readAudioClip()
-        hitShipSound = context.resourcesVfs["audio/hit_ship.ogg"].readAudioClip()
-        hitEnemySound = context.resourcesVfs["audio/hit_enemy.ogg"].readAudioClip()
-        baySound = context.resourcesVfs["audio/bay.ogg"].readAudioClip()
-
         logo = context.resourcesVfs["textures/logo.png"].readTexture()
-        font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
         buttonNormal = context.resourcesVfs["textures/ui/button_normal.png"].readTexture()
         buttonNormalNinePatch = NinePatch(buttonNormal, 16, 16, 16, 16)
         buttonHovered = context.resourcesVfs["textures/ui/button_hovered.png"].readTexture()
@@ -261,6 +228,8 @@ class Resources : Releasable {
         captain = context.resourcesVfs["textures/ui/captain.png"].readTexture()
         crewBackground = context.resourcesVfs["textures/ui/crew_background.png"].readTexture()
         crewBackgroundNinePatch = NinePatch(crewBackground, 36, 36, 36, 36)
+        fightBackground = context.resourcesVfs["textures/ui/fight_background.png"].readTexture()
+        fightBackgroundNinePatch = NinePatch(fightBackground, 22, 22, 22, 22)
 
         transition = context.resourcesVfs["textures/ui/transition.png"].readTexture()
         borderIndicator = context.resourcesVfs["textures/ui/border_indicator.png"].readTexture()
@@ -275,9 +244,6 @@ class Resources : Releasable {
         shockwave = context.resourcesVfs["textures/projectiles/shockwave.png"].readTexture()
         shield = context.resourcesVfs["textures/projectiles/shield.png"].readTexture()
 
-        shootSound = context.resourcesVfs["audio/shoot.ogg"].readAudioClip()
-        beamSound = context.resourcesVfs["audio/beam.ogg"].readAudioClip()
-
         background = context.resourcesVfs["textures/background.png"].readTexture()
         asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
         vortexBase = context.resourcesVfs["textures/vortex/base.png"].readTexture()
@@ -291,9 +257,9 @@ class Resources : Releasable {
         playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
         playerShipTemplate = context.resourcesVfs["textures/player/player_ship_template.png"].readTexture()
         playerHealthIndicator = context.resourcesVfs["textures/player/health.png"].readTexture()
-        playerHealthIndicatorNinepatch = NinePatch(playerHealthIndicator, 7, 7, 7, 7)
+        playerHealthIndicatorNinepatch = NinePatch(playerHealthIndicator, 3, 3, 3, 3)
         playerHealthEmptyIndicator = context.resourcesVfs["textures/player/health_empty.png"].readTexture()
-        playerHealthEmptyIndicatorNinepatch = NinePatch(playerHealthEmptyIndicator, 7, 7, 7, 7)
+        playerHealthEmptyIndicatorNinepatch = NinePatch(playerHealthEmptyIndicator, 3, 3, 3, 3)
 
         bossTutorialHead = context.resourcesVfs["textures/tutorial_boss/head.png"].readTexture()
         bossTutorialEyes = context.resourcesVfs["textures/tutorial_boss/eyes.png"].readTexture()
@@ -345,36 +311,8 @@ class Resources : Releasable {
         boss4tailSlices = boss4tail.slice(boss4tail.width, boss4tail.height / Constants.BOSS4_TAIL_PARTS).map { it[0] }.toTypedArray()
     }
 
-    fun requestAvatarTexture(index: Int, callback: (Texture) -> Unit) {
-        avatarTextureRequests += AvatarTextureRequest(index, callback)
-    }
-
-    fun update(context: Context) {
-        val avatarTextureRequests = avatarTextureRequests.toList()
-        this.avatarTextureRequests.clear()
-
-        if (avatarTextureRequests.isNotEmpty())
-            CoroutineScope(Dispatchers.Unconfined).launch {
-                avatarTextureRequests.forEach { request ->
-                    val texture = context.resourcesVfs["avatars/avatar${request.index}.png"].readTexture()
-                    request.callback(texture)
-                }
-            }
-    }
-
     override fun release() {
-        hoverSound.release()
-        clickSound.release()
-        unlockSound.release()
-        selectPrimarySound.release()
-        selectSecondarySound.release()
-        themeSound.release()
-        hitShipSound.release()
-        hitEnemySound.release()
-        baySound.release()
-
         logo.release()
-        font.release()
         buttonNormal.release()
         buttonHovered.release()
         buttonPressed.release()
@@ -413,6 +351,7 @@ class Resources : Releasable {
         weaponSlotBackground.release()
         captain.release()
         crewBackground.release()
+        fightBackground.release()
 
         transition.release()
         borderIndicator.release()
@@ -423,9 +362,6 @@ class Resources : Releasable {
         baitBall.release()
         shockwave.release()
         shield.release()
-
-        shootSound.release()
-        beamSound.release()
 
         background.release()
         asteroid0.release()

@@ -12,11 +12,11 @@ import kotlin.math.sqrt
 class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int) : EnemyPart("boss2fin"), PlayerDamageSource, ProjectileSource, Hittable {
     override val renderLayer = layer
 
-    override val texture = Game.resources.boss2fin.slice()
+    override val texture = Game.textures.boss2fin.slice()
 
-    override val width = Game.resources.boss2fin.width * scale
+    override val width = Game.textures.boss2fin.width * scale
 
-    override val height = Game.resources.boss2fin.height * scale
+    override val height = Game.textures.boss2fin.height * scale
 
     override val flipX get() = boss.isFlipped
 
@@ -45,6 +45,6 @@ class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
     }
 }

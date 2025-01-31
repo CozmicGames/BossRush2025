@@ -165,6 +165,12 @@ class IdleLegMovement : CompoundLegMovement(
     )
 )
 
+class ParalyzedLegMovement : CompoundLegMovement(
+    listOf(
+        StretchDownLegMovement(0.3f)
+    )
+)
+
 class DeadLegMovement : CompoundLegMovement(
     listOf(
         HangLegMovement()

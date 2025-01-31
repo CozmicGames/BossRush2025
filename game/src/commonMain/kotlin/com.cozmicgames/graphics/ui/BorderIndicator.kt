@@ -12,7 +12,7 @@ class BorderIndicator : GUIElement() {
     override fun renderElement(delta: Duration, renderer: Renderer) {
         if (color.a > 0.0f)
             renderer.submit(RenderLayers.BORDER_INDICATOR) {
-                Game.resources.borderIndicatorNinePatch.draw(it, 0.0f, 0.0f, Game.graphics.width.toFloat(), Game.graphics.height.toFloat(), color = color)
+                Game.textures.borderIndicatorNinePatch.draw(it, 0.0f, 0.0f, Game.graphics.width.toFloat(), Game.graphics.height.toFloat(), color = color)
             }
     }
 }

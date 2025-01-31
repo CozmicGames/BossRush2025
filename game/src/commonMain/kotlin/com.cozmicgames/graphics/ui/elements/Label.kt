@@ -12,7 +12,7 @@ import com.littlekt.graphics.g2d.font.BitmapFontCache
 import com.littlekt.graphics.g2d.font.GlyphLayout
 import kotlin.time.Duration
 
-open class Label(text: String, size: Float = Game.resources.font.fontSize, private val color: Color = Color.WHITE) : GUIElement() {
+open class Label(text: String, size: Float = Game.graphics.font.fontSize, private val color: Color = Color.WHITE) : GUIElement() {
     open var alwaysUpdateLayoutAndCache = true
 
     var text = text
@@ -65,9 +65,9 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
     val textHeight get() = layout.height
 
     private val layout = GlyphLayout()
-    private val cache = BitmapFontCache(Game.resources.font)
+    private val cache = BitmapFontCache(Game.graphics.font)
     private val shadowLayout = GlyphLayout()
-    private val shadowCache = BitmapFontCache(Game.resources.font)
+    private val shadowCache = BitmapFontCache(Game.graphics.font)
     private var textX = 0.0f
     private var textY = 0.0f
 
@@ -83,7 +83,7 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
         if (fontSize == 0.0f)
             return
 
-        layout.setText(Game.resources.font, text, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize)
+        layout.setText(Game.graphics.font, text, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize)
 
         textX = when (hAlign) {
             HAlign.LEFT -> this.x
@@ -97,11 +97,11 @@ open class Label(text: String, size: Float = Game.resources.font.fontSize, priva
             VAlign.TOP -> this.y + height - layout.height
         } + layout.height * 0.2f
 
-        cache.setText(layout, textX, textY, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize, color = color)
+        cache.setText(layout, textX, textY, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize, color = color)
 
         if (shadowOffsetX != 0.0f || shadowOffsetY != 0.0f) {
-            shadowLayout.setText(Game.resources.font, text, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize)
-            shadowCache.setText(shadowLayout, textX + shadowOffsetX, textY + shadowOffsetY, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize, color = shadowColor)
+            shadowLayout.setText(Game.graphics.font, text, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize)
+            shadowCache.setText(shadowLayout, textX + shadowOffsetX, textY + shadowOffsetY, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize, color = shadowColor)
         }
     }
 

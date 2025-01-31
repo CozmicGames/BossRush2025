@@ -24,7 +24,7 @@ interface Boss {
     fun removeFromWorld()
     fun addToPhysics()
     fun removeFromPhysics()
-    fun update(delta: Duration, fightStarted: Boolean)
+    fun update(delta: Duration, isFighting: Boolean)
 
     fun renderSpecials(delta: Duration, renderer: Renderer) {}
 

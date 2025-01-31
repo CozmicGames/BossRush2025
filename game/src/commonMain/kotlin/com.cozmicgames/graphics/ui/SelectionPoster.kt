@@ -7,7 +7,6 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Divider
 import com.cozmicgames.graphics.ui.elements.Image
 import com.cozmicgames.graphics.ui.elements.Label
-import com.cozmicgames.states.BossFightState
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
@@ -139,7 +138,7 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         renderer.submit(layer) {
-            Game.resources.fightSelectionPosterNinePatch.draw(it, x, y, width, height)
+            Game.textures.fightSelectionPosterNinePatch.draw(it, x, y, width, height)
         }
 
         nameLabel.render(delta, renderer)
@@ -156,7 +155,7 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
             lock?.render(delta, renderer)
 
             renderer.submit(layer) {
-                Game.resources.fightSelectionPosterMaskNinePatch.draw(it, x, y, width, height, color = (lock?.color ?: MutableColor(Color.WHITE)).mix(Color(1.0f, 1.0f, 1.0f, 0.5f), 0.5f))
+                Game.textures.fightSelectionPosterMaskNinePatch.draw(it, x, y, width, height, color = (lock?.color ?: MutableColor(Color.WHITE)).mix(Color(1.0f, 1.0f, 1.0f, 0.5f), 0.5f))
             }
         }
     }

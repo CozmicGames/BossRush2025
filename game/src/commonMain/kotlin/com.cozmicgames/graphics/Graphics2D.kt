@@ -2,7 +2,9 @@ package com.cozmicgames.graphics
 
 import com.littlekt.Context
 import com.littlekt.Releasable
+import com.littlekt.file.vfs.readBitmapFont
 import com.littlekt.graphics.Color
+import com.littlekt.graphics.g2d.font.BitmapFont
 import com.littlekt.graphics.webgpu.*
 import com.littlekt.util.datastructure.Pool
 import com.littlekt.util.viewport.ExtendViewport
@@ -29,6 +31,8 @@ class Graphics2D(private val context: Context) : Releasable {
 
     private var frameContext: FrameContext? = null
 
+    lateinit var font: BitmapFont
+
     val width get() = context.graphics.width
     val height get() = context.graphics.height
 
@@ -43,6 +47,10 @@ class Graphics2D(private val context: Context) : Releasable {
         )
 
         mainViewport = ExtendViewport(context.graphics.width, context.graphics.height)
+    }
+
+    suspend fun load(context: Context) {
+        font = context.resourcesVfs["fonts/font.fnt"].readBitmapFont()
     }
 
     fun resize(width: Int, height: Int) {
@@ -119,6 +127,9 @@ class Graphics2D(private val context: Context) : Releasable {
     }
 
     override fun release() {
+        if (::font.isInitialized)
+            font.release()
+
         renderPassPool.allocMultiple(renderPassPool.itemsInPool) {
             it.forEach(RenderPass::release)
         }

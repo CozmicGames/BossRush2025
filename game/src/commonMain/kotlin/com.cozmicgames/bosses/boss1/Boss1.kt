@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
 import com.cozmicgames.entities.Entity
 import com.cozmicgames.entities.worldObjects.AreaEffectSource
+import com.cozmicgames.entities.worldObjects.animations.DeadAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
@@ -182,7 +183,7 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         Game.physics.removeHittable(heart)
     }
 
-    override fun update(delta: Duration, fightStarted: Boolean) {
+    override fun update(delta: Duration, isFighting: Boolean) {
         isInvulnerableTimer -= delta
         if (isInvulnerableTimer <= 0.0.seconds)
             isInvulnerableTimer = 0.0.seconds
@@ -208,13 +209,11 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         y += impulseY * delta.seconds * 300.0f
         rotation += impulseSpin.degrees * delta.seconds * 200.0f
 
-        if (fightStarted) {
-            movementController.update(delta)
-            tentacles.forEach {
-                it.update(delta, movementController.movement.tentacleMovement)
-            }
-            beak.update(delta, movementController.movement.beakMovement)
+        movementController.update(delta, isFighting)
+        tentacles.forEach {
+            it.update(delta, movementController.movement.tentacleMovement)
         }
+        beak.update(delta, movementController.movement.beakMovement)
 
         val cos = rotation.cosine
         val sin = rotation.sine
@@ -268,7 +267,7 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         if (isInvulnerable || health <= 0)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
@@ -280,13 +279,13 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
 
         if (health <= 0) {
             removeFromPhysics()
-            movementController.onDeath()
 
             if (isFinalBattle) {
-                head.texture = Game.resources.boss1headDead.slice()
+                head.texture = Game.textures.boss1headDead.slice()
 
                 Game.world.remove(heart)
-                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation - 90.0.degrees))
+                addEntityAnimation { DeadAnimation() }
             }
         } else {
             tentacles.forEach {

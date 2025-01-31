@@ -14,21 +14,21 @@ class Head(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2
 
     override val renderLayer = layer
 
-    override val width = Game.resources.boss2head.width * scale
+    override val width = Game.textures.boss2head.width * scale
 
-    override val height = Game.resources.boss2head.height * scale
+    override val height = Game.textures.boss2head.height * scale
 
     override val flipX get() = boss.isFlipped
 
     override val collider = Collider(getCircleCollisionShape(0.9f), this)
 
-    override var texture = Game.resources.boss2head.slice()
+    override var texture = Game.textures.boss2head.slice()
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         boss.paralyze()
     }

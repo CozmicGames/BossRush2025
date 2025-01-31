@@ -36,6 +36,7 @@ class ParalyzedShieldMovement : ShieldMovement {
                     val x = shield.x + cos * radius
                     val y = shield.y + sin * radius
                     Game.projectiles.spawnProjectile(shield.boss, ProjectileType.ENERGY_BALL, x, y, angle, 500.0f, 0.0f)
+                    Game.audio.shootSound.play(0.7f)
                 }
             }
 
@@ -62,6 +63,7 @@ class ShootShieldMovement(private val shootTime: Duration = 0.3.seconds) : Shiel
 
         if (timer >= shootTime) {
             Game.projectiles.spawnProjectile(shield.boss, ProjectileType.ENERGY_BALL, shield.boss.muzzleX, shield.boss.muzzleY, shield.boss.muzzleRotation, 500.0f, 0.0f)
+            Game.audio.shootSound.play(0.7f)
             timer = 0.0.seconds
         }
     }
@@ -74,6 +76,7 @@ class BeamShieldMovement(private val shootTime: Duration = 2.0.seconds) : Shield
     override fun updateShield(delta: Duration, shield: Shield) {
         if (isFirstUpdate) {
             Game.projectiles.spawnProjectile(shield.boss, ProjectileType.ENERGY_BEAM, shield.boss.muzzleX, shield.boss.muzzleY, shield.boss.muzzleRotation, 300.0f, 0.0f)
+            Game.audio.beamSound.play(0.7f)
             isFirstUpdate = false
         }
 
@@ -81,7 +84,9 @@ class BeamShieldMovement(private val shootTime: Duration = 2.0.seconds) : Shield
 
         timer += delta
 
-        if (timer >= shootTime)
+        if (timer >= shootTime) {
             Game.projectiles.stopBeamProjectile(shield.boss)
+            Game.audio.beamSound.stop()
+        }
     }
 }

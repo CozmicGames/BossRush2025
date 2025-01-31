@@ -11,11 +11,11 @@ import kotlin.math.sqrt
 class BackFin(val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialBackFin"), PlayerDamageSource, Hittable {
     override val renderLayer = layer
 
-    override val texture = Game.resources.bossTutorialBackFin.slice()
+    override val texture = Game.textures.bossTutorialBackFin.slice()
 
-    override val width = Game.resources.bossTutorialBackFin.width * scale
+    override val width = Game.textures.bossTutorialBackFin.width * scale
 
-    override val height = Game.resources.bossTutorialBackFin.height * scale
+    override val height = Game.textures.bossTutorialBackFin.height * scale
 
     override val flipX get() = boss.isFlipped
 
@@ -34,6 +34,6 @@ class BackFin(val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bos
     }
 
     override fun onDamageHit() {
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
     }
 }

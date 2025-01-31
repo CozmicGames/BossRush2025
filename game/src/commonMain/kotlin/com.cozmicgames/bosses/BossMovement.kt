@@ -39,7 +39,7 @@ class DeadBossMovement(val currentAngle: Angle = 0.0.degrees) : BossMovement {
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
         timer += delta
-        transform.targetRotation = currentAngle + 10.0.degrees * timer.seconds * 0.3f
+        transform.targetRotation = currentAngle + 10.0.degrees * timer.seconds * 0.5f
         transform.targetX = boss.x
         transform.targetY = boss.y
     }

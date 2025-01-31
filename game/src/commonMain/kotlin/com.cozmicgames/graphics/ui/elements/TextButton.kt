@@ -10,7 +10,7 @@ import com.littlekt.graphics.g2d.font.BitmapFontCache
 import com.littlekt.graphics.g2d.font.GlyphLayout
 import kotlin.time.Duration
 
-open class TextButton(text: String, val color: Color, fontSize: Float = Game.resources.font.fontSize, private val fontColor: Color = Color.WHITE, var onClick: () -> Unit = {}) : GUIElement() {
+open class TextButton(text: String, val color: Color, fontSize: Float = Game.graphics.font.fontSize, private val fontColor: Color = Color.WHITE, var onClick: () -> Unit = {}) : GUIElement() {
     open var alwaysUpdateLayoutAndCache = true
 
     var text = text
@@ -38,7 +38,7 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
         }
 
     private val layout = GlyphLayout()
-    private val cache = BitmapFontCache(Game.resources.font)
+    private val cache = BitmapFontCache(Game.graphics.font)
     private var textX = 0.0f
     private var textY = 0.0f
 
@@ -53,7 +53,7 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
     }
 
     private fun updateLayoutAndCache() {
-        layout.setText(Game.resources.font, text, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize)
+        layout.setText(Game.graphics.font, text, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize)
 
         textX = when (hAlign) {
             HAlign.LEFT -> this.x
@@ -67,7 +67,7 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
             VAlign.TOP -> this.y + height - layout.height
         } + layout.height * 0.2f
 
-        cache.setText(layout, textX, textY, scaleX = fontSize / Game.resources.font.fontSize, scaleY = fontSize / Game.resources.font.fontSize, color = fontColor)
+        cache.setText(layout, textX, textY, scaleX = fontSize / Game.graphics.font.fontSize, scaleY = fontSize / Game.graphics.font.fontSize, color = fontColor)
     }
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
@@ -86,9 +86,9 @@ open class TextButton(text: String, val color: Color, fontSize: Float = Game.res
             onClick()
 
         val ninePatch = when {
-            isClicked -> Game.resources.buttonPressedNinePatch
-            isHovered -> Game.resources.buttonHoveredNinePatch
-            else -> Game.resources.buttonNormalNinePatch
+            isClicked -> Game.textures.buttonPressedNinePatch
+            isHovered -> Game.textures.buttonHoveredNinePatch
+            else -> Game.textures.buttonNormalNinePatch
         }
 
         renderer.submit(layer) {

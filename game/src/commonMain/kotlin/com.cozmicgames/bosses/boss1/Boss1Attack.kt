@@ -69,6 +69,7 @@ class ScreamAttack(override val duration: Duration = 5.0.seconds) : Boss1Attack(
     override val bossMovement = ShakeBossMovement()
 
     override fun onStart(boss: Boss) {
+        Game.audio.screamSound.play(0.7f)
         Game.areaEffects.spawnEffect(boss as Boss1, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 64.0f, 70.0f, duration)
     }
 }

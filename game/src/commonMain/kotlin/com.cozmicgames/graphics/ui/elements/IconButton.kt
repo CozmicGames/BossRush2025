@@ -22,19 +22,19 @@ open class IconButton(val texture: Texture, val color: Color, var scale: Float =
         val isClicked = isEnabled && Game.input.justTouched && isHovered
 
         if (!wasHovered && isHovered)
-            Game.resources.hoverSound.play(0.1f)
+            Game.audio.hoverSound.play(0.1f)
 
         wasHovered = isHovered
 
         if (isClicked) {
             onClick()
-            Game.resources.clickSound.play()
+            Game.audio.clickSound.play()
         }
 
         val ninePatch = when {
-            isClicked -> Game.resources.buttonPressedNinePatch
-            isHovered -> Game.resources.buttonHoveredNinePatch
-            else -> Game.resources.buttonNormalNinePatch
+            isClicked -> Game.textures.buttonPressedNinePatch
+            isHovered -> Game.textures.buttonHoveredNinePatch
+            else -> Game.textures.buttonNormalNinePatch
         }
 
         val textureWidth = width * scale

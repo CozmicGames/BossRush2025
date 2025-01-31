@@ -15,11 +15,11 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), tentacle)
 
-    override val texture = Game.resources.boss1tentacleSlices[index]
+    override val texture = Game.textures.boss1tentacleSlices[index]
 
-    override val width get() = Game.resources.boss1tentacle.width * tentacle.scale / Constants.BOSS1_TENTACLE_PARTS
+    override val width get() = Game.textures.boss1tentacle.width * tentacle.scale / Constants.BOSS1_TENTACLE_PARTS
 
-    override val height get() = Game.resources.boss1tentacle.height * 3.0f
+    override val height get() = Game.textures.boss1tentacle.height * 3.0f
 
     override val flipX get() = flip
 
@@ -29,7 +29,7 @@ class TentaclePart(val tentacle: Tentacle, val parent: TentaclePart? = null, val
 
     var tentacleRotation = 0.0.degrees
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         val tentacleRotation = if (flip) -tentacleRotation else tentacleRotation
 
         val parentRotation = parent?.rotation ?: tentacle.tentacleAngle

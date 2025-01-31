@@ -18,13 +18,13 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
 
     override val renderLayer = layer
 
-    override val width get() = Game.resources.boss1heart.width * heartScale * size * boss.bossScale
+    override val width get() = Game.textures.boss1heart.width * heartScale * size * boss.bossScale
 
-    override val height get() = Game.resources.boss1heart.height * heartScale * size * boss.bossScale
+    override val height get() = Game.textures.boss1heart.height * heartScale * size * boss.bossScale
 
     override val collider = Collider(CircleCollisionShape(width * 0.7f), this)
 
-    override val texture = Game.resources.boss1heart.slice()
+    override val texture = Game.textures.boss1heart.slice()
 
     override val baseColor get() = boss.camouflageColor
 
@@ -36,7 +36,7 @@ class Heart(val boss: Boss4, val heartScale: Float, layer: Int) : EnemyPart("bos
     private var size = 1.0f
     private var timer = 0.0.seconds
 
-    override fun updateWorldObject(delta: Duration, fightStarted: Boolean) {
+    override fun updateWorldObject(delta: Duration, isFighting: Boolean) {
         timer += delta
 
         size = 1.0f + sin(timer.seconds * 3.0f) * 0.2f

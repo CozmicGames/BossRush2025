@@ -3,8 +3,8 @@ package com.cozmicgames.bosses.boss2
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.Boss
-import com.cozmicgames.entities.worldObjects.PlayerShip
 import com.cozmicgames.entities.worldObjects.ProjectileSource
+import com.cozmicgames.entities.worldObjects.animations.DeadAnimation
 import com.cozmicgames.entities.worldObjects.animations.HitAnimation
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
 import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
@@ -172,7 +172,7 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         Game.physics.removeCollider(tail.collider)
     }
 
-    override fun update(delta: Duration, fightStarted: Boolean) {
+    override fun update(delta: Duration, isFighting: Boolean) {
         isInvulnerableTimer -= delta
         if (isInvulnerableTimer <= 0.0.seconds)
             isInvulnerableTimer = 0.0.seconds
@@ -203,14 +203,12 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         else
             Game.player.ship.x < x
 
-        if (!isParalyzed && !movementController.isAttacking && !playerIsInView)
+        if (!isDead && !isParalyzed && !movementController.isAttacking && !playerIsInView)
             flip()
 
-        if (fightStarted) {
-            movementController.update(delta)
-            body.update(delta, movementController.movement.bodyMovement)
-            shield.update(delta, movementController.movement.shieldMovement)
-        }
+        movementController.update(delta, isFighting)
+        body.update(delta, movementController.movement.bodyMovement)
+        shield.update(delta, movementController.movement.shieldMovement)
 
         body.x = x
         body.y = y
@@ -299,7 +297,7 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         if (isInvulnerable || health <= 0)
             return
 
-        Game.resources.hitEnemySound.play(0.5f)
+        Game.audio.hitEnemySound.play(0.5f)
 
         cancelEntityAnimation<ParalyzeAnimation>()
         addEntityAnimation { HitAnimation(INVULNERABLE_TIME) }
@@ -311,14 +309,14 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
 
         if (health <= 0) {
             removeFromPhysics()
-            movementController.onDeath()
 
             if (isFinalBattle) {
-                head.texture = Game.resources.boss2headDead.slice()
-                sword.texture = Game.resources.boss2swordDead.slice()
+                head.texture = Game.textures.boss2headDead.slice()
+                sword.texture = Game.textures.boss2swordDead.slice()
 
                 Game.world.remove(heart)
-                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))
+                Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation - 90.0.degrees))
+                addEntityAnimation { DeadAnimation() }
             }
         } else {
             isInvulnerableTimer = INVULNERABLE_TIME
