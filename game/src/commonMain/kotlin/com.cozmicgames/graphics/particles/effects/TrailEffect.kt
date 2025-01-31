@@ -73,7 +73,7 @@ class TrailEffect() : ParticleEffect() {
             shouldSpawn = true
 
         if (shouldSpawn && !Game.audio.enginesSound.isLooping)
-            Game.audio.enginesSound.play(0.4f, true)
+            Game.audio.enginesSound.play(0.2f, true)
         else if (!shouldSpawn)
             Game.audio.enginesSound.stop()
 

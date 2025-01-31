@@ -11,7 +11,7 @@ class Boss2Desc : BossDesc {
 
     override val name = "Nebulancer"
 
-    override val reward = 400
+    override val reward = 300
 
     override val preview get() = Game.textures.boss2preview
 

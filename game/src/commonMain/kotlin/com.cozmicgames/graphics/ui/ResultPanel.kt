@@ -9,6 +9,7 @@ import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.Easing
 import com.cozmicgames.utils.FightResults
 import com.cozmicgames.utils.lerp
+import com.littlekt.graphics.HAlign
 import kotlin.math.ceil
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -154,35 +155,60 @@ class ResultPanel(private val results: FightResults) {
         messageLabel.getY = { y + height * 0.28f }
         messageLabel.getWidth = { width * 0.8f }
 
-        returnLabel.getX = { x + width * 0.18f }
-        returnLabel.getY = { y + 75.0f }
-        returnLabel.getWidth = { 100.0f }
-        returnLabel.getHeight = { 40.0f }
+        returnLabel.getX = { x + width * 0.28f }
+        returnLabel.getY = { y + 88.0f }
+        returnLabel.hAlign = HAlign.CENTER
 
-        retryLabel.getX = { x + width * 0.51f }
-        retryLabel.getY = { y + 75.0f }
-        retryLabel.getWidth = { 100.0f }
-        retryLabel.getHeight = { 40.0f }
+        retryLabel.getX = { x + width * 0.72f }
+        retryLabel.getY = { y + 88.0f }
+        retryLabel.hAlign = HAlign.CENTER
 
-        returnButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f }
+        returnButton.getX = { x + width * 0.28f - 56.0f * 0.5f }
         returnButton.getY = { y + 17.0f }
         returnButton.getWidth = { 56.0f }
         returnButton.getHeight = { 56.0f }
 
-        playEasyButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f }
-        playEasyButton.getY = { y + 17.0f }
-        playEasyButton.getWidth = { 56.0f }
-        playEasyButton.getHeight = { 56.0f }
+        if (Game.player.isFreePlay) {
+            playEasyButton.getX = { x + width * 0.72f - (56.0f * 3 + 10.0f * 2) * 0.5f }
+            playEasyButton.getY = { y + 17.0f }
+            playEasyButton.getWidth = { 56.0f }
+            playEasyButton.getHeight = { 56.0f }
 
-        playNormalButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f + 56.0f * 1.2f }
-        playNormalButton.getY = { y + 17.0f }
-        playNormalButton.getWidth = { 56.0f }
-        playNormalButton.getHeight = { 56.0f }
+            playNormalButton.getX = { x + width * 0.72f - (56.0f * 3 + 10.0f * 2) * 0.5f + 56.0f + 10.0f }
+            playNormalButton.getY = { y + 17.0f }
+            playNormalButton.getWidth = { 56.0f }
+            playNormalButton.getHeight = { 56.0f }
 
-        playHardButton.getX = { x + (width - (56.0f * 4 + 56.0f * 0.5f * 2 + 56.0f * 1.2f)) * 0.5f + 56.0f * 2.5f + 56.0f * 1.2f * 2 }
-        playHardButton.getY = { y + 17.0f }
-        playHardButton.getWidth = { 56.0f }
-        playHardButton.getHeight = { 56.0f }
+            playHardButton.getX = { x + width * 0.72f - (56.0f * 3 + 10.0f * 2) * 0.5f + 56.0f * 2 + 10.0f * 2 }
+            playHardButton.getY = { y + 17.0f }
+            playHardButton.getWidth = { 56.0f }
+            playHardButton.getHeight = { 56.0f }
+        } else {
+            when (results.difficulty) {
+                Difficulty.EASY -> {
+                    playEasyButton.getX = { x + width * 0.72f - 56.0f * 0.5f }
+                    playEasyButton.getY = { y + 17.0f }
+                    playEasyButton.getWidth = { 56.0f }
+                    playEasyButton.getHeight = { 56.0f }
+                }
+
+                Difficulty.NORMAL -> {
+                    playNormalButton.getX = { x + width * 0.72f - 56.0f * 0.5f }
+                    playNormalButton.getY = { y + 17.0f }
+                    playNormalButton.getWidth = { 56.0f }
+                    playNormalButton.getHeight = { 56.0f }
+                }
+
+                Difficulty.HARD -> {
+                    playHardButton.getX = { x + width * 0.72f - 56.0f * 0.5f }
+                    playHardButton.getY = { y + 17.0f }
+                    playHardButton.getWidth = { 56.0f }
+                    playHardButton.getHeight = { 56.0f }
+                }
+
+                else -> {}
+            }
+        }
     }
 
     fun renderAndGetResultState(delta: Duration, renderer: Renderer): ResultState {
@@ -215,9 +241,19 @@ class ResultPanel(private val results: FightResults) {
         returnLabel.render(delta, renderer)
         retryLabel.render(delta, renderer)
         returnButton.render(delta, renderer)
-        playEasyButton.render(delta, renderer)
-        playNormalButton.render(delta, renderer)
-        playHardButton.render(delta, renderer)
+
+        if (Game.player.isFreePlay) {
+            playEasyButton.render(delta, renderer)
+            playNormalButton.render(delta, renderer)
+            playHardButton.render(delta, renderer)
+        } else {
+            when (results.difficulty) {
+                Difficulty.EASY -> playEasyButton.render(delta, renderer)
+                Difficulty.NORMAL -> playNormalButton.render(delta, renderer)
+                Difficulty.HARD -> playHardButton.render(delta, renderer)
+                else -> {}
+            }
+        }
 
         if (isAnimationFinished)
             messageLabel.render(delta, renderer)

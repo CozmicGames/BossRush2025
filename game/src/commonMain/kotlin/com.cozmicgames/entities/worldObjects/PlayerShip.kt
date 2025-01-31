@@ -9,6 +9,7 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.particles.effects.TrailEffect
 import com.cozmicgames.Player
+import com.cozmicgames.graphics.particles.effects.ExplosionEffect
 import com.cozmicgames.physics.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.weapons.*
@@ -29,6 +30,8 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
     }
 
     override val projectileSourceId get() = id
+
+    private var currentDifficulty = Difficulty.EASY
 
     var health = 0
     val isDead get() = health <= 0
@@ -227,13 +230,19 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
 
         Game.physics.checkCollision(collider, { it != collider }) {
             if (it.userData is PlayerDamageSource && it.userData.canDamage) {
-                onDamageHit()
+                var impulseModifier = 0.05f
 
-                if (!Game.player.isTutorialMode)
-                    onDamageHit()
+                if (it.userData is Asteroid) {
+                    if (currentDifficulty == Difficulty.HARD)
+                        onDamageHit()
 
-                val impulseX = (x - it.userData.damageSourceX) * 0.05f
-                val impulseY = (y - it.userData.damageSourceY) * 0.05f
+                    impulseModifier = 0.03f
+                } else
+                    if (!Game.player.isTutorialMode)
+                        onDamageHit()
+
+                val impulseX = (x - it.userData.damageSourceX) * impulseModifier
+                val impulseY = (y - it.userData.damageSourceY) * impulseModifier
 
                 onImpulseHit(impulseX, impulseY, 20.0f)
             }
@@ -376,10 +385,11 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
     }
 
     fun onDeath() {
-        //removeFromWorld()
-        //removeFromPhysics()
+        removeFromWorld()
+        removeFromPhysics()
 
-        //TODO: Play death animation
+        Game.audio.explosionSound.play(0.4f)
+        Game.particles.add(ExplosionEffect(Game.player.ship.x, Game.player.ship.y))
     }
 
     fun addToWorld() {
@@ -407,6 +417,7 @@ class PlayerShip(private val player: Player) : WorldObject("player"), Projectile
     }
 
     fun initialize(difficulty: Difficulty, spawnX: Float, spawnY: Float, spawnRotation: Angle, isFinalBattle: Boolean) {
+        currentDifficulty = difficulty
         health = difficulty.basePlayerHealth
         x = spawnX
         y = spawnY

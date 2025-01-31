@@ -15,10 +15,12 @@ class TransitionStage(override val nextStage: BossStage) : BossStage() {
     override fun update(delta: Duration, controller: BossMovementController): BossStage {
         if (isFirstUpdate) {
             val movement = controller.movement as? Boss2Movement ?: throw IllegalStateException("Invalid movement type")
-            movement.bossMovement = CompoundBodyMovement(listOf(
-                ShakeBossMovement { 1.0f - timer.seconds / 2.0f },
-                SpinBossMovement()
-            ))
+            movement.bossMovement = CompoundBodyMovement(
+                listOf(
+                    ShakeBossMovement { 1.0f - timer.seconds / 2.0f },
+                    SpinBossMovement()
+                )
+            )
             movement.bodyMovement = CurlBodyMovement(4.0.degrees, 0.4f)
             movement.shieldMovement = IdleShieldMovement()
         }
@@ -70,9 +72,9 @@ class Boss2FightStage1 : Boss2FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.7f, 1.0.seconds) { HitAttack() },
-        StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
-        StageAttack(0.4f, 3.0.seconds) { FlyAttack() }
+        StageAttack(0.4f, 1.0.seconds) { controller, onDone -> controller.performAttack(HitAttack(), onDone) },
+        StageAttack(0.5f, 2.0.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) },
+        StageAttack(0.6f, 3.0.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) }
     )
 }
 
@@ -82,39 +84,50 @@ class Boss2FightStage2 : Boss2FightStage() {
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.3f, 1.0.seconds) { HitAttack() },
-        StageAttack(0.5f, 3.0.seconds) { SpinAttack() },
-        StageAttack(0.4f, 3.0.seconds) { FlyAttack() },
-        StageAttack(0.4f, 5.0.seconds) { PierceAttack() },
-        StageAttack(0.2f, 4.0.seconds) { ShootAttack() },
-        StageAttack(0.2f, 4.0.seconds) { BeamAttack() },
+        StageAttack(0.5f, 2.0.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) },
+        StageAttack(0.4f, 3.0.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) },
+        StageAttack(0.4f, 2.0.seconds) { controller, onDone -> controller.performAttack(PierceAttack(), onDone) },
+        StageAttack(0.2f, 3.0.seconds) { controller, onDone -> controller.performAttack(ShootAttack(), onDone) },
+        StageAttack(0.2f, 3.0.seconds) { controller, onDone -> controller.performAttack(BeamAttack(), onDone) },
     )
 }
 
 class Boss2FightStage3 : Boss2FightStage() {
-    override val nextStage = TransitionStage(Boss2FightStage4())
+    override val nextStage = TransitionStage(EndStage())
 
     override val maxFollowDistance = 400.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.2f, 1.0.seconds) { HitAttack() },
-        StageAttack(0.3f, 3.0.seconds) { FlyAttack() },
-        StageAttack(0.3f, 4.0.seconds) { PierceAttack() },
-        StageAttack(0.7f, 3.0.seconds) { ShootAttack() },
-        StageAttack(0.7f, 3.0.seconds) { BeamAttack() },
-    )
-}
+        StageAttack(0.4f, 3.0.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) },
+        StageAttack(0.4f, 2.0.seconds) { controller, onDone -> controller.performAttack(PierceAttack(), onDone) },
+        StageAttack(0.2f, 2.0.seconds) { controller, onDone -> controller.performAttack(ShootAttack(), onDone) },
+        StageAttack(0.2f, 2.0.seconds) { controller, onDone -> controller.performAttack(BeamAttack(), onDone) },
 
-class Boss2FightStage4 : Boss2FightStage() {
-    override val nextStage = TransitionStage(EndStage())
+        StageAttack(0.3f, 3.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    FlyAttack(),
+                    PierceAttack()
+                ), onDone
+            )
+        },
 
-    override val maxFollowDistance = 300.0f
+        StageAttack(0.4f, 2.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    SpinAttack(),
+                    ShootAttack()
+                ), onDone
+            )
+        },
 
-    override val stageAttacks = listOf(
-        StageAttack(0.5f, 3.0.seconds) { PierceAttack() },
-        StageAttack(0.3f, 3.0.seconds) { ShootAttack() },
-        StageAttack(0.4f, 3.0.seconds) { BeamAttack() },
-        StageAttack(0.6f, 3.0.seconds) { SpinShootAttack() },
-        StageAttack(0.7f, 3.0.seconds) { SpinBeamAttack() },
+        StageAttack(0.3f, 2.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    SpinAttack(),
+                    BeamAttack()
+                ), onDone
+            )
+        }
     )
 }

@@ -33,7 +33,14 @@ class OpenBeakMovement : BeakMovement {
 }
 
 class ScreamBeakMovement : BeakMovement {
+    private var isFirstUpdate = true
+
     override fun updateBeak(delta: Duration, beak: Beak) {
+        if (isFirstUpdate) {
+            Game.audio.screamSound.play(0.7f)
+            isFirstUpdate = false
+        }
+
         beak.beakAngle = lerpAngle(beak.beakAngle, 12.0.degrees, 0.5f)
     }
 }

@@ -53,14 +53,18 @@ class SpinAttackBoss1BossMovement : BossMovement {
     }
 }
 
-class GrabAttackBoss1BossMovement(private val target: BossTarget) : BossMovement {
+class SpinFlyAttackBoss1BossMovement(val target: BossTarget?) : BossMovement {
     private var timer = 0.0.seconds
 
     override fun update(delta: Duration, boss: Boss, transform: BossTransform) {
+        val dx = (target?.x ?: (boss.x * 2.0f)) - boss.x
+        val dy = (target?.y ?: (boss.x * 2.0f)) - boss.y
+
+        transform.targetX = lerp(boss.x, boss.x + dx, 0.7f)
+        transform.targetY = lerp(boss.y, boss.y + dy, 0.7f)
+
         timer += delta
-        transform.targetX = target.x
-        transform.targetY = target.y + 200.0f // Above the ship
-        transform.targetRotation = atan((transform.targetY - boss.y) / (transform.targetX - boss.x)).radians - 90.0.degrees
+        transform.targetRotation = 250.0.degrees * timer.seconds
     }
 }
 

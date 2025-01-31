@@ -169,7 +169,7 @@ class TeleportBoss4BossMovement(private val onDone: () -> Unit) : BossMovement {
                 if (distance < minDistance)
                     minDistance = distance
 
-                if (minDistance < bestDistance) {
+                if (minDistance > bestDistance) {
                     bestX = x
                     bestY = y
                     bestDistance = minDistance
@@ -196,6 +196,7 @@ class TeleportBoss4BossMovement(private val onDone: () -> Unit) : BossMovement {
             enterVortexMovement = EnterVortexBoss4BossMovement {
                 boss.vortex.size = 0.0f
                 secondStage = true
+                Game.audio.teleportSound.play(0.3f)
             }
 
             val (x, y) = chooseRandomPosition(boss)
@@ -210,7 +211,7 @@ class TeleportBoss4BossMovement(private val onDone: () -> Unit) : BossMovement {
         if (secondStage) {
             timer += delta
 
-            if (timer > 0.5.seconds) //TODO: Add trail effect?
+            if (timer > 0.5.seconds)
                 exitVortexMovement.update(delta, boss, transform)
         } else
             enterVortexMovement.update(delta, boss, transform)

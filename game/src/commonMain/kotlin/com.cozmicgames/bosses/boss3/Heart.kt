@@ -62,4 +62,8 @@ class Heart(val boss: Boss3, private val heartScale: Float, layer: Int) : EnemyP
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

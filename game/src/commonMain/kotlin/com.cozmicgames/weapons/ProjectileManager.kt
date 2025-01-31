@@ -54,8 +54,12 @@ class ProjectileManager {
             }
 
             if (nearestCollider != null) {
-                if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit)
-                    nearestCollider.userData.onDamageHit()
+                if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit) {
+                    if(projectile.type == ProjectileType.BAIT_BALL)
+                        nearestCollider.userData.onBaitHit()
+                    else
+                        nearestCollider.userData.onDamageHit()
+                }
 
                 if (projectile.fromSource is PlayerShip)
                     Game.player.shootStatistics.shotsHit++

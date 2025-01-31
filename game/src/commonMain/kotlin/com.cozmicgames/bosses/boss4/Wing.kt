@@ -37,8 +37,6 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
 
     override fun onDamageHit() {
         Game.audio.hitEnemySound.play(0.5f)
-
-        //boss.paralyze() //TODO: Paralyze?
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {
@@ -75,5 +73,9 @@ class Wing(private val boss: Boss4, private val left: Boolean, private val wingS
         (lowerCollider.shape as RectangleCollisionShape).width = width
         (lowerCollider.shape as RectangleCollisionShape).height = height * 0.15f
         lowerCollider.update(lowerColliderX, lowerColliderY)
+    }
+
+    override fun onBaitHit() {
+        boss.paralyze()
     }
 }

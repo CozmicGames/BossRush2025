@@ -10,6 +10,7 @@ import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.cozmicgames.utils.HighscoreEntry
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.input.Key
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.degrees
@@ -39,7 +40,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
     private var isPaused = false
     private var checkMenuResults = false
     private var showResults = false
-    private val asteroids = AsteroidManager(difficulty, 700)
+    private val asteroids = AsteroidManager(700)
     private var returnState: GameState = this
 
     override fun begin() {
@@ -81,7 +82,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
         Game.physics.height = 2500.0f
 
         if (!isRetry)
-            asteroids.initialize()
+            asteroids.initialize(difficulty)
 
         boss = desc.createBoss(difficulty)
         boss.addToWorld()
@@ -154,7 +155,7 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
 
                 isPaused = true
                 checkMenuResults = true
-                ingameMenu = IngameMenu()
+                ingameMenu = IngameMenu(difficulty, false)
                 ingameMenu?.slideIn()
                 ingameUI?.slideOut()
             } else {
@@ -224,13 +225,18 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             fightDuration += delta
 
         if (!showResults && (boss.isDead || Game.player.ship.isDead)) {
+            Game.audio.stopLoopingSounds()
+
             showResults = true
+            isFighting = false
             ingameUI?.slideOut()
 
             boss.movementController.onEndFight()
 
-            if (boss.isDead)
+            if (boss.isDead) {
                 Game.player.newlyUnlockedBossIndex = desc.unlockedBossIndex
+                Game.player.gainCredits(desc.reward)
+            }
 
             val results = FightResults(fightDuration, difficulty, desc.fullHealth, boss.health, Game.player.ship.health, Game.player.shootStatistics.shotsFired, Game.player.shootStatistics.shotsHit)
             val highscoreEntries = Game.player.highscores[desc.index]
@@ -301,9 +307,12 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             }
         }
 
-        //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-        //    boss.drawDebug(renderer)
-        //}
+        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+            Game.player.ship.collider.drawDebug(renderer)
+            asteroids.drawDebug(renderer)
+
+            //boss.drawDebug(renderer)
+        }
 
         pass.end()
 

@@ -80,4 +80,8 @@ class Tentacle(val boss: Boss1, val index: Int, val flip: Boolean, val layer: In
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

@@ -47,4 +47,8 @@ class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int
     override fun onDamageHit() {
         Game.audio.hitEnemySound.play(0.5f)
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

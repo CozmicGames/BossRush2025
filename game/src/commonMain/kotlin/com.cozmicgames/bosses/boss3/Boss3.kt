@@ -25,7 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = false) : Boss, ProjectileSource, AreaEffectSource {
     companion object {
-        const val FULL_HEALTH = 4
+        const val FULL_HEALTH = 3
 
         private val INVULNERABLE_TIME = 2.0.seconds
         private val PARALYZED_TIME = 5.0.seconds

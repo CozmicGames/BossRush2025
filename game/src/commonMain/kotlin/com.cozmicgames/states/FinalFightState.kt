@@ -42,7 +42,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     private var fightEnded = false
     private var checkMenuResults = false
     private var checkFinalFightFailedResults = false
-    private val asteroids = AsteroidManager(difficulty, 1500)
+    private val asteroids = AsteroidManager(1500)
     private var returnState: GameState = this
 
     override fun begin() {
@@ -83,7 +83,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         Game.physics.height = 4000.0f
 
         if (!isRetry)
-            asteroids.initialize()
+            asteroids.initialize(difficulty)
 
         bosses = arrayOf(Boss1(difficulty), Boss2(difficulty), Boss3(difficulty), Boss4(difficulty))
 
@@ -171,7 +171,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
 
                 isPaused = true
                 checkMenuResults = true
-                ingameMenu = IngameMenu()
+                ingameMenu = IngameMenu(difficulty, true)
                 ingameMenu?.slideIn()
                 ingameUI?.slideOut()
             } else {
@@ -238,7 +238,10 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             }
 
         if (!fightEnded && (bosses.all { it.isDead } || Game.player.ship.isDead)) {
+            Game.audio.stopLoopingSounds()
+
             fightEnded = true
+            isFighting = false
             ingameUI?.slideOut()
 
             bosses.forEach {
@@ -257,9 +260,6 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
                 finalFightFailedUI = FinalFightFailedUI()
                 finalFightFailedUI?.slideIn()
                 checkFinalFightFailedResults = true
-
-                Game.particles.add(ExplosionEffect(Game.player.ship.x, Game.player.ship.y))
-                Game.world.remove(Game.player.ship)
             }
         }
 

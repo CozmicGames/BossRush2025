@@ -34,8 +34,6 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
 
     override fun onDamageHit() {
         Game.audio.hitEnemySound.play(0.5f)
-
-        //boss.paralyze() //TODO: Paralyze?
     }
 
     override fun onImpulseHit(x: Float, y: Float, strength: Float) {
@@ -60,5 +58,9 @@ class Body(private val boss: Boss4, private val bodyScale: Float, layer: Int) : 
 
         (centerCollider.shape as CircleCollisionShape).radius = width * 0.7f
         centerCollider.update(centerColliderX, centerColliderY)
+    }
+
+    override fun onBaitHit() {
+        boss.paralyze()
     }
 }

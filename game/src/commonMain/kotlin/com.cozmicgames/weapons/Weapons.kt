@@ -20,7 +20,7 @@ enum class Weapons : Weapon {
     },
     HYPER_HARPOON {
         override val previewTexture get() = Game.textures.hyperHarpoonPreview
-        override val price = 500
+        override val price = 600
         override val displayName = "Hyper\nHarpoon"
         override val fireRate = 0.5.seconds
         override val canContinoousFire = true
@@ -31,6 +31,19 @@ enum class Weapons : Weapon {
         override val spread = 0.0.degrees
         override val isRandomSpread = false
     },
+    SHOCKMINE {
+        override val previewTexture get() = Game.textures.shockminePreview
+        override val price = 700
+        override val displayName = "Shockmine"
+        override val fireRate = 10.seconds
+        override val canContinoousFire = false
+        override val projectileType = ProjectileType.SHOCK_MINE
+        override val projectileCount = 1
+        override val projectileSpeed = 200.0f
+        override val projectileSpeedFalloff = 1.0f
+        override val spread = 0.0.degrees
+        override val isRandomSpread = false
+    },
     BAITBLASTER {
         override val previewTexture get() = Game.textures.baitblasterPreview
         override val price = 1000
@@ -38,19 +51,6 @@ enum class Weapons : Weapon {
         override val fireRate = 10.seconds
         override val canContinoousFire = false
         override val projectileType = ProjectileType.BAIT_BALL
-        override val projectileCount = 1
-        override val projectileSpeed = 200.0f
-        override val projectileSpeedFalloff = 1.0f
-        override val spread = 0.0.degrees
-        override val isRandomSpread = false
-    },
-    SHOCKMINE {
-        override val previewTexture get() = Game.textures.shockminePreview
-        override val price = 1000
-        override val displayName = "Shockmine"
-        override val fireRate = 10.seconds
-        override val canContinoousFire = false
-        override val projectileType = ProjectileType.SHOCK_MINE
         override val projectileCount = 1
         override val projectileSpeed = 200.0f
         override val projectileSpeedFalloff = 1.0f

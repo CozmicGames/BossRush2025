@@ -122,7 +122,7 @@ class BeamAttack(target: BossTarget? = Game.world.decideOnTarget()) : Boss2Attac
         if (target == null)
             setDone()
         else {
-            bossMovement = AimBoss2BossMovement(target?.x ?: 0.0f, target?.y ?: 0.0f, false)
+            bossMovement = AimBoss2BossMovement(target.x, target.y, false)
         }
     }
 }

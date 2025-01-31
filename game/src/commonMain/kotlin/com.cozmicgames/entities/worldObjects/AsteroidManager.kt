@@ -2,13 +2,20 @@ package com.cozmicgames.entities.worldObjects
 
 import com.cozmicgames.Game
 import com.cozmicgames.utils.Difficulty
+import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import kotlin.time.Duration
 
-class AsteroidManager(val difficulty: Difficulty, val maxAsteroids: Int) {
+class AsteroidManager(val maxAsteroids: Int) {
     private val asteroids = Array(maxAsteroids) { Asteroid(it) }
     private val activeAsteroids = BooleanArray(maxAsteroids)
 
-    fun initialize() {
+    private var difficulty = Difficulty.EASY
+
+    fun initialize(difficulty: Difficulty) {
+        activeAsteroids.fill(false)
+
+        this.difficulty = difficulty
+
         repeat(maxAsteroids / 50) {
             activeAsteroids[it] = true
             val asteroid = asteroids[it]
@@ -48,6 +55,13 @@ class AsteroidManager(val difficulty: Difficulty, val maxAsteroids: Int) {
 
         if (activeAsteroidsCount < 20)
             spawnAsteroid(difficulty)
+    }
+
+    fun drawDebug(renderer: ShapeRenderer) {
+        activeAsteroids.forEachIndexed { index, isActive ->
+            if (isActive)
+                asteroids[index].collider.drawDebug(renderer)
+        }
     }
 
     fun spawnAsteroid(difficulty: Difficulty) {

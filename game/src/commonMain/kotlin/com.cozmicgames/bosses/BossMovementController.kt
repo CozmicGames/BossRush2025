@@ -37,6 +37,25 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
         currentAttack = attack
     }
 
+    fun performComboAttack(attacks: List<Attack>, onDone: () -> Unit = {}) {
+        if (attacks.isEmpty()) {
+            onDone()
+            return
+        }
+
+        attacks.forEachIndexed { index, attack ->
+            val nextAttack = attacks.getOrNull(index + 1)
+            attack.followingAttack = nextAttack
+
+            if(index == attacks.lastIndex)
+                attack.afterAttack {
+                    onDone()
+                }
+        }
+
+        performAttack(attacks.first())
+    }
+
     fun cancelAttack(runAfterAttackListeners: Boolean) {
         val attack = currentAttack
         currentAttack = null
@@ -57,8 +76,14 @@ abstract class BossMovementController(val boss: Boss, startStage: BossStage) {
         if (isFighting)
             currentStage = currentStage.update(delta, this)
 
-        if (currentAttack?.isDone(delta) == true)
-            currentAttack = null
+        if (currentAttack?.isDone(delta) == true) {
+            val followingAttack = currentAttack?.followingAttack
+
+            if (followingAttack != null) {
+                performAttack(followingAttack)
+            } else
+                currentAttack = null
+        }
 
         movement.update(delta, boss, transform)
 

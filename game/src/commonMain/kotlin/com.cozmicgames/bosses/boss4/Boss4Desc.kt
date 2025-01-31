@@ -12,7 +12,7 @@ class Boss4Desc : BossDesc {
 
     override val name = "Voidray"
 
-    override val reward = 600
+    override val reward = 500
 
     override val preview get() = Game.textures.boss4preview
 

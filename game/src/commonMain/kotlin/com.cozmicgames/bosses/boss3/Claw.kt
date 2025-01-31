@@ -6,6 +6,7 @@ import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.Grabbable
 import com.cozmicgames.physics.GrabbingObject
+import com.littlekt.graphics.Color
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -39,7 +40,7 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
     override val projectileSourceId = "boss3"
     override val isStunMode = false
 
-    override val grabbingId = "boss3"
+    override val grabbingId = "boss3${if (flip) "left" else "right"}"
 
     override var grabX = 0.0f
 
@@ -80,7 +81,7 @@ class Claw(arm: Arm, parent: ArmPart, flip: Boolean, index: Int, partScale: Floa
     }
 
     fun tryGrabObject(): Boolean {
-        if (hasGrabbedObject || grabCooldown > 0.0.seconds)
+        if (arm.otherArm.claw.hasGrabbedObject || hasGrabbedObject || grabCooldown > 0.0.seconds)
             return false
 
         var closestGrabbable: Grabbable? = null

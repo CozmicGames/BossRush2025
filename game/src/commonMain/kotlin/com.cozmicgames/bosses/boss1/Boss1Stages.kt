@@ -66,9 +66,10 @@ class Boss1FightStage1 : Boss1FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.7f, 1.5.seconds) { StretchAttack(1.0.seconds) },
-        StageAttack(0.5f, 2.0.seconds) { DefendAttack(2.0.seconds) },
-        StageAttack(0.2f, 1.0.seconds) { FlyAttack() }
+        StageAttack(0.3f, 0.7.seconds) { controller, onDone -> controller.performAttack(StretchAttack(0.5.seconds), onDone) },
+        StageAttack(0.5f, 0.8.seconds) { controller, onDone -> controller.performAttack(DefendAttack(1.0.seconds), onDone) },
+        StageAttack(0.2f, 1.2.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) },
+        StageAttack(0.4f, 0.8.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) }
     )
 }
 
@@ -78,10 +79,10 @@ class Boss1FightStage2 : Boss1FightStage() {
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.7f, 1.5.seconds) { StretchAttack(1.0.seconds) },
-        StageAttack(0.5f, 2.0.seconds) { DefendAttack(2.0.seconds) },
-        StageAttack(0.3f, 1.0.seconds) { FlyAttack() },
-        StageAttack(0.6f, 4.0.seconds) { ScreamAttack() }
+        StageAttack(0.5f, 0.7.seconds) { controller, onDone -> controller.performAttack(DefendAttack(1.5.seconds), onDone) },
+        StageAttack(0.3f, 1.2.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) },
+        StageAttack(0.6f, 1.4.seconds) { controller, onDone -> controller.performAttack(ScreamAttack(), onDone) },
+        StageAttack(0.4f, 0.7.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) }
     )
 }
 
@@ -91,10 +92,31 @@ class Boss1FightStage3 : Boss1FightStage() {
     override val maxFollowDistance = 400.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.5f, 1.5.seconds) { StretchAttack(1.0.seconds) },
-        StageAttack(0.4f, 2.0.seconds) { DefendAttack(2.0.seconds) },
-        StageAttack(0.4f, 1.0.seconds) { FlyAttack() },
-        StageAttack(0.5f, 4.0.seconds) { ScreamAttack() },
-        StageAttack(0.2f, 4.0.seconds) { SpinAttack() }
+        StageAttack(0.4f, 0.6.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) },
+        StageAttack(0.4f, 0.8.seconds) { controller, onDone -> controller.performAttack(FlyAttack(), onDone) },
+        StageAttack(0.3f, 1.2.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    FlyAttack(),
+                    SpinAttack()
+                ),
+                onDone
+            )
+        },
+
+        StageAttack(0.5f, 1.5.seconds) { controller, onDone -> controller.performAttack(ScreamAttack(), onDone) },
+        StageAttack(0.4f, 2.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    ScreamAttack(),
+                    SpinFlyAttack()
+                ),
+                onDone
+            )
+
+            controller.performAttack(ScreamAttack(), onDone)
+        },
+
+        StageAttack(0.2f, 2.5.seconds) { controller, onDone -> controller.performAttack(SpinFlyAttack(), onDone) },
     )
 }

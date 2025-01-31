@@ -65,4 +65,8 @@ class Mouth(private val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPar
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

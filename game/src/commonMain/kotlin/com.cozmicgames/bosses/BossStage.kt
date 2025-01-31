@@ -12,7 +12,7 @@ abstract class BossStage {
 }
 
 abstract class FightStage : BossStage() {
-    protected class StageAttack(val probability: Float, val timeToNextAttack: Duration, val createAttack: (Boss) -> Attack)
+    protected class StageAttack(val probability: Float, val timeToNextAttack: Duration, vararg val tags: String, val performAttack: (controller: BossMovementController, onDone: () -> Unit) -> Unit)
 
     protected abstract val stageAttacks: List<StageAttack>
 
@@ -33,8 +33,8 @@ abstract class FightStage : BossStage() {
             val attack = stageAttacks.randomOrNull() ?: return
             val attackProbability = attack.probability / totalProbability
 
-            if (probability < attackProbability) {
-                controller.performAttack(attack.createAttack(boss)) {
+            if (probability > attackProbability) {
+                attack.performAttack(controller) {
                     nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
                 }
 

@@ -140,6 +140,8 @@ class Audio() : Releasable {
     lateinit var beamSound: Sound
     lateinit var screamSound: Sound
     lateinit var enginesSound: Sound
+    lateinit var explosionSound: Sound
+    lateinit var teleportSound: Sound
 
     suspend fun load(context: Context) {
         themeSound = SingleSound(context.resourcesVfs["audio/theme.wav"].readAudioClip())
@@ -156,6 +158,8 @@ class Audio() : Releasable {
         beamSound = SingleSound(context.resourcesVfs["audio/beam.ogg"].readAudioClip())
         screamSound = MultiSound((0..1).map { context.resourcesVfs["audio/scream$it.ogg"].readAudioClip() })
         enginesSound = SingleSound(context.resourcesVfs["audio/engines.ogg"].readAudioClip())
+        explosionSound = SingleSound(context.resourcesVfs["audio/explosion.ogg"].readAudioClip())
+        teleportSound = SingleSound(context.resourcesVfs["audio/teleport.ogg"].readAudioClip())
     }
 
     fun stopLoopingSounds() {
@@ -179,5 +183,7 @@ class Audio() : Releasable {
         beamSound.release()
         screamSound.release()
         enginesSound.release()
+        explosionSound.release()
+        teleportSound.release()
     }
 }

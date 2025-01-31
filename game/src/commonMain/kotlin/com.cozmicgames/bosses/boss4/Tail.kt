@@ -81,4 +81,8 @@ class Tail(val boss: Boss4, val scale: Float, val layer: Int) : Hittable, Player
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

@@ -57,4 +57,8 @@ class Heart(val boss: Boss1, layer: Int) : EnemyPart("boss1heart"), Hittable, Pl
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

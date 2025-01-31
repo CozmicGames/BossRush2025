@@ -22,11 +22,11 @@ class ExplosionEffect() : ParticleEffect() {
         private const val MIN_SIZE = 15.0f
         private const val MAX_SIZE = 25.0f
 
-        private val MIN_LIFETIME = 3.0.seconds
-        private val MAX_LIFETIME = 5.0.seconds
+        private val MIN_LIFETIME = 5.0.seconds
+        private val MAX_LIFETIME = 7.0.seconds
 
-        private val MIN_SPEED = 100.0f
-        private val MAX_SPEED = 200.0f
+        private val MIN_SPEED = 200.0f
+        private val MAX_SPEED = 300.0f
     }
 
     constructor(x: Float, y: Float) : this() {
@@ -36,11 +36,11 @@ class ExplosionEffect() : ParticleEffect() {
 
     override val name = "EXPLOSION"
 
-    override val duration = 5.0.seconds
+    override val duration = 7.0.seconds
 
     var x = 0.0f
     var y = 0.0f
-    val baseColor = Color.fromHex("ad0d40")
+    val baseColor = Color.fromHex("ffa214")
 
     private var isFirstUpdate = true
 

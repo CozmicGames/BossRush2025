@@ -4,7 +4,5 @@ enum class Difficulty(val basePlayerHealth: Int, val bossAttackSpeedModifier: Fl
     TUTORIAL(7, 1.0f),
     EASY(10, 1.5f),
     NORMAL(7, 1.0f),
-    HARD(4, 0.7f)
-
-    //TODO: Maybe add player movement speed to this
+    HARD(4, 0.5f)
 }

@@ -51,8 +51,6 @@ class MenuState() : GameState {
         tutorialButton.getY = { 60.0f }
         tutorialButton.getWidth = { buttonWidth }
         tutorialButton.getHeight = { buttonHeight }
-
-        Game.player.unlockFreePlay()
     }
 
     override fun resize(width: Int, height: Int) {

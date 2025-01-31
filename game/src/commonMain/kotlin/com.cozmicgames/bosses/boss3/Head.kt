@@ -76,4 +76,8 @@ class Head(private val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss3
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

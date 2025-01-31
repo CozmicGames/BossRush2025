@@ -12,4 +12,6 @@ interface Hittable {
     fun onDamageHit() {}
 
     fun onImpulseHit(x: Float, y: Float, strength: Float) {}
+
+    fun onBaitHit() {}
 }

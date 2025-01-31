@@ -36,4 +36,8 @@ class Tail(val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTu
     override fun onDamageHit() {
         Game.audio.hitEnemySound.play(0.5f)
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

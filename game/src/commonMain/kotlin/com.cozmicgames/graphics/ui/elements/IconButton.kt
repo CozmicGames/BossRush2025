@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.GUIElement
 import com.littlekt.graphics.Color
+import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.Texture
 import kotlin.time.Duration
 
@@ -41,7 +42,10 @@ open class IconButton(val texture: Texture, val color: Color, var scale: Float =
         val textureHeight = height * scale
 
         renderer.submit(layer) {
-            ninePatch.draw(it, x, y, width = width, height = height, color = color)
+            if (isEnabled)
+                ninePatch.draw(it, x, y, width = width, height = height, color = color)
+            else
+                ninePatch.draw(it, x, y, width = width, height = height, color = MutableColor(color).mix(Color(0.9f, 0.9f, 0.9f, 0.5f), 0.5f))
             it.draw(texture, x + (width - textureWidth) * 0.5f, y + (height - textureHeight) * 0.5f, width = textureWidth, height = textureHeight)
         }
     }

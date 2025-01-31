@@ -47,4 +47,8 @@ class Sword(private val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss
     override fun onDamageHit() {
         Game.audio.hitEnemySound.play(0.5f)
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

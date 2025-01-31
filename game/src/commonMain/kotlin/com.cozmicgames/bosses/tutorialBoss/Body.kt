@@ -69,4 +69,8 @@ class Body(val boss: TutorialBoss, val scale: Float, layer: Int) : Hittable, Pla
 
         paralyze()
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

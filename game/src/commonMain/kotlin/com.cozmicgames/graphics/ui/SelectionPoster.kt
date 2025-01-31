@@ -66,9 +66,9 @@ open class SelectionPoster(desc: BossDesc, var isUnlocked: Boolean, onSelect: (I
         width = Constants.BOSS_SELECTION_POSTER_WIDTH
         height = Constants.BOSS_SELECTION_POSTER_HEIGHT
 
-        playEasyButton.isEnabled = isUnlocked
-        playNormalButton.isEnabled = isUnlocked
-        playHardButton.isEnabled = isUnlocked
+        playEasyButton.isEnabled = (isUnlocked && Game.player.highscores[desc.index].easy == null) || Game.player.isFreePlay
+        playNormalButton.isEnabled = (isUnlocked && Game.player.highscores[desc.index].normal == null) || Game.player.isFreePlay
+        playHardButton.isEnabled = (isUnlocked && Game.player.highscores[desc.index].hard == null) || Game.player.isFreePlay
 
         nameLabel.getX = { x + (width - nameLabel.width) * 0.5f }
         nameLabel.getY = { y + height * 0.8f }

@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss4
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
+import com.cozmicgames.bosses.boss2.HitAttack
 import com.littlekt.util.seconds
 import kotlin.math.sqrt
 import kotlin.time.Duration
@@ -72,17 +73,19 @@ abstract class Boss4FightStage : FightStage() {
         var tries = 0
         while (tries++ < 10) {
             val attack = stageAttacks.randomOrNull() ?: return
-            if (isFirstAttack && attack.createAttack(boss) is TeleportAttack)
+
+            if (isFirstAttack && "teleport" in attack.tags)
                 continue
 
             val attackProbability = attack.probability / totalProbability
 
             if (probability < attackProbability) {
-                controller.performAttack(attack.createAttack(boss)) {
+                isFirstAttack = false
+
+                attack.performAttack(controller) {
                     nextAttackDecisionTime = attack.timeToNextAttack * boss.difficulty.bossAttackSpeedModifier.toDouble()
                 }
 
-                isFirstAttack = false
                 break
             }
         }
@@ -95,10 +98,10 @@ class Boss4FightStage1 : Boss4FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.2f, 0.0.seconds) { CamouflageAttack() },
-        StageAttack(0.4f, 1.0.seconds) { PierceAttack() },
-        StageAttack(0.3f, 1.0.seconds) { FlyAttack(false) },
-        StageAttack(0.5f, 2.0.seconds) { HuntingAttack(false, 7.0.seconds) },
+        StageAttack(0.2f, 0.0.seconds) { controller, onDone -> controller.performAttack(CamouflageAttack(), onDone) },
+        StageAttack(0.4f, 1.0.seconds) { controller, onDone -> controller.performAttack(PierceAttack(), onDone) },
+        StageAttack(0.3f, 1.0.seconds) { controller, onDone -> controller.performAttack(FlyAttack(false), onDone) },
+        StageAttack(0.5f, 2.0.seconds) { controller, onDone -> controller.performAttack(HuntingAttack(false, 7.0.seconds), onDone) }
     )
 }
 
@@ -108,11 +111,11 @@ class Boss4FightStage2 : Boss4FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.2f, 0.1.seconds) { CamouflageAttack() },
-        StageAttack(0.4f, 1.0.seconds) { PierceAttack() },
-        StageAttack(0.4f, 1.0.seconds) { TeleportAttack() },
-        StageAttack(0.5f, 1.0.seconds) { FlyAttack(Game.random.nextBoolean()) },
-        StageAttack(0.6f, 2.0.seconds) { HuntingAttack(false, 10.0.seconds) },
+        StageAttack(0.2f, 0.0.seconds) { controller, onDone -> controller.performAttack(CamouflageAttack(), onDone) },
+        StageAttack(0.4f, 1.0.seconds) { controller, onDone -> controller.performAttack(PierceAttack(), onDone) },
+        StageAttack(0.4f, 1.0.seconds) { controller, onDone -> controller.performAttack(TeleportAttack(), onDone) },
+        StageAttack(0.5f, 1.0.seconds) { controller, onDone -> controller.performAttack(FlyAttack(Game.random.nextBoolean()), onDone) },
+        StageAttack(0.6f, 2.0.seconds) { controller, onDone -> controller.performAttack(HuntingAttack(false, 10.0.seconds), onDone) }
     )
 }
 
@@ -122,10 +125,34 @@ class Boss4FightStage3 : Boss4FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.3f, 1.0.seconds) { PierceAttack() },
-        StageAttack(0.4f, 1.0.seconds) { TeleportAttack() },
-        StageAttack(0.5f, 1.0.seconds) { TeleportAndFlyAttack() },
-        StageAttack(0.6f, 1.0.seconds) { HuntingAttack(true, 5.0.seconds) },
-        StageAttack(0.3f, 1.0.seconds) { HuntingAttack(true, 10.0.seconds) },
+        StageAttack(0.3f, 0.0.seconds) { controller, onDone -> controller.performAttack(CamouflageAttack(), onDone) },
+        StageAttack(0.4f, 1.0.seconds) { controller, onDone -> controller.performAttack(TeleportAttack(), onDone) },
+        StageAttack(0.4f, 2.0.seconds) { controller, onDone -> controller.performAttack(HuntingAttack(true, 10.0.seconds), onDone) },
+        StageAttack(0.3f, 1.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    PierceAttack(),
+                    TeleportAttack()
+                ), onDone
+            )
+        },
+
+        StageAttack(0.3f, 2.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    TeleportAttack(),
+                    HuntingAttack(false, 10.0.seconds)
+                ), onDone
+            )
+        },
+
+        StageAttack(0.5f, 3.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    TeleportAttack(),
+                    FlyAttack(false)
+                ), onDone
+            )
+        },
     )
 }

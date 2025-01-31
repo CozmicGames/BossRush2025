@@ -14,6 +14,7 @@ class IngameUI(private val ship: PlayerShip, difficulty: Difficulty) : GUIElemen
     private companion object {
         private val SLIDE_TIME = 0.5.seconds
         private val INVULNERABILITY_COLOR = Color.fromHex("c42430")
+        private val BACKGROUND_COLOR = Color(1.0f, 1.0f, 1.0f, 0.4f)
     }
 
     private var primaryWeaponSlot: FightWeaponSlot? = null
@@ -111,7 +112,7 @@ class IngameUI(private val ship: PlayerShip, difficulty: Difficulty) : GUIElemen
         invulnerableIndicator.currentValue = 1.0f - ship.invulnerabilityFactor
 
         renderer.submit(layer) {
-            Game.textures.fightBackgroundNinePatch.draw(it, x, y, width, height)
+            Game.textures.fightBackgroundNinePatch.draw(it, x, y, width, height, color = BACKGROUND_COLOR)
         }
 
         primaryWeaponSlot?.render(delta, renderer)

@@ -4,6 +4,7 @@ import com.cozmicgames.Game
 import com.cozmicgames.physics.Grabbable
 import com.cozmicgames.utils.lerpAngle
 import com.cozmicgames.weapons.ProjectileType
+import com.littlekt.graphics.Color
 import com.littlekt.math.PI_F
 import com.littlekt.math.geom.*
 import com.littlekt.util.seconds
@@ -105,9 +106,9 @@ class GrabArmMovement(val target: Grabbable, val smoothFactor: Float) : ArmMovem
 
         if (distance < otherDistance) {
             val targetAngle = if (arm.flip)
-                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians
+                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians + 180.0.degrees
             else
-                atan2(targetY - arm.claw.y, targetX - arm.claw.x).radians
+                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians
 
             arm.parts[0].armRotation = lerpAngle(arm.parts[0].armRotation, targetAngle, if (arm.isParalyzed) smoothFactor * ARM_PARALYZED_FACTOR else smoothFactor)
 
@@ -147,9 +148,9 @@ class AimArmMovement(val targetX: Float, val targetY: Float, val smoothFactor: F
 
         if (distance < otherDistance) {
             val targetAngle = if (arm.flip)
-                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians
+                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians + 180.0.degrees
             else
-                atan2(targetY - arm.claw.y, targetX - arm.claw.x).radians
+                -atan2(arm.claw.y - targetY, arm.claw.x - targetX).radians
 
             arm.parts[0].armRotation = lerpAngle(arm.parts[0].armRotation, targetAngle - arm.baseRotation, if (arm.isParalyzed) smoothFactor * ARM_PARALYZED_FACTOR else smoothFactor)
 
@@ -174,7 +175,7 @@ class ThrowAttackClawMovement(val duration: Duration) : ArmMovement {
 
         if (timer >= duration * 0.8 && arm !in isReleased) {
             val impulseStrength = 4.0f
-            val impulseAngle = arm.claw.rotation - 90.0.degrees
+            val impulseAngle = arm.claw.rotation + if (arm.flip) (-90.0).degrees else 90.0.degrees
             val impulseX = impulseAngle.cosine * impulseStrength
             val impulseY = impulseAngle.sine * impulseStrength
 
@@ -231,6 +232,7 @@ class IdleArmMovement : CompoundArmMovement(
         IdleClawMovement(0.2f, 0.2f)
     )
 )
+
 class ParalyzedArmMovement : CompoundArmMovement(
     listOf(
         StretchOutArmMovement(0.2f),

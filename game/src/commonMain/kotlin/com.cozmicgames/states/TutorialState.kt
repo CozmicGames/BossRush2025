@@ -153,7 +153,7 @@ class TutorialState() : GameState {
             currentMessage = null
 
             transitionOut.start {
-                returnState = BayState() //TODO: Start screen
+                returnState = MenuState()
             }
         }
     }
@@ -170,7 +170,7 @@ class TutorialState() : GameState {
     private var shouldUpdate = false
     private var isFighting = false
 
-    private val asteroids = AsteroidManager(Difficulty.EASY, 300)
+    private val asteroids = AsteroidManager(300)
     private var returnState: GameState = this
 
     private var nextMessage: TutorialMessage? = null
@@ -192,7 +192,7 @@ class TutorialState() : GameState {
         Game.physics.width = 2500.0f
         Game.physics.height = 800.0f
 
-        asteroids.initialize()
+        asteroids.initialize(Difficulty.EASY)
 
         boss = TutorialBoss()
         boss.x = 800.0f

@@ -2,6 +2,7 @@ package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
 import com.cozmicgames.bosses.*
+import com.cozmicgames.bosses.boss2.HitAttack
 import com.littlekt.util.seconds
 import kotlin.math.sqrt
 import kotlin.time.Duration
@@ -20,8 +21,10 @@ class TransitionStage(override val nextStage: BossStage) : BossStage() {
 
         timer += delta
 
-        if (timer >= 2.0.seconds)
+        if (timer >= 2.0.seconds) {
+            controller.performAttack(GrabAttack())
             return nextStage
+        }
 
         return this
     }
@@ -65,11 +68,11 @@ class Boss3FightStage1 : Boss3FightStage() {
     override val maxFollowDistance = 600.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.3f, 1.5.seconds) { StretchAttack() },
-        StageAttack(0.2f, 3.0.seconds) { SpinAttack() },
-        StageAttack(0.4f, 8.0.seconds) { GrabAttack() },
-        StageAttack(0.3f, 6.0.seconds) { ShootAttack0() },
-        StageAttack(0.1f, 4.0.seconds) { GravityScreamAttack() },
+        StageAttack(0.3f, 1.5.seconds) { controller, onDone -> controller.performAttack(StretchAttack(), onDone) },
+        StageAttack(0.2f, 3.0.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) },
+        StageAttack(0.4f, 5.0.seconds) { controller, onDone -> controller.performAttack(GrabAttack(), onDone) },
+        StageAttack(0.3f, 2.0.seconds) { controller, onDone -> controller.performAttack(ShootAttack0(), onDone) },
+        StageAttack(0.3f, 5.0.seconds) { controller, onDone -> controller.performAttack(GravityScreamAttack(), onDone) },
     )
 }
 
@@ -79,41 +82,53 @@ class Boss3FightStage2 : Boss3FightStage() {
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.2f, 3.0.seconds) { SpinAttack() },
-        StageAttack(0.4f, 8.0.seconds) { GrabAttack() },
-        StageAttack(0.3f, 6.0.seconds) { ShootAttack0() },
-        StageAttack(0.2f, 6.0.seconds) { ShootAttack1() },
-        StageAttack(0.3f, 5.0.seconds) { SpinShootAttack0() },
-        StageAttack(0.2f, 4.0.seconds) { GravityScreamAttack() },
+        StageAttack(0.2f, 2.0.seconds) { controller, onDone -> controller.performAttack(SpinAttack(), onDone) },
+        StageAttack(0.5f, 5.0.seconds) { controller, onDone -> controller.performAttack(GrabAttack(), onDone) },
+        StageAttack(0.2f, 2.0.seconds) { controller, onDone -> controller.performAttack(ShootAttack1(), onDone) },
+        StageAttack(0.1f, 4.0.seconds) { controller, onDone -> controller.performAttack(SpinShootAttack(), onDone) },
+        StageAttack(0.3f, 5.0.seconds) { controller, onDone -> controller.performAttack(GravityScreamAttack(), onDone) },
     )
 }
 
 class Boss3FightStage3 : Boss3FightStage() {
-    override val nextStage = TransitionStage(Boss3FightStage4())
-
-    override val maxFollowDistance = 500.0f
-
-    override val stageAttacks = listOf(
-        StageAttack(0.4f, 8.0.seconds) { GrabAttack() },
-        StageAttack(0.2f, 6.0.seconds) { ShootAttack1() },
-        StageAttack(0.15f, 6.0.seconds) { ShootAttack2() },
-        StageAttack(0.3f, 5.0.seconds) { SpinShootAttack0() },
-        StageAttack(0.15f, 5.0.seconds) { SpinShootAttack1() },
-        StageAttack(0.2f, 4.0.seconds) { GravityScreamAttack() },
-    )
-}
-
-class Boss3FightStage4 : Boss3FightStage() {
     override val nextStage = TransitionStage(EndStage())
 
     override val maxFollowDistance = 500.0f
 
     override val stageAttacks = listOf(
-        StageAttack(0.4f, 8.0.seconds) { GrabAttack() },
-        StageAttack(0.1f, 6.0.seconds) { ShootAttack1() },
-        StageAttack(0.3f, 6.0.seconds) { ShootAttack2() },
-        StageAttack(0.1f, 5.0.seconds) { SpinShootAttack1() },
-        StageAttack(0.3f, 5.0.seconds) { SpinShootAttack2() },
-        StageAttack(0.3f, 4.0.seconds) { GravityScreamAttack() },
+        StageAttack(0.4f, 5.0.seconds) { controller, onDone -> controller.performAttack(GrabAttack(), onDone) },
+        StageAttack(0.3f, 4.0.seconds) { controller, onDone -> controller.performAttack(SpinShootAttack(), onDone) },
+        StageAttack(0.3f, 5.0.seconds) { controller, onDone -> controller.performAttack(GravityScreamAttack(), onDone) },
+
+        StageAttack(0.5f, 5.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    GrabAttack(),
+                    ShootAttack1()
+                ),
+                onDone
+            )
+        },
+
+        StageAttack(0.4f, 5.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    GrabAttack(),
+                    SpinShootAttack()
+                ),
+                onDone
+            )
+        },
+
+        StageAttack(0.3f, 5.0.seconds) { controller, onDone ->
+            controller.performComboAttack(
+                listOf(
+                    GravityScreamAttack(),
+                    GrabAttack(),
+                    ShootAttack1()
+                ),
+                onDone
+            )
+        },
     )
 }

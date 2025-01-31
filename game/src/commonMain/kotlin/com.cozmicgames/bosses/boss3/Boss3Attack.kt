@@ -71,7 +71,7 @@ class GrabAttack(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attac
 }
 
 class ThrowAttack : Boss3Attack() {
-    override val duration: Duration = 2.0.seconds
+    override val duration: Duration = 4.0.seconds
 
     override val bossMovement = SpinBossMovement(90.0f)
     override val legMovement = StretchOutLegMovement(0.05f)
@@ -142,36 +142,7 @@ class ShootAttack1(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Att
     }
 }
 
-class ShootAttack2(target: BossTarget? = Game.world.decideOnTarget()) : Boss3Attack() {
-    override val duration = 5.0.seconds
-
-    override var bossMovement: BossMovement? = null
-    override var legMovement: LegMovement? = null
-    override var armMovement: ArmMovement? = null
-    override val beakMovement = ClosedBeakMovement()
-
-    init {
-        if (target !is PlayerShip)
-            setDone()
-        else {
-            bossMovement = FollowPlayerBoss3BossMovement(target)
-            legMovement = CompoundLegMovement(
-                listOf(
-                    DefendLegMovement(),
-                    SwayLegMovement(12.0.degrees, 0.5f, 0.2f)
-                )
-            )
-            armMovement = CompoundArmMovement(
-                listOf(
-                    AimArmMovement(target.x, target.y, 0.1f),
-                    ShootClawMovement(0.2.seconds, 5, 40.0.degrees)
-                )
-            )
-        }
-    }
-}
-
-class SpinShootAttack0(override val duration: Duration = 4.0.seconds) : Boss3Attack() {
+class SpinShootAttack(override val duration: Duration = 4.0.seconds) : Boss3Attack() {
     override val bossMovement = SpinAttackBoss3BossMovement()
     override val legMovement = StretchOutLegMovement(0.1f)
     override val armMovement = CompoundArmMovement(
@@ -183,26 +154,3 @@ class SpinShootAttack0(override val duration: Duration = 4.0.seconds) : Boss3Att
     override val beakMovement = ClosedBeakMovement()
 }
 
-class SpinShootAttack1(override val duration: Duration = 4.0.seconds) : Boss3Attack() {
-    override val bossMovement = SpinAttackBoss3BossMovement()
-    override val legMovement = StretchOutLegMovement(0.1f)
-    override val armMovement = CompoundArmMovement(
-        listOf(
-            StretchOutArmMovement(0.1f),
-            ShootClawMovement(0.4.seconds, 3, 30.0.degrees)
-        )
-    )
-    override val beakMovement = ClosedBeakMovement()
-}
-
-class SpinShootAttack2(override val duration: Duration = 4.0.seconds) : Boss3Attack() {
-    override val bossMovement = SpinAttackBoss3BossMovement()
-    override val legMovement = StretchOutLegMovement(0.1f)
-    override val armMovement = CompoundArmMovement(
-        listOf(
-            StretchOutArmMovement(0.1f),
-            ShootClawMovement(0.2.seconds, 5, 40.0.degrees)
-        )
-    )
-    override val beakMovement = ClosedBeakMovement()
-}

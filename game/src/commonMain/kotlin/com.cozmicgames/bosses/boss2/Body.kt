@@ -72,4 +72,8 @@ class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDama
 
         paralyze()
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

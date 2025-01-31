@@ -66,4 +66,8 @@ class Heart(private val boss: Boss2, layer: Int) : EnemyPart("boss2heart"), Hitt
     override val muzzleRotation get() = boss.muzzleRotation
 
     override val isStunMode = false
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }

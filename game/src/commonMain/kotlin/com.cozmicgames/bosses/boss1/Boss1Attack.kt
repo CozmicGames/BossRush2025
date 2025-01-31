@@ -63,13 +63,18 @@ class SpinAttack(override val duration: Duration = 4.0.seconds) : Boss1Attack() 
     override val bossMovement = SpinAttackBoss1BossMovement()
 }
 
+class SpinFlyAttack(override val duration: Duration = 4.0.seconds, target: BossTarget? = Game.world.decideOnTarget()) : Boss1Attack() {
+    override val tentacleMovement = StretchOutTentacleMovement(0.3f)
+    override val beakMovement = ScreamBeakMovement()
+    override val bossMovement = SpinFlyAttackBoss1BossMovement(target)
+}
+
 class ScreamAttack(override val duration: Duration = 5.0.seconds) : Boss1Attack() {
     override val tentacleMovement = StretchOutTentacleMovement(0.3f)
     override val beakMovement = ScreamBeakMovement()
     override val bossMovement = ShakeBossMovement()
 
     override fun onStart(boss: Boss) {
-        Game.audio.screamSound.play(0.7f)
         Game.areaEffects.spawnEffect(boss as Boss1, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 64.0f, 70.0f, duration)
     }
 }

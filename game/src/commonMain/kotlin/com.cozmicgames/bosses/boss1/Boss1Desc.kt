@@ -11,7 +11,7 @@ class Boss1Desc : BossDesc {
 
     override val name = "Tentacula"
 
-    override val reward = 300
+    override val reward = 200
 
     override val preview get() = Game.textures.boss1preview
 

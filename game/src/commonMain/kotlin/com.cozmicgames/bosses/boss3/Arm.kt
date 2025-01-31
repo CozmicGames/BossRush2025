@@ -91,4 +91,8 @@ class Arm(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, va
         boss.impulseY = y / distance * strength * 0.15f
         boss.impulseSpin = strength * 0.15f
     }
+
+    override fun onBaitHit() {
+        boss.paralyze()
+    }
 }
