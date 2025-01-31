@@ -13,7 +13,7 @@ import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class BayState(isFreePlay: Boolean = false) : GameState {
+class BayState() : GameState {
     private lateinit var guiCamera: GUICamera
     private var returnState: GameState = this
     private var timer = 0.0.seconds
@@ -74,23 +74,25 @@ class BayState(isFreePlay: Boolean = false) : GameState {
     }
 
     override fun render(delta: Duration): () -> GameState {
-        if (timer > 2.0.seconds) {
-            if (Game.player.newlyUnlockedBossIndex >= 0) {
-                if (Game.player.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
-                    unlockedFinalFight = true
-                    fightSelectionUI.transitionToFinalFight()
-                } else
-                    fightSelectionUI.unlock(Game.player.newlyUnlockedBossIndex) {
-                        Game.player.unlockedBossIndices += Game.player.newlyUnlockedBossIndex
-                    }
-                Game.player.newlyUnlockedBossIndex = -1
+        if (!Game.player.isFreePlay) {
+            if (timer > 2.0.seconds) {
+                if (Game.player.newlyUnlockedBossIndex >= 0) {
+                    if (Game.player.newlyUnlockedBossIndex == Constants.FINAL_FIGHT_INDEX) {
+                        unlockedFinalFight = true
+                        fightSelectionUI.transitionToFinalFight()
+                    } else
+                        fightSelectionUI.unlock(Game.player.newlyUnlockedBossIndex) {
+                            Game.player.unlockedBossIndices += Game.player.newlyUnlockedBossIndex
+                        }
+                    Game.player.newlyUnlockedBossIndex = -1
+                }
             }
-        }
 
-        if (unlockedFinalFight) {
-            finalFightIndicatorColor.a = sin(timer.seconds * 5.0f) * 0.5f + 0.5f
+            if (unlockedFinalFight) {
+                finalFightIndicatorColor.a = sin(timer.seconds * 5.0f) * 0.5f + 0.5f
 
-            borderIndicator.color.set(finalFightIndicatorColor)
+                borderIndicator.color.set(finalFightIndicatorColor)
+            }
         }
 
         val pass = Game.graphics.beginMainRenderPass()

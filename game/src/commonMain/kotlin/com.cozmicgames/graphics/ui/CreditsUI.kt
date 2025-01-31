@@ -1,35 +1,29 @@
-package com.cozmicgames.states
+package com.cozmicgames.graphics.ui
 
 import com.cozmicgames.Game
-import com.cozmicgames.graphics.Background
 import com.cozmicgames.graphics.Renderer
-import com.cozmicgames.graphics.Transition
-import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.graphics.ui.elements.Label
 import com.cozmicgames.graphics.ui.elements.TextButton
 import com.littlekt.graphics.Color
+import com.littlekt.graphics.MutableColor
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
-class CreditsState : GameState {
-    private lateinit var guiCamera: GUICamera
-    private var returnState: GameState = this
-    private val background = Background(Game.textures.background)
-    private var transitionIn: Transition? = Transition(fromOpenToClose = false)
-    private val transitionOut = Transition(fromOpenToClose = true)
+class CreditsUI(onFreePlayPressed: () -> Unit) : GUIElement() {
+    private val color = MutableColor()
+    private var fadeInAmount = 0.0f
+    private var fadeInTimer = 0.0.seconds
+    private var fadeInStarted = false
 
     private val upperMessageLabel = Label("The monsters are gone!", 60.0f)
     private val lowerMessageLabel = Label("But who knows what else lurks out there?", 40.0f)
     private val thanksLabel = Label("Thank you for playing!", 32.0f)
     private val creditsLabel = Label("Made by cozmicgames for Boss Rush Jam 2025", 26.0f)
     private val freePlayButton = TextButton("Free Play", Color.fromHex("33984b"), fontSize = 28.0f) {
-        transitionOut.start {
-            returnState = BayState(true)
-        }
+        onFreePlayPressed()
     }
 
-    override fun begin() {
-        guiCamera = GUICamera()
-
+    init {
         upperMessageLabel.getX = { Game.graphics.width * 0.5f }
         upperMessageLabel.getY = { 460.0f }
         upperMessageLabel.shadowOffsetX = 3.0f
@@ -54,33 +48,25 @@ class CreditsState : GameState {
         freePlayButton.getY = { 50.0f }
         freePlayButton.getWidth = { 300.0f }
         freePlayButton.getHeight = { 50.0f }
-
-        transitionIn?.start {
-            transitionIn = null
-        }
     }
 
-    override fun resize(width: Int, height: Int) {
-        guiCamera.resize(width, height)
+    fun fadeIn() {
+        fadeInTimer = 3.0.seconds
+        fadeInStarted = true
     }
 
-    override fun render(delta: Duration): () -> GameState {
-        val pass = Game.graphics.beginMainRenderPass()
+    override fun renderElement(delta: Duration, renderer: Renderer) {
+        if (fadeInStarted) {
+            fadeInAmount = 1.0f - (fadeInTimer / 3.0.seconds).toFloat()
+            color.set(1.0f, 1.0f, 1.0f, fadeInAmount)
 
-        pass.render(guiCamera.camera) { renderer: Renderer ->
-            background.render(delta, renderer)
-            transitionIn?.render(delta, renderer)
-            transitionOut.render(delta, renderer)
-
-            upperMessageLabel.render(delta, renderer)
-            lowerMessageLabel.render(delta, renderer)
-            thanksLabel.render(delta, renderer)
-            creditsLabel.render(delta, renderer)
-            freePlayButton.render(delta, renderer)
+            fadeInTimer -= delta
         }
 
-        pass.end()
-
-        return { returnState }
+        upperMessageLabel.render(delta, renderer)
+        lowerMessageLabel.render(delta, renderer)
+        thanksLabel.render(delta, renderer)
+        creditsLabel.render(delta, renderer)
+        freePlayButton.render(delta, renderer)
     }
 }

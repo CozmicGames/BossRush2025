@@ -9,15 +9,15 @@ import com.cozmicgames.bosses.boss3.Boss3
 import com.cozmicgames.bosses.boss4.Boss4
 import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.*
+import com.cozmicgames.graphics.particles.effects.ExplosionEffect
 import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.utils.Difficulty
-import com.cozmicgames.utils.FightResults
+import com.littlekt.input.Key
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.isFuzzyZero
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class FinalFightState(var difficulty: Difficulty) : GameState {
     private val fightId = Game.random.nextLong()
@@ -29,15 +29,19 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
     private lateinit var transitionOut: Transition
     private lateinit var bosses: Array<Boss>
 
-    private var resultPanel: ResultPanel? = null
     private var fightStartMessage: FinalFightStartMessage? = FinalFightStartMessage()
 
     private var ingameUI: IngameUI? = null
+    private var ingameMenu: IngameMenu? = null
+    private var creditsUI: CreditsUI? = null
+    private var finalFightFailedUI: FinalFightFailedUI? = null
     private val borderIndicator = BorderIndicator()
 
-    private var fightDuration = 0.0.seconds
-    private var fightStarted = false
-    private var showResults = false
+    private var isFighting = false
+    private var isPaused = false
+    private var fightEnded = false
+    private var checkMenuResults = false
+    private var checkFinalFightFailedResults = false
     private val asteroids = AsteroidManager(difficulty, 1500)
     private var returnState: GameState = this
 
@@ -58,7 +62,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             ingameUI?.slideIn()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
-                fightStarted = true
+                isFighting = true
             }
             transitionIn = null
         }
@@ -68,10 +72,8 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
         val player = Game.player
 
         this.difficulty = difficulty
-        fightDuration = 0.0.seconds
-        resultPanel = null
-        fightStarted = false
-        showResults = false
+        isFighting = false
+        fightEnded = false
 
         Game.player.shootStatistics.reset()
 
@@ -113,7 +115,7 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             fightStartMessage = FinalFightStartMessage()
             fightStartMessage?.startAnimation {
                 fightStartMessage = null
-                fightStarted = true
+                isFighting = true
             }
         }
     }
@@ -151,30 +153,155 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             cameraTargetY += playerShipToBossY * cameraTargetDistance
         }
 
-        bosses.forEach {
-            it.update(delta, fightStarted)
+        if (!isPaused && !fightEnded) {
+            bosses.forEach {
+                it.update(delta, isFighting)
+            }
+            asteroids.update(delta, isFighting)
+            Game.particles.update(delta)
+            Game.world.update(delta, isFighting)
         }
-        asteroids.update(delta, fightStarted)
-        Game.particles.update(delta)
-        Game.world.update(delta, fightStarted)
+
         playerCamera.update(cameraTargetX, cameraTargetY, delta)
         borderIndicator.color.set(player.indicatorColor)
 
-        if (!showResults)
-            fightDuration += delta
+        if (isFighting && !fightEnded && (Game.input.isKeyJustPressed(Key.ESCAPE) || Game.input.isKeyJustPressed(Key.BACKSPACE))) {
+            if (ingameMenu == null) {
+                Game.audio.stopLoopingSounds()
 
-        if (!showResults && (bosses.all { it.isDead } || Game.player.ship.isDead)) {
-            showResults = true
+                isPaused = true
+                checkMenuResults = true
+                ingameMenu = IngameMenu()
+                ingameMenu?.slideIn()
+                ingameUI?.slideOut()
+            } else {
+                ingameMenu?.slideOut {
+                    isPaused = false
+                    checkMenuResults = false
+                    ingameMenu = null
+                    ingameUI?.slideIn()
+                }
+            }
+        }
+
+        if (checkMenuResults)
+            when (ingameMenu?.resultState) {
+                IngameMenu.ResultState.CONTINUE -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        ingameUI?.slideIn()
+                    }
+                }
+
+                IngameMenu.ResultState.RETURN -> {
+                    checkMenuResults = false
+
+                    transitionOut.start {
+                        returnState = BayState()
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_EASY -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.EASY, true)
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_NORMAL -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.NORMAL, true)
+                    }
+                }
+
+                IngameMenu.ResultState.RETRY_HARD -> {
+                    checkMenuResults = false
+
+                    ingameMenu?.slideOut {
+                        ingameMenu = null
+                        isPaused = false
+                        startFight(Difficulty.HARD, true)
+                    }
+                }
+
+                else -> {}
+            }
+
+        if (!fightEnded && (bosses.all { it.isDead } || Game.player.ship.isDead)) {
+            fightEnded = true
             ingameUI?.slideOut()
 
             bosses.forEach {
                 it.movementController.onEndFight()
             }
 
-            val results = FightResults(fightDuration, difficulty, bosses.sumOf { it.fullHealth }, bosses.sumOf { it.health }, Game.player.ship.health, Game.player.shootStatistics.shotsFired, Game.player.shootStatistics.shotsHit)
+            if (bosses.all { it.isDead }) {
+                Game.player.unlockFreePlay()
 
-            resultPanel = ResultPanel(results)
+                creditsUI = CreditsUI {
+                    transitionOut.start {
+                        returnState = BayState()
+                    }
+                }
+            } else {
+                finalFightFailedUI = FinalFightFailedUI()
+                finalFightFailedUI?.slideIn()
+                checkFinalFightFailedResults = true
+
+                Game.particles.add(ExplosionEffect(Game.player.ship.x, Game.player.ship.y))
+                Game.world.remove(Game.player.ship)
+            }
         }
+
+        if (checkFinalFightFailedResults)
+            when (finalFightFailedUI?.resultState) {
+                FinalFightFailedUI.ResultState.RETURN -> {
+                    checkFinalFightFailedResults = false
+
+                    transitionOut.start {
+                        returnState = BayState()
+                    }
+                }
+
+                FinalFightFailedUI.ResultState.RETRY_EASY -> {
+                    checkFinalFightFailedResults = false
+
+                    finalFightFailedUI?.slideOut {
+                        finalFightFailedUI = null
+                        startFight(Difficulty.EASY, true)
+                    }
+                }
+
+                FinalFightFailedUI.ResultState.RETRY_NORMAL -> {
+                    checkFinalFightFailedResults = false
+
+                    finalFightFailedUI?.slideOut {
+                        finalFightFailedUI = null
+                        startFight(Difficulty.NORMAL, true)
+                    }
+                }
+
+                FinalFightFailedUI.ResultState.RETRY_HARD -> {
+                    checkFinalFightFailedResults = false
+
+                    finalFightFailedUI?.slideOut {
+                        finalFightFailedUI = null
+                        startFight(Difficulty.HARD, true)
+                    }
+                }
+
+                else -> {}
+            }
 
         val pass = Game.graphics.beginMainRenderPass()
 
@@ -206,19 +333,8 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             transitionIn?.render(delta, renderer)
             transitionOut.render(delta, renderer)
             borderIndicator.render(delta, renderer)
-
-            if (showResults) {
-                when (resultPanel?.renderAndGetResultState(delta, renderer)) {
-                    ResultPanel.ResultState.RETURN -> transitionOut.start {
-                        returnState = CreditsState()
-                    }
-
-                    ResultPanel.ResultState.RETRY_EASY -> startFight(Difficulty.EASY, true)
-                    ResultPanel.ResultState.RETRY_NORMAL -> startFight(Difficulty.NORMAL, true)
-                    ResultPanel.ResultState.RETRY_HARD -> startFight(Difficulty.HARD, true)
-                    else -> {}
-                }
-            }
+            creditsUI?.render(delta, renderer)
+            finalFightFailedUI?.render(delta, renderer)
         }
 
         pass.end()

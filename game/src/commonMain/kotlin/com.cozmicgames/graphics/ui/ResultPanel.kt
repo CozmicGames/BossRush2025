@@ -31,7 +31,7 @@ class ResultPanel(private val results: FightResults) {
     val x = (Game.graphics.width - width) * 0.5f
     var y = (Game.graphics.height - height) * 0.5f
 
-    private val titleLabel = object : Label(if (results.isVictory) "Catched!" else "Failed!", 72.0f) {
+    private val titleLabel = object : Label(if (results.isVictory) "Catched!" else "You're dead!", 72.0f) {
         override var layer: Int
             get() = RenderLayers.UI + 1000
             set(value) {}

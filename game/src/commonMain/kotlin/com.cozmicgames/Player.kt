@@ -33,13 +33,16 @@ class Player {
     var wallet = 100
         private set
 
-    val unlockedBossIndices = hashSetOf(0,1,2,3)
+    val unlockedBossIndices = hashSetOf(0)
 
     val unlockedWeaponIndices = hashSetOf(0)
 
-    var newlyUnlockedBossIndex = Constants.FINAL_FIGHT_INDEX//-1
+    var newlyUnlockedBossIndex = -1
 
     var currentFightIndex = 0
+
+    var isFreePlay = false
+        private set
 
     fun gainCredits(amount: Int) {
         wallet += amount
@@ -47,5 +50,13 @@ class Player {
 
     fun spendCredits(amount: Int) {
         wallet -= amount
+    }
+
+    fun unlockFreePlay() {
+        isFreePlay = true
+        unlockedBossIndices += 0
+        unlockedBossIndices += 1
+        unlockedBossIndices += 2
+        unlockedBossIndices += 3
     }
 }
