@@ -1,0 +1,2137 @@
+{
+    "meta": {
+        "app": "https://littlekt.com",
+        "version": "1.0",
+        "image": "textures.png",
+        "format": "RGBA8888",
+        "scale": 1.0,
+        "size": {
+            "w": 1128,
+            "h": 1132
+        },
+        "related_multi_packs": []
+    },
+    "frames": [
+        {
+            "filename": "asteroid0",
+            "frame": {
+                "x": 1008,
+                "y": 456,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "background",
+            "frame": {
+                "x": 4,
+                "y": 556,
+                "w": 256,
+                "h": 256
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 256,
+                "h": 256
+            },
+            "sourceSize": {
+                "w": 256,
+                "h": 256
+            }
+        },
+        {
+            "filename": "bait_ball",
+            "frame": {
+                "x": 930,
+                "y": 782,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "baitblaster_preview",
+            "frame": {
+                "x": 732,
+                "y": 1008,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "border_indicator",
+            "frame": {
+                "x": 802,
+                "y": 1008,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss1_head",
+            "frame": {
+                "x": 872,
+                "y": 1008,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss1_head_dead",
+            "frame": {
+                "x": 930,
+                "y": 712,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss1_preview",
+            "frame": {
+                "x": 266,
+                "y": 556,
+                "w": 256,
+                "h": 256
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 256,
+                "h": 256
+            },
+            "sourceSize": {
+                "w": 256,
+                "h": 256
+            }
+        },
+        {
+            "filename": "boss1_tentacle",
+            "frame": {
+                "x": 790,
+                "y": 648,
+                "w": 160,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 160,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 160,
+                "h": 16
+            }
+        },
+        {
+            "filename": "boss2_body",
+            "frame": {
+                "x": 528,
+                "y": 556,
+                "w": 256,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 256,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 256,
+                "h": 96
+            }
+        },
+        {
+            "filename": "boss2_fin",
+            "frame": {
+                "x": 630,
+                "y": 1022,
+                "w": 64,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 48
+            }
+        },
+        {
+            "filename": "boss2_head",
+            "frame": {
+                "x": 968,
+                "y": 782,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss2_head_dead",
+            "frame": {
+                "x": 968,
+                "y": 852,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss2_preview",
+            "frame": {
+                "x": 4,
+                "y": 818,
+                "w": 256,
+                "h": 256
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 256,
+                "h": 256
+            },
+            "sourceSize": {
+                "w": 256,
+                "h": 256
+            }
+        },
+        {
+            "filename": "boss2_sword",
+            "frame": {
+                "x": 528,
+                "y": 658,
+                "w": 128,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 128,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 128,
+                "h": 32
+            }
+        },
+        {
+            "filename": "boss2_sword_dead",
+            "frame": {
+                "x": 662,
+                "y": 670,
+                "w": 128,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 128,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 128,
+                "h": 32
+            }
+        },
+        {
+            "filename": "boss2_tail",
+            "frame": {
+                "x": 710,
+                "y": 450,
+                "w": 32,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 96
+            }
+        },
+        {
+            "filename": "boss3_arm",
+            "frame": {
+                "x": 828,
+                "y": 626,
+                "w": 48,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 16
+            }
+        },
+        {
+            "filename": "boss3_claw_base",
+            "frame": {
+                "x": 934,
+                "y": 526,
+                "w": 32,
+                "h": 24
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 24
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 24
+            }
+        },
+        {
+            "filename": "boss3_claw_lower",
+            "frame": {
+                "x": 630,
+                "y": 830,
+                "w": 24,
+                "h": 12
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 24,
+                "h": 12
+            },
+            "sourceSize": {
+                "w": 24,
+                "h": 12
+            }
+        },
+        {
+            "filename": "boss3_claw_lower_dead",
+            "frame": {
+                "x": 764,
+                "y": 778,
+                "w": 24,
+                "h": 12
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 24,
+                "h": 12
+            },
+            "sourceSize": {
+                "w": 24,
+                "h": 12
+            }
+        },
+        {
+            "filename": "boss3_claw_upper",
+            "frame": {
+                "x": 926,
+                "y": 634,
+                "w": 12,
+                "h": 8
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 8
+            },
+            "sourceSize": {
+                "w": 12,
+                "h": 8
+            }
+        },
+        {
+            "filename": "boss3_foot",
+            "frame": {
+                "x": 732,
+                "y": 848,
+                "w": 24,
+                "h": 12
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 24,
+                "h": 12
+            },
+            "sourceSize": {
+                "w": 24,
+                "h": 12
+            }
+        },
+        {
+            "filename": "boss3_head",
+            "frame": {
+                "x": 828,
+                "y": 556,
+                "w": 96,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss3_head_dead",
+            "frame": {
+                "x": 662,
+                "y": 778,
+                "w": 96,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss3_leg_lower",
+            "frame": {
+                "x": 942,
+                "y": 1062,
+                "w": 48,
+                "h": 12
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 12
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 12
+            }
+        },
+        {
+            "filename": "boss3_leg_upper",
+            "frame": {
+                "x": 828,
+                "y": 626,
+                "w": 48,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 16
+            }
+        },
+        {
+            "filename": "boss3_preview",
+            "frame": {
+                "x": 528,
+                "y": 696,
+                "w": 128,
+                "h": 128
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 128,
+                "h": 128
+            },
+            "sourceSize": {
+                "w": 128,
+                "h": 128
+            }
+        },
+        {
+            "filename": "boss4_body",
+            "frame": {
+                "x": 936,
+                "y": 922,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss4_eyes",
+            "frame": {
+                "x": 942,
+                "y": 992,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss4_eyes_dead",
+            "frame": {
+                "x": 958,
+                "y": 106,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss4_head",
+            "frame": {
+                "x": 958,
+                "y": 176,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss4_preview",
+            "frame": {
+                "x": 796,
+                "y": 670,
+                "w": 128,
+                "h": 128
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 128,
+                "h": 128
+            },
+            "sourceSize": {
+                "w": 128,
+                "h": 128
+            }
+        },
+        {
+            "filename": "boss4_tail",
+            "frame": {
+                "x": 790,
+                "y": 450,
+                "w": 32,
+                "h": 192
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 192
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 192
+            }
+        },
+        {
+            "filename": "boss4_wing",
+            "frame": {
+                "x": 958,
+                "y": 246,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "boss_beak",
+            "frame": {
+                "x": 1046,
+                "y": 602,
+                "w": 16,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 32
+            }
+        },
+        {
+            "filename": "boss_heart",
+            "frame": {
+                "x": 1046,
+                "y": 640,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "button_hovered",
+            "frame": {
+                "x": 1076,
+                "y": 776,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "button_normal",
+            "frame": {
+                "x": 1076,
+                "y": 830,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "button_pressed",
+            "frame": {
+                "x": 1076,
+                "y": 884,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "credits",
+            "frame": {
+                "x": 1038,
+                "y": 782,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "crew_background",
+            "frame": {
+                "x": 528,
+                "y": 830,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "currency_icon",
+            "frame": {
+                "x": 1008,
+                "y": 494,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "energy_ball",
+            "frame": {
+                "x": 1046,
+                "y": 662,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "energy_beam",
+            "frame": {
+                "x": 1046,
+                "y": 684,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "fight_background",
+            "frame": {
+                "x": 1076,
+                "y": 938,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "fight_selection_poster",
+            "frame": {
+                "x": 930,
+                "y": 556,
+                "w": 72,
+                "h": 72
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 72,
+                "h": 72
+            },
+            "sourceSize": {
+                "w": 72,
+                "h": 72
+            }
+        },
+        {
+            "filename": "fight_selection_poster_mask",
+            "frame": {
+                "x": 968,
+                "y": 634,
+                "w": 72,
+                "h": 72
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 72,
+                "h": 72
+            },
+            "sourceSize": {
+                "w": 72,
+                "h": 72
+            }
+        },
+        {
+            "filename": "highscore_background",
+            "frame": {
+                "x": 1038,
+                "y": 896,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "hyper_harpoon_preview",
+            "frame": {
+                "x": 958,
+                "y": 316,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "icon",
+            "frame": {
+                "x": 930,
+                "y": 670,
+                "w": 32,
+                "h": 34
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 34
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 34
+            }
+        },
+        {
+            "filename": "lock_body",
+            "frame": {
+                "x": 1012,
+                "y": 992,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "lock_shackle",
+            "frame": {
+                "x": 1066,
+                "y": 992,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "logo",
+            "frame": {
+                "x": 4,
+                "y": 4,
+                "w": 948,
+                "h": 440
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 948,
+                "h": 440
+            },
+            "sourceSize": {
+                "w": 948,
+                "h": 440
+            }
+        },
+        {
+            "filename": "message_banner_background",
+            "frame": {
+                "x": 4,
+                "y": 1080,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "play_icon",
+            "frame": {
+                "x": 1008,
+                "y": 608,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "player_health",
+            "frame": {
+                "x": 1116,
+                "y": 112,
+                "w": 8,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 8,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 8,
+                "h": 16
+            }
+        },
+        {
+            "filename": "player_health_empty",
+            "frame": {
+                "x": 952,
+                "y": 782,
+                "w": 8,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 8,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 8,
+                "h": 16
+            }
+        },
+        {
+            "filename": "player_ship_base_fast",
+            "frame": {
+                "x": 58,
+                "y": 1080,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "player_ship_base_slow",
+            "frame": {
+                "x": 112,
+                "y": 1080,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "player_ship_base_still",
+            "frame": {
+                "x": 166,
+                "y": 1080,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "player_ship_template",
+            "frame": {
+                "x": 220,
+                "y": 1080,
+                "w": 48,
+                "h": 48
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "sourceSize": {
+                "w": 48,
+                "h": 48
+            }
+        },
+        {
+            "filename": "player_slot",
+            "frame": {
+                "x": 1070,
+                "y": 602,
+                "w": 52,
+                "h": 52
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 52,
+                "h": 52
+            },
+            "sourceSize": {
+                "w": 52,
+                "h": 52
+            }
+        },
+        {
+            "filename": "player_slot_background",
+            "frame": {
+                "x": 1070,
+                "y": 660,
+                "w": 52,
+                "h": 52
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 52,
+                "h": 52
+            },
+            "sourceSize": {
+                "w": 52,
+                "h": 52
+            }
+        },
+        {
+            "filename": "player_slot_empty",
+            "frame": {
+                "x": 1070,
+                "y": 718,
+                "w": 52,
+                "h": 52
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 52,
+                "h": 52
+            },
+            "sourceSize": {
+                "w": 52,
+                "h": 52
+            }
+        },
+        {
+            "filename": "rating_background",
+            "frame": {
+                "x": 528,
+                "y": 932,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "reelgun_preview",
+            "frame": {
+                "x": 958,
+                "y": 386,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "result_background",
+            "frame": {
+                "x": 764,
+                "y": 804,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "result_banner",
+            "frame": {
+                "x": 4,
+                "y": 450,
+                "w": 700,
+                "h": 100
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 700,
+                "h": 100
+            },
+            "sourceSize": {
+                "w": 700,
+                "h": 100
+            }
+        },
+        {
+            "filename": "return_icon",
+            "frame": {
+                "x": 732,
+                "y": 866,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "scattergun_preview",
+            "frame": {
+                "x": 934,
+                "y": 456,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "shield",
+            "frame": {
+                "x": 700,
+                "y": 1052,
+                "w": 16,
+                "h": 16
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 16,
+                "h": 16
+            },
+            "sourceSize": {
+                "w": 16,
+                "h": 16
+            }
+        },
+        {
+            "filename": "shockmine_preview",
+            "frame": {
+                "x": 1000,
+                "y": 712,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "shockwave",
+            "frame": {
+                "x": 266,
+                "y": 818,
+                "w": 256,
+                "h": 256
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 256,
+                "h": 256
+            },
+            "sourceSize": {
+                "w": 256,
+                "h": 256
+            }
+        },
+        {
+            "filename": "shop_background",
+            "frame": {
+                "x": 630,
+                "y": 848,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "star_empty",
+            "frame": {
+                "x": 972,
+                "y": 526,
+                "w": 24,
+                "h": 24
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 24,
+                "h": 24
+            },
+            "sourceSize": {
+                "w": 24,
+                "h": 24
+            }
+        },
+        {
+            "filename": "star_full",
+            "frame": {
+                "x": 700,
+                "y": 1022,
+                "w": 24,
+                "h": 24
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 24,
+                "h": 24
+            },
+            "sourceSize": {
+                "w": 24,
+                "h": 24
+            }
+        },
+        {
+            "filename": "todo_preview",
+            "frame": {
+                "x": 828,
+                "y": 450,
+                "w": 100,
+                "h": 100
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 100,
+                "h": 100
+            },
+            "sourceSize": {
+                "w": 100,
+                "h": 100
+            }
+        },
+        {
+            "filename": "transition",
+            "frame": {
+                "x": 630,
+                "y": 950,
+                "w": 96,
+                "h": 66
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 66
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 66
+            }
+        },
+        {
+            "filename": "tutorial_boss_back_fin",
+            "frame": {
+                "x": 1060,
+                "y": 4,
+                "w": 64,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 32
+            }
+        },
+        {
+            "filename": "tutorial_boss_body",
+            "frame": {
+                "x": 662,
+                "y": 708,
+                "w": 128,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 128,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 128,
+                "h": 64
+            }
+        },
+        {
+            "filename": "tutorial_boss_body_fin",
+            "frame": {
+                "x": 1038,
+                "y": 820,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "tutorial_boss_eyes",
+            "frame": {
+                "x": 1006,
+                "y": 922,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "tutorial_boss_eyes_dead",
+            "frame": {
+                "x": 1060,
+                "y": 42,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "tutorial_boss_head",
+            "frame": {
+                "x": 1046,
+                "y": 112,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "tutorial_boss_mouth",
+            "frame": {
+                "x": 882,
+                "y": 626,
+                "w": 38,
+                "h": 14
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 38,
+                "h": 14
+            },
+            "sourceSize": {
+                "w": 38,
+                "h": 14
+            }
+        },
+        {
+            "filename": "tutorial_boss_tail",
+            "frame": {
+                "x": 1046,
+                "y": 182,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "vortex0",
+            "frame": {
+                "x": 1046,
+                "y": 252,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "vortex1",
+            "frame": {
+                "x": 1046,
+                "y": 322,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "vortex2",
+            "frame": {
+                "x": 1046,
+                "y": 392,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "vortex3",
+            "frame": {
+                "x": 1046,
+                "y": 462,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "vortex_base",
+            "frame": {
+                "x": 1046,
+                "y": 532,
+                "w": 64,
+                "h": 64
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 64,
+                "h": 64
+            },
+            "sourceSize": {
+                "w": 64,
+                "h": 64
+            }
+        },
+        {
+            "filename": "wallet_background",
+            "frame": {
+                "x": 1008,
+                "y": 532,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "weapon_background",
+            "frame": {
+                "x": 732,
+                "y": 906,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "weapon_background_hovered",
+            "frame": {
+                "x": 834,
+                "y": 906,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "weapon_background_selected",
+            "frame": {
+                "x": 866,
+                "y": 804,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "weapon_mask",
+            "frame": {
+                "x": 958,
+                "y": 4,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "weapon_selected",
+            "frame": {
+                "x": 866,
+                "y": 804,
+                "w": 96,
+                "h": 96
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 96,
+                "h": 96
+            },
+            "sourceSize": {
+                "w": 96,
+                "h": 96
+            }
+        },
+        {
+            "filename": "weapon_slot",
+            "frame": {
+                "x": 1038,
+                "y": 858,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "weapon_slot_background",
+            "frame": {
+                "x": 1008,
+                "y": 570,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        },
+        {
+            "filename": "weapon_slot_empty",
+            "frame": {
+                "x": 748,
+                "y": 450,
+                "w": 32,
+                "h": 32
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 32,
+                "h": 32
+            },
+            "sourceSize": {
+                "w": 32,
+                "h": 32
+            }
+        }
+    ]
+}

@@ -6,7 +6,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -26,7 +25,7 @@ class Wing(override val boss: Boss4, private val left: Boolean, private val wing
 
     override val flipX = !left
 
-    override val texture = Game.textures.boss4wing.slice()
+    override val texture = Game.textures.boss4wing
 
     override val baseColor get() = boss.camouflageColor
 

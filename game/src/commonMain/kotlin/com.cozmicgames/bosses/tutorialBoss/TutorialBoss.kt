@@ -10,7 +10,6 @@ import com.cozmicgames.entities.worldObjects.animations.WorldObjectAnimation
 import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -277,7 +276,7 @@ class TutorialBoss : Boss {
         health--
         if (health < 0) health = 0
 
-        eyes.texture = Game.textures.bossTutorialEyesDead.slice()
+        eyes.texture = Game.textures.bossTutorialEyesDead
 
         movementController.onHit()
 

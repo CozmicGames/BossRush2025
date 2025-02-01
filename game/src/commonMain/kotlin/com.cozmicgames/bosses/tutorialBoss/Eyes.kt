@@ -2,7 +2,6 @@ package com.cozmicgames.bosses.tutorialBoss
 
 import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
-import com.littlekt.graphics.slice
 
 class Eyes(private val boss: TutorialBoss, private val eyesScale: Float, layer: Int) : EnemyPart("bossTutorialEyes") {
     override val renderLayer = layer
@@ -13,7 +12,7 @@ class Eyes(private val boss: TutorialBoss, private val eyesScale: Float, layer: 
 
     override val height get() = Game.textures.bossTutorialEyes.height * eyesScale
 
-    override var texture = Game.textures.bossTutorialEyes.slice()
+    override var texture = Game.textures.bossTutorialEyes
 
     override val flipX get() = boss.isFlipped
 }

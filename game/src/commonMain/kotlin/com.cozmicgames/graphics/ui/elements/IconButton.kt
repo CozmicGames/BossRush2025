@@ -5,10 +5,10 @@ import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.GUIElement
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
-import com.littlekt.graphics.Texture
+import com.littlekt.graphics.g2d.TextureSlice
 import kotlin.time.Duration
 
-open class IconButton(val texture: Texture, val color: Color, var scale: Float = 1.0f, var onClick: () -> Unit = {}) : GUIElement() {
+open class IconButton(val texture: TextureSlice, val color: Color, var scale: Float = 1.0f, var onClick: () -> Unit = {}) : GUIElement() {
     var isEnabled = true
 
     private var wasHovered = false

@@ -5,7 +5,7 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.utils.toHsv
 import com.littlekt.graphics.Color
-import com.littlekt.graphics.Texture
+import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.math.clamp
 import com.littlekt.math.geom.degrees
 import com.littlekt.util.seconds
@@ -33,7 +33,7 @@ class Vortex {
         private val BASE_COLOR = Color.fromHex("0a0215")
     }
 
-    private class Layer(val layer: Int, val texture: Texture, val color: Color, val rotationSpeed: Float, val scale: Float) {
+    private class Layer(val layer: Int, val texture: TextureSlice, val color: Color, val rotationSpeed: Float, val scale: Float) {
         var rotation = 0.0.degrees
     }
 

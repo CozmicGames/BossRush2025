@@ -6,13 +6,12 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class Fin(override val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int) : EnemyPart("boss2fin"), PlayerDamageSource, ProjectileSource, BossHittable {
     override val renderLayer = layer
 
-    override val texture = Game.textures.boss2fin.slice()
+    override val texture = Game.textures.boss2fin
 
     override val width = Game.textures.boss2fin.width * scale
 

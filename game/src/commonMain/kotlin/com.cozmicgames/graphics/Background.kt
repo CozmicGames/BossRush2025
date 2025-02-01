@@ -1,13 +1,13 @@
 package com.cozmicgames.graphics
 
 import com.cozmicgames.Game
-import com.littlekt.graphics.Texture
+import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.util.seconds
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.time.Duration
 
-class Background(private val texture: Texture) {
+class Background(private val texture: TextureSlice) {
     companion object {
         private const val TILE_SIZE = 1024.0f
         private const val PARALLAX_FACTOR = 0.3f

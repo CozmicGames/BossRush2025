@@ -7,7 +7,6 @@ import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -25,7 +24,7 @@ class Head(override val boss: Boss3, scale: Float, layer: Int) : EnemyPart("boss
 
     override val collider = Collider(getRectangleCollisionShape(0.5f, 0.3f), this)
 
-    override var texture = Game.textures.boss3head.slice()
+    override var texture = Game.textures.boss3head
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

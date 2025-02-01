@@ -5,7 +5,6 @@ import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
 import kotlin.math.sqrt
@@ -22,7 +21,7 @@ class Head(override val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPar
 
     override val collider = Collider(getCircleCollisionShape(0.75f), this)
 
-    override var texture = Game.textures.bossTutorialHead.slice()
+    override var texture = Game.textures.bossTutorialHead
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

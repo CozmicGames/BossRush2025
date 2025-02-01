@@ -5,13 +5,12 @@ import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class Tail(override val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialTail"), PlayerDamageSource, BossHittable {
     override val renderLayer = layer
 
-    override val texture = Game.textures.bossTutorialTail.slice()
+    override val texture = Game.textures.bossTutorialTail
 
     override val width = Game.textures.bossTutorialTail.width * scale
 

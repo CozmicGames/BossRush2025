@@ -6,7 +6,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class Head(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2head"), BossHittable, PlayerDamageSource, ProjectileSource {
@@ -22,7 +21,7 @@ class Head(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss
 
     override val collider = Collider(getCircleCollisionShape(0.9f), this)
 
-    override var texture = Game.textures.boss2head.slice()
+    override var texture = Game.textures.boss2head
 
     override val damageSourceX get() = boss.x
     override val damageSourceY get() = boss.y

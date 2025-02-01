@@ -4,7 +4,6 @@ import com.cozmicgames.Game
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
@@ -12,11 +11,11 @@ import kotlin.time.Duration
 class BeakPart(val beak: Beak, private val left: Boolean, layer: Int) : EnemyPart("boss1beak${if (left) "left" else "right"}") {
     override val renderLayer = layer
 
-    override val texture = Game.textures.boss1beak.slice()
+    override val texture = Game.textures.bossBeak
 
-    override val width get() = Game.textures.boss1beak.width * 2.0f
+    override val width get() = Game.textures.bossBeak.width * 2.0f
 
-    override val height get() = Game.textures.boss1beak.height * 2.0f
+    override val height get() = Game.textures.bossBeak.height * 2.0f
 
     override val flipX get() = !left
 

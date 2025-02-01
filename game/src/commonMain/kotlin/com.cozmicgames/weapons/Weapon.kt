@@ -1,11 +1,11 @@
 package com.cozmicgames.weapons
 
-import com.littlekt.graphics.Texture
+import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.math.geom.Angle
 import kotlin.time.Duration
 
 interface Weapon {
-    val previewTexture: Texture
+    val previewTexture: TextureSlice
     val price: Int
     val displayName: String
     val fireRate: Duration

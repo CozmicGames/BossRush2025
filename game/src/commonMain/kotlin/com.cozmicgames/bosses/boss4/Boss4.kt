@@ -15,7 +15,6 @@ import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -372,7 +371,7 @@ class Boss4(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             closeVortex(0.5.seconds)
 
             if (isFinalBattle) {
-                eyes.texture = Game.textures.boss4eyesDead.slice()
+                eyes.texture = Game.textures.boss4eyesDead
 
                 Game.world.remove(heart)
                 Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation + 90.0.degrees))

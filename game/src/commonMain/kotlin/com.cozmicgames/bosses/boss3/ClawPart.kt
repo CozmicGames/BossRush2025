@@ -5,7 +5,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -14,7 +13,7 @@ import kotlin.time.Duration
 class ClawPart(val claw: Claw, private val flip: Boolean, private val isUpper: Boolean, private val partScale: Float, layer: Int) : EnemyPart("boss3claw${if (isUpper) "upper" else "lower"}"), ProjectileSource {
     override val renderLayer = layer - 1
 
-    override var texture = if (isUpper) Game.textures.boss3clawUpper.slice() else Game.textures.boss3clawLower.slice()
+    override var texture = if (isUpper) Game.textures.boss3clawUpper else Game.textures.boss3clawLower
 
     override val width get() = texture.width * partScale
 

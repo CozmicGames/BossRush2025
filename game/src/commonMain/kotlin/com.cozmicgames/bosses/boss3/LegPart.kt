@@ -4,17 +4,14 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.cozmicgames.physics.RectangleCollisionShape
-import com.littlekt.graphics.Texture
-import com.littlekt.graphics.slice
+import com.littlekt.graphics.g2d.TextureSlice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
 import kotlin.time.Duration
 
-class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val index: Int, texture: Texture, val partScale: Float, layer: Int) : EnemyPart("boss3leg${index}"), ProjectileSource {
+class LegPart(val leg: Leg, val parent: LegPart? = null, val flip: Boolean, val index: Int, override val texture: TextureSlice, val partScale: Float, layer: Int) : EnemyPart("boss3leg${index}"), ProjectileSource {
     override val renderLayer = layer
-
-    override val texture = texture.slice()
 
     override val width get() = texture.width * partScale
 

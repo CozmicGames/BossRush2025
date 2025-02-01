@@ -6,7 +6,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import com.littlekt.util.seconds
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -18,13 +17,13 @@ class Heart(override val boss: Boss4, val heartScale: Float, layer: Int) : Enemy
 
     override val renderLayer = layer
 
-    override val width get() = Game.textures.boss1heart.width * heartScale * size * boss.bossScale
+    override val width get() = Game.textures.bossHeart.width * heartScale * size * boss.bossScale
 
-    override val height get() = Game.textures.boss1heart.height * heartScale * size * boss.bossScale
+    override val height get() = Game.textures.bossHeart.height * heartScale * size * boss.bossScale
 
     override val collider = Collider(CircleCollisionShape(width * 0.7f), this)
 
-    override val texture = Game.textures.boss1heart.slice()
+    override val texture = Game.textures.bossHeart
 
     override val baseColor get() = boss.camouflageColor
 

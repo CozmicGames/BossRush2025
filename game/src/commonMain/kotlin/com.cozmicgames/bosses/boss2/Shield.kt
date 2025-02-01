@@ -8,14 +8,13 @@ import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.MutableColor
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 import kotlin.time.Duration
 
 class Shield(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2mouth"), PlayerDamageSource, ProjectileSource, BossHittable {
     override val renderLayer = layer
 
-    override val texture = Game.textures.shield.slice()
+    override val texture = Game.textures.shield
 
     override val width = Game.textures.shield.width * scale
 

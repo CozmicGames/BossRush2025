@@ -9,7 +9,6 @@ import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
 import com.littlekt.graphics.MutableColor
-import com.littlekt.graphics.slice
 import com.littlekt.resources.Textures
 import kotlin.math.round
 import kotlin.time.Duration
@@ -84,7 +83,7 @@ open class HighscoreUI : GUIElement() {
             val place = places[place]
 
             if (place != null) {
-                previewImage.texture = Constants.BOSS_DESCRIPTORS[place.bossIndex].preview.slice()
+                previewImage.texture = Constants.BOSS_DESCRIPTORS[place.bossIndex].preview
 
                 difficultyIconColor.set(
                     when (place.difficulty) {

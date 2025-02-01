@@ -3,424 +3,314 @@ package com.cozmicgames.graphics
 import com.cozmicgames.Constants
 import com.littlekt.Context
 import com.littlekt.Releasable
-import com.littlekt.file.vfs.readTexture
-import com.littlekt.graphics.Texture
+import com.littlekt.file.vfs.readAtlas
 import com.littlekt.graphics.g2d.NinePatch
+import com.littlekt.graphics.g2d.TextureAtlas
 import com.littlekt.graphics.g2d.TextureSlice
-import com.littlekt.graphics.slice
 
 class Textures : Releasable {
+    private lateinit var atlas: TextureAtlas
+
     /**
      * UI
      */
-    lateinit var logo: Texture
-    lateinit var buttonNormal: Texture
+    lateinit var logo: TextureSlice
+    lateinit var buttonNormal: TextureSlice
     lateinit var buttonNormalNinePatch: NinePatch
-    lateinit var buttonHovered: Texture
+    lateinit var buttonHovered: TextureSlice
     lateinit var buttonHoveredNinePatch: NinePatch
-    lateinit var buttonPressed: Texture
+    lateinit var buttonPressed: TextureSlice
     lateinit var buttonPressedNinePatch: NinePatch
-    lateinit var starFull: Texture
-    lateinit var starEmpty: Texture
-    lateinit var resultBackground: Texture
+    lateinit var starFull: TextureSlice
+    lateinit var starEmpty: TextureSlice
+    lateinit var resultBackground: TextureSlice
     lateinit var resultBackgroundNinePatch: NinePatch
-    lateinit var ratingBackground: Texture
+    lateinit var ratingBackground: TextureSlice
     lateinit var ratingBackgroundNinePatch: NinePatch
-    lateinit var resultBanner: Texture
-    lateinit var returnIcon: Texture
-    lateinit var playIcon: Texture
-    lateinit var fightSelectionPoster: Texture
+    lateinit var resultBanner: TextureSlice
+    lateinit var returnIcon: TextureSlice
+    lateinit var playIcon: TextureSlice
+    lateinit var fightSelectionPoster: TextureSlice
     lateinit var fightSelectionPosterNinePatch: NinePatch
-    lateinit var fightSelectionPosterMask: Texture
+    lateinit var fightSelectionPosterMask: TextureSlice
     lateinit var fightSelectionPosterMaskNinePatch: NinePatch
-    lateinit var lockBody: Texture
-    lateinit var lockShackle: Texture
-    lateinit var todoPreview: Texture
-    lateinit var weaponBackground: Texture
+    lateinit var lockBody: TextureSlice
+    lateinit var lockShackle: TextureSlice
+    lateinit var todoPreview: TextureSlice
+    lateinit var weaponBackground: TextureSlice
     lateinit var weaponBackgroundNinePatch: NinePatch
-    lateinit var weaponBackgroundHovered: Texture
+    lateinit var weaponBackgroundHovered: TextureSlice
     lateinit var weaponBackgroundHoveredNinePatch: NinePatch
-    lateinit var weaponSelected: Texture
+    lateinit var weaponSelected: TextureSlice
     lateinit var weaponSelectedNinePatch: NinePatch
-    lateinit var weaponMask: Texture
+    lateinit var weaponMask: TextureSlice
     lateinit var weaponMaskNinePatch: NinePatch
-    lateinit var shopBackground: Texture
+    lateinit var shopBackground: TextureSlice
     lateinit var shopBackgroundNinePatch: NinePatch
-    lateinit var walletBackground: Texture
+    lateinit var walletBackground: TextureSlice
     lateinit var walletBackgroundNinePatch: NinePatch
-    lateinit var highscoreBackground: Texture
+    lateinit var highscoreBackground: TextureSlice
     lateinit var highscoreBackgroundNinePatch: NinePatch
-    lateinit var reelgunPreview: Texture
-    lateinit var hyperHarpoonPreview: Texture
-    lateinit var scattergunPreview: Texture
-    lateinit var baitblasterPreview: Texture
-    lateinit var shockminePreview: Texture
-    lateinit var currencyIcon: Texture
-    lateinit var messageBannerBackground: Texture
-    lateinit var checkmark: Texture
-    lateinit var playerSlot: Texture
-    lateinit var playerSlotEmpty: Texture
-    lateinit var playerSlotBackground: Texture
-    lateinit var weaponSlot: Texture
-    lateinit var weaponSlotEmpty: Texture
-    lateinit var weaponSlotBackground: Texture
-    lateinit var captain: Texture
-    lateinit var crewBackground: Texture
+    lateinit var reelgunPreview: TextureSlice
+    lateinit var hyperHarpoonPreview: TextureSlice
+    lateinit var scattergunPreview: TextureSlice
+    lateinit var baitblasterPreview: TextureSlice
+    lateinit var shockminePreview: TextureSlice
+    lateinit var currencyIcon: TextureSlice
+    lateinit var messageBannerBackground: TextureSlice
+    lateinit var playerSlot: TextureSlice
+    lateinit var playerSlotEmpty: TextureSlice
+    lateinit var playerSlotBackground: TextureSlice
+    lateinit var weaponSlot: TextureSlice
+    lateinit var weaponSlotEmpty: TextureSlice
+    lateinit var weaponSlotBackground: TextureSlice
+    lateinit var crewBackground: TextureSlice
     lateinit var crewBackgroundNinePatch: NinePatch
-    lateinit var fightBackground: Texture
+    lateinit var fightBackground: TextureSlice
     lateinit var fightBackgroundNinePatch: NinePatch
 
-    lateinit var borderIndicator: Texture
+    lateinit var borderIndicator: TextureSlice
     lateinit var borderIndicatorNinePatch: NinePatch
-    lateinit var transition: Texture
-    lateinit var debug: Texture
-    lateinit var debugNinePatch: NinePatch
+    lateinit var transition: TextureSlice
 
     /**
      * Projectiles and area effects
      */
-    lateinit var energyBall: Texture
-    lateinit var energyBeam: Texture
-    lateinit var baitBall: Texture
-    lateinit var shockwave: Texture
-    lateinit var shield: Texture
+    lateinit var energyBall: TextureSlice
+    lateinit var energyBeam: TextureSlice
+    lateinit var baitBall: TextureSlice
+    lateinit var shockwave: TextureSlice
+    lateinit var shield: TextureSlice
 
     /**
      * World
      */
-    lateinit var background: Texture
-    lateinit var asteroid0: Texture
-    lateinit var vortexBase: Texture
-    lateinit var vortex0: Texture
-    lateinit var vortex1: Texture
-    lateinit var vortex2: Texture
-    lateinit var vortex3: Texture
+    lateinit var background: TextureSlice
+    lateinit var asteroid0: TextureSlice
+    lateinit var vortexBase: TextureSlice
+    lateinit var vortex0: TextureSlice
+    lateinit var vortex1: TextureSlice
+    lateinit var vortex2: TextureSlice
+    lateinit var vortex3: TextureSlice
 
     /**
      * Player
      */
-    lateinit var playerShipBaseStill: Texture
-    lateinit var playerShipBaseSlow: Texture
-    lateinit var playerShipBaseFast: Texture
-    lateinit var playerShipTemplate: Texture
-    lateinit var playerHealthIndicator: Texture
-    lateinit var playerHealthEmptyIndicator: Texture
+    lateinit var playerShipBaseStill: TextureSlice
+    lateinit var playerShipBaseSlow: TextureSlice
+    lateinit var playerShipBaseFast: TextureSlice
+    lateinit var playerShipTemplate: TextureSlice
+    lateinit var playerHealthIndicator: TextureSlice
+    lateinit var playerHealthEmptyIndicator: TextureSlice
     lateinit var playerHealthIndicatorNinepatch: NinePatch
     lateinit var playerHealthEmptyIndicatorNinepatch: NinePatch
 
     /**
      * Tutorial boss
      */
-    lateinit var bossTutorialHead: Texture
-    lateinit var bossTutorialEyes: Texture
-    lateinit var bossTutorialEyesDead: Texture
-    lateinit var bossTutorialMouth: Texture
-    lateinit var bossTutorialBody: Texture
+    lateinit var bossTutorialHead: TextureSlice
+    lateinit var bossTutorialEyes: TextureSlice
+    lateinit var bossTutorialEyesDead: TextureSlice
+    lateinit var bossTutorialMouth: TextureSlice
+    lateinit var bossTutorialBody: TextureSlice
     lateinit var bossTutorialBodySlices: Array<TextureSlice>
-    lateinit var bossTutorialTail: Texture
-    lateinit var bossTutorialBackFin: Texture
-    lateinit var bossTutorialBodyFin: Texture
+    lateinit var bossTutorialTail: TextureSlice
+    lateinit var bossTutorialBackFin: TextureSlice
+    lateinit var bossTutorialBodyFin: TextureSlice
 
+
+    /**
+     * Bosses general
+     */
+    lateinit var bossBeak: TextureSlice
+    lateinit var bossHeart: TextureSlice
 
     /**
      * Boss 1 - Space octopus
      */
-    lateinit var boss1preview: Texture
-    lateinit var boss1head: Texture
-    lateinit var boss1headDead: Texture
-    lateinit var boss1beak: Texture
-    lateinit var boss1heart: Texture
-    lateinit var boss1tentacle: Texture
+    lateinit var boss1preview: TextureSlice
+    lateinit var boss1head: TextureSlice
+    lateinit var boss1headDead: TextureSlice
+    lateinit var boss1tentacle: TextureSlice
     lateinit var boss1tentacleSlices: Array<TextureSlice>
 
     /**
      * Boss 2 - Shark
      */
-    lateinit var boss2preview: Texture
-    lateinit var boss2head: Texture
-    lateinit var boss2headDead: Texture
-    lateinit var boss2sword: Texture
-    lateinit var boss2swordDead: Texture
-    lateinit var boss2fin: Texture
-    lateinit var boss2body: Texture
+    lateinit var boss2preview: TextureSlice
+    lateinit var boss2head: TextureSlice
+    lateinit var boss2headDead: TextureSlice
+    lateinit var boss2sword: TextureSlice
+    lateinit var boss2swordDead: TextureSlice
+    lateinit var boss2fin: TextureSlice
+    lateinit var boss2body: TextureSlice
     lateinit var boss2bodySlices: Array<TextureSlice>
-    lateinit var boss2tail: Texture
+    lateinit var boss2tail: TextureSlice
 
     /*
     * Boss 3 - Crab
      */
-    lateinit var boss3preview: Texture
-    lateinit var boss3head: Texture
-    lateinit var boss3headDead: Texture
-    lateinit var boss3arm: Texture
-    lateinit var boss3clawBase: Texture
-    lateinit var boss3clawUpper: Texture
-    lateinit var boss3clawLower: Texture
-    lateinit var boss3clawLowerDead: Texture
-    lateinit var boss3legUpper: Texture
-    lateinit var boss3legLower: Texture
-    lateinit var boss3foot: Texture
+    lateinit var boss3preview: TextureSlice
+    lateinit var boss3head: TextureSlice
+    lateinit var boss3headDead: TextureSlice
+    lateinit var boss3arm: TextureSlice
+    lateinit var boss3clawBase: TextureSlice
+    lateinit var boss3clawUpper: TextureSlice
+    lateinit var boss3clawLower: TextureSlice
+    lateinit var boss3clawLowerDead: TextureSlice
+    lateinit var boss3legUpper: TextureSlice
+    lateinit var boss3legLower: TextureSlice
+    lateinit var boss3foot: TextureSlice
 
     /*
     * Boss 4 - Ray
      */
-    lateinit var boss4preview: Texture
-    lateinit var boss4head: Texture
-    lateinit var boss4eyes: Texture
-    lateinit var boss4eyesDead: Texture
-    lateinit var boss4body: Texture
-    lateinit var boss4wing: Texture
-    lateinit var boss4tail: Texture
+    lateinit var boss4preview: TextureSlice
+    lateinit var boss4head: TextureSlice
+    lateinit var boss4eyes: TextureSlice
+    lateinit var boss4eyesDead: TextureSlice
+    lateinit var boss4body: TextureSlice
+    lateinit var boss4wing: TextureSlice
+    lateinit var boss4tail: TextureSlice
     lateinit var boss4tailSlices: Array<TextureSlice>
 
     suspend fun load(context: Context) {
-        logo = context.resourcesVfs["textures/logo.png"].readTexture()
-        buttonNormal = context.resourcesVfs["textures/ui/button_normal.png"].readTexture()
+        atlas = context.resourcesVfs["textures.json"].readAtlas()
+
+        logo = atlas["logo"].slice
+        buttonNormal = atlas["button_normal"].slice
         buttonNormalNinePatch = NinePatch(buttonNormal, 16, 16, 16, 16)
-        buttonHovered = context.resourcesVfs["textures/ui/button_hovered.png"].readTexture()
+        buttonHovered = atlas["button_hovered"].slice
         buttonHoveredNinePatch = NinePatch(buttonHovered, 16, 16, 16, 16)
-        buttonPressed = context.resourcesVfs["textures/ui/button_pressed.png"].readTexture()
+        buttonPressed = atlas["button_pressed"].slice
         buttonPressedNinePatch = NinePatch(buttonPressed, 16, 16, 16, 16)
-        starFull = context.resourcesVfs["textures/ui/star_full.png"].readTexture()
-        starEmpty = context.resourcesVfs["textures/ui/star_empty.png"].readTexture()
-        resultBackground = context.resourcesVfs["textures/ui/result_background.png"].readTexture()
+        starFull = atlas["star_full"].slice
+        starEmpty = atlas["star_empty"].slice
+        resultBackground = atlas["result_background"].slice
         resultBackgroundNinePatch = NinePatch(resultBackground, 32, 32, 32, 32)
-        ratingBackground = context.resourcesVfs["textures/ui/rating_background.png"].readTexture()
+        ratingBackground = atlas["rating_background"].slice
         ratingBackgroundNinePatch = NinePatch(ratingBackground, 32, 32, 32, 32)
-        resultBanner = context.resourcesVfs["textures/ui/result_banner.png"].readTexture()
-        returnIcon = context.resourcesVfs["textures/ui/return_icon.png"].readTexture()
-        playIcon = context.resourcesVfs["textures/ui/play_icon.png"].readTexture()
-        fightSelectionPoster = context.resourcesVfs["textures/ui/fight_selection_poster.png"].readTexture()
+        resultBanner = atlas["result_banner"].slice
+        returnIcon = atlas["return_icon"].slice
+        playIcon = atlas["play_icon"].slice
+        fightSelectionPoster = atlas["fight_selection_poster"].slice
         fightSelectionPosterNinePatch = NinePatch(fightSelectionPoster, 28, 28, 28, 28)
-        fightSelectionPosterMask = context.resourcesVfs["textures/ui/fight_selection_poster_mask.png"].readTexture()
+        fightSelectionPosterMask = atlas["fight_selection_poster_mask"].slice
         fightSelectionPosterMaskNinePatch = NinePatch(fightSelectionPoster, 28, 28, 28, 28)
-        lockBody = context.resourcesVfs["textures/ui/lock_body.png"].readTexture()
-        lockShackle = context.resourcesVfs["textures/ui/lock_shackle.png"].readTexture()
-        todoPreview = context.resourcesVfs["textures/todo_preview.png"].readTexture()
-        weaponBackground = context.resourcesVfs["textures/ui/weapon_background.png"].readTexture()
+        lockBody = atlas["lock_body"].slice
+        lockShackle = atlas["lock_shackle"].slice
+        todoPreview = atlas["todo_preview"].slice
+        weaponBackground = atlas["weapon_background"].slice
         weaponBackgroundNinePatch = NinePatch(weaponBackground, 32, 32, 32, 32)
-        weaponBackgroundHovered = context.resourcesVfs["textures/ui/weapon_background_hovered.png"].readTexture()
+        weaponBackgroundHovered = atlas["weapon_background_hovered"].slice
         weaponBackgroundHoveredNinePatch = NinePatch(weaponBackgroundHovered, 32, 32, 32, 32)
-        weaponSelected = context.resourcesVfs["textures/ui/weapon_selected.png"].readTexture()
+        weaponSelected = atlas["weapon_selected"].slice
         weaponSelectedNinePatch = NinePatch(weaponSelected, 32, 32, 32, 32)
-        weaponMask = context.resourcesVfs["textures/ui/weapon_mask.png"].readTexture()
+        weaponMask = atlas["weapon_mask"].slice
         weaponMaskNinePatch = NinePatch(weaponMask, 32, 32, 32, 32)
-        shopBackground = context.resourcesVfs["textures/ui/shop_background.png"].readTexture()
+        shopBackground = atlas["shop_background"].slice
         shopBackgroundNinePatch = NinePatch(shopBackground, 32, 32, 32, 32)
-        walletBackground = context.resourcesVfs["textures/ui/wallet_background.png"].readTexture()
+        walletBackground = atlas["wallet_background"].slice
         walletBackgroundNinePatch = NinePatch(walletBackground, 12, 12, 12, 12)
-        highscoreBackground = context.resourcesVfs["textures/ui/highscore_background.png"].readTexture()
+        highscoreBackground = atlas["highscore_background"].slice
         highscoreBackgroundNinePatch = NinePatch(highscoreBackground, 7, 7, 7, 7)
-        reelgunPreview = context.resourcesVfs["textures/weapons/reelgun_preview.png"].readTexture()
-        hyperHarpoonPreview = context.resourcesVfs["textures/weapons/hyper_harpoon_preview.png"].readTexture()
-        scattergunPreview = context.resourcesVfs["textures/weapons/scattergun_preview.png"].readTexture()
-        baitblasterPreview = context.resourcesVfs["textures/weapons/baitblaster_preview.png"].readTexture()
-        shockminePreview = context.resourcesVfs["textures/weapons/shockmine_preview.png"].readTexture()
-        currencyIcon = context.resourcesVfs["textures/ui/currency_icon.png"].readTexture()
-        messageBannerBackground = context.resourcesVfs["textures/ui/message_banner_background.png"].readTexture()
-        checkmark = context.resourcesVfs["textures/ui/checkmark.png"].readTexture()
-        playerSlot = context.resourcesVfs["textures/ui/player_slot.png"].readTexture()
-        playerSlotEmpty = context.resourcesVfs["textures/ui/player_slot_empty.png"].readTexture()
-        playerSlotBackground = context.resourcesVfs["textures/ui/player_slot_background.png"].readTexture()
-        weaponSlot = context.resourcesVfs["textures/ui/weapon_slot.png"].readTexture()
-        weaponSlotEmpty = context.resourcesVfs["textures/ui/weapon_slot_empty.png"].readTexture()
-        weaponSlotBackground = context.resourcesVfs["textures/ui/weapon_slot_background.png"].readTexture()
-        captain = context.resourcesVfs["textures/ui/captain.png"].readTexture()
-        crewBackground = context.resourcesVfs["textures/ui/crew_background.png"].readTexture()
+        reelgunPreview = atlas["reelgun_preview"].slice
+        hyperHarpoonPreview = atlas["hyper_harpoon_preview"].slice
+        scattergunPreview = atlas["scattergun_preview"].slice
+        baitblasterPreview = atlas["baitblaster_preview"].slice
+        shockminePreview = atlas["shockmine_preview"].slice
+        currencyIcon = atlas["currency_icon"].slice
+        messageBannerBackground = atlas["message_banner_background"].slice
+        playerSlot = atlas["player_slot"].slice
+        playerSlotEmpty = atlas["player_slot_empty"].slice
+        playerSlotBackground = atlas["player_slot_background"].slice
+        weaponSlot = atlas["weapon_slot"].slice
+        weaponSlotEmpty = atlas["weapon_slot_empty"].slice
+        weaponSlotBackground = atlas["weapon_slot_background"].slice
+        crewBackground = atlas["crew_background"].slice
         crewBackgroundNinePatch = NinePatch(crewBackground, 36, 36, 36, 36)
-        fightBackground = context.resourcesVfs["textures/ui/fight_background.png"].readTexture()
+        fightBackground = atlas["fight_background"].slice
         fightBackgroundNinePatch = NinePatch(fightBackground, 22, 22, 22, 22)
 
-        transition = context.resourcesVfs["textures/ui/transition.png"].readTexture()
-        borderIndicator = context.resourcesVfs["textures/ui/border_indicator.png"].readTexture()
+        transition = atlas["transition"].slice
+        borderIndicator = atlas["border_indicator"].slice
         borderIndicatorNinePatch = NinePatch(borderIndicator, 60, 60, 60, 60)
 
-        debug = context.resourcesVfs["textures/ui/debug.png"].readTexture()
-        debugNinePatch = NinePatch(debug, 4, 4, 4, 4)
+        energyBall = atlas["energy_ball"].slice
+        energyBeam = atlas["energy_beam"].slice
+        baitBall = atlas["bait_ball"].slice
+        shockwave = atlas["shockwave"].slice
+        shield = atlas["shield"].slice
 
-        energyBall = context.resourcesVfs["textures/projectiles/energy_ball.png"].readTexture()
-        energyBeam = context.resourcesVfs["textures/projectiles/energy_beam.png"].readTexture()
-        baitBall = context.resourcesVfs["textures/projectiles/bait_ball.png"].readTexture()
-        shockwave = context.resourcesVfs["textures/projectiles/shockwave.png"].readTexture()
-        shield = context.resourcesVfs["textures/projectiles/shield.png"].readTexture()
+        background = atlas["background"].slice
+        asteroid0 = atlas["asteroid0"].slice
+        vortexBase = atlas["vortex_base"].slice
+        vortex0 = atlas["vortex0"].slice
+        vortex1 = atlas["vortex1"].slice
+        vortex2 = atlas["vortex2"].slice
+        vortex3 = atlas["vortex3"].slice
 
-        background = context.resourcesVfs["textures/background.png"].readTexture()
-        asteroid0 = context.resourcesVfs["textures/asteroids/asteroid0.png"].readTexture()
-        vortexBase = context.resourcesVfs["textures/vortex/base.png"].readTexture()
-        vortex0 = context.resourcesVfs["textures/vortex/vortex0.png"].readTexture()
-        vortex1 = context.resourcesVfs["textures/vortex/vortex1.png"].readTexture()
-        vortex2 = context.resourcesVfs["textures/vortex/vortex2.png"].readTexture()
-        vortex3 = context.resourcesVfs["textures/vortex/vortex3.png"].readTexture()
-
-        playerShipBaseStill = context.resourcesVfs["textures/player/player_ship_base_still.png"].readTexture()
-        playerShipBaseSlow = context.resourcesVfs["textures/player/player_ship_base_slow.png"].readTexture()
-        playerShipBaseFast = context.resourcesVfs["textures/player/player_ship_base_fast.png"].readTexture()
-        playerShipTemplate = context.resourcesVfs["textures/player/player_ship_template.png"].readTexture()
-        playerHealthIndicator = context.resourcesVfs["textures/player/health.png"].readTexture()
+        playerShipBaseStill = atlas["player_ship_base_still"].slice
+        playerShipBaseSlow = atlas["player_ship_base_slow"].slice
+        playerShipBaseFast = atlas["player_ship_base_fast"].slice
+        playerShipTemplate = atlas["player_ship_template"].slice
+        playerHealthIndicator = atlas["player_health"].slice
         playerHealthIndicatorNinepatch = NinePatch(playerHealthIndicator, 3, 3, 3, 3)
-        playerHealthEmptyIndicator = context.resourcesVfs["textures/player/health_empty.png"].readTexture()
+        playerHealthEmptyIndicator = atlas["player_health_empty"].slice
         playerHealthEmptyIndicatorNinepatch = NinePatch(playerHealthEmptyIndicator, 3, 3, 3, 3)
 
-        bossTutorialHead = context.resourcesVfs["textures/tutorial_boss/head.png"].readTexture()
-        bossTutorialEyes = context.resourcesVfs["textures/tutorial_boss/eyes.png"].readTexture()
-        bossTutorialEyesDead = context.resourcesVfs["textures/tutorial_boss/eyes_dead.png"].readTexture()
-        bossTutorialMouth = context.resourcesVfs["textures/tutorial_boss/mouth.png"].readTexture()
-        bossTutorialBody = context.resourcesVfs["textures/tutorial_boss/body.png"].readTexture()
+        bossTutorialHead = atlas["tutorial_boss_head"].slice
+        bossTutorialEyes = atlas["tutorial_boss_eyes"].slice
+        bossTutorialEyesDead = atlas["tutorial_boss_eyes_dead"].slice
+        bossTutorialMouth = atlas["tutorial_boss_mouth"].slice
+        bossTutorialBody = atlas["tutorial_boss_body"].slice
         bossTutorialBodySlices = bossTutorialBody.slice(bossTutorialBody.width / Constants.BOSS_TUTORIAL_BODY_PARTS, bossTutorialBody.height)[0]
-        bossTutorialTail = context.resourcesVfs["textures/tutorial_boss/tail.png"].readTexture()
-        bossTutorialBackFin = context.resourcesVfs["textures/tutorial_boss/back_fin.png"].readTexture()
-        bossTutorialBodyFin = context.resourcesVfs["textures/tutorial_boss/body_fin.png"].readTexture()
+        bossTutorialTail = atlas["tutorial_boss_tail"].slice
+        bossTutorialBackFin = atlas["tutorial_boss_back_fin"].slice
+        bossTutorialBodyFin = atlas["tutorial_boss_body_fin"].slice
 
-        boss1preview = context.resourcesVfs["textures/boss1/preview.png"].readTexture()
-        boss1head = context.resourcesVfs["textures/boss1/head.png"].readTexture()
-        boss1headDead = context.resourcesVfs["textures/boss1/head_dead.png"].readTexture()
-        boss1beak = context.resourcesVfs["textures/boss1/beak.png"].readTexture()
-        boss1heart = context.resourcesVfs["textures/boss1/heart.png"].readTexture()
-        boss1tentacle = context.resourcesVfs["textures/boss1/tentacle.png"].readTexture()
+        bossBeak = atlas["boss_beak"].slice
+        bossHeart = atlas["boss_heart"].slice
+
+        boss1preview = atlas["boss1_preview"].slice
+        boss1head = atlas["boss1_head"].slice
+        boss1headDead = atlas["boss1_head_dead"].slice
+        boss1tentacle = atlas["boss1_tentacle"].slice
         boss1tentacleSlices = boss1tentacle.slice(boss1tentacle.width / Constants.BOSS1_TENTACLE_PARTS, boss1tentacle.height)[0]
 
-        boss2preview = context.resourcesVfs["textures/boss2/preview.png"].readTexture()
-        boss2head = context.resourcesVfs["textures/boss2/head.png"].readTexture()
-        boss2headDead = context.resourcesVfs["textures/boss2/head_dead.png"].readTexture()
-        boss2sword = context.resourcesVfs["textures/boss2/sword.png"].readTexture()
-        boss2swordDead = context.resourcesVfs["textures/boss2/sword_dead.png"].readTexture()
-        boss2fin = context.resourcesVfs["textures/boss2/fin.png"].readTexture()
-        boss2body = context.resourcesVfs["textures/boss2/body.png"].readTexture()
+        boss2preview = atlas["boss2_preview"].slice
+        boss2head = atlas["boss2_head"].slice
+        boss2headDead = atlas["boss2_head_dead"].slice
+        boss2sword = atlas["boss2_sword"].slice
+        boss2swordDead = atlas["boss2_sword_dead"].slice
+        boss2fin = atlas["boss2_fin"].slice
+        boss2body = atlas["boss2_body"].slice
         boss2bodySlices = boss2body.slice(boss2body.width / Constants.BOSS2_BODY_PARTS, boss2body.height)[0]
-        boss2tail = context.resourcesVfs["textures/boss2/tail.png"].readTexture()
+        boss2tail = atlas["boss2_tail"].slice
 
-        boss3preview = context.resourcesVfs["textures/boss3/preview.png"].readTexture()
-        boss3head = context.resourcesVfs["textures/boss3/head.png"].readTexture()
-        boss3headDead = context.resourcesVfs["textures/boss3/head_dead.png"].readTexture()
-        boss3arm = context.resourcesVfs["textures/boss3/arm.png"].readTexture()
-        boss3clawBase = context.resourcesVfs["textures/boss3/claw_base.png"].readTexture()
-        boss3clawUpper = context.resourcesVfs["textures/boss3/claw_upper.png"].readTexture()
-        boss3clawLower = context.resourcesVfs["textures/boss3/claw_lower.png"].readTexture()
-        boss3clawLowerDead = context.resourcesVfs["textures/boss3/claw_lower_dead.png"].readTexture()
-        boss3legUpper = context.resourcesVfs["textures/boss3/leg_upper.png"].readTexture()
-        boss3legLower = context.resourcesVfs["textures/boss3/leg_lower.png"].readTexture()
-        boss3foot = context.resourcesVfs["textures/boss3/foot.png"].readTexture()
+        boss3preview = atlas["boss3_preview"].slice
+        boss3head = atlas["boss3_head"].slice
+        boss3headDead = atlas["boss3_head_dead"].slice
+        boss3arm = atlas["boss3_arm"].slice
+        boss3clawBase = atlas["boss3_claw_base"].slice
+        boss3clawUpper = atlas["boss3_claw_upper"].slice
+        boss3clawLower = atlas["boss3_claw_lower"].slice
+        boss3clawLowerDead = atlas["boss3_claw_lower_dead"].slice
+        boss3legUpper = atlas["boss3_leg_upper"].slice
+        boss3legLower = atlas["boss3_leg_lower"].slice
+        boss3foot = atlas["boss3_foot"].slice
 
-        boss4preview = context.resourcesVfs["textures/boss4/preview.png"].readTexture()
-        boss4head = context.resourcesVfs["textures/boss4/head.png"].readTexture()
-        boss4eyes = context.resourcesVfs["textures/boss4/eyes.png"].readTexture()
-        boss4eyesDead = context.resourcesVfs["textures/boss4/eyes_dead.png"].readTexture()
-        boss4body = context.resourcesVfs["textures/boss4/body.png"].readTexture()
-        boss4wing = context.resourcesVfs["textures/boss4/wing.png"].readTexture()
-        boss4tail = context.resourcesVfs["textures/boss4/tail.png"].readTexture()
+        boss4preview = atlas["boss4_preview"].slice
+        boss4head = atlas["boss4_head"].slice
+        boss4eyes = atlas["boss4_eyes"].slice
+        boss4eyesDead = atlas["boss4_eyes_dead"].slice
+        boss4body = atlas["boss4_body"].slice
+        boss4wing = atlas["boss4_wing"].slice
+        boss4tail = atlas["boss4_tail"].slice
         boss4tailSlices = boss4tail.slice(boss4tail.width, boss4tail.height / Constants.BOSS4_TAIL_PARTS).map { it[0] }.toTypedArray()
     }
 
     override fun release() {
-        logo.release()
-        buttonNormal.release()
-        buttonHovered.release()
-        buttonPressed.release()
-        starFull.release()
-        starEmpty.release()
-        resultBackground.release()
-        ratingBackground.release()
-        resultBanner.release()
-        returnIcon.release()
-        playIcon.release()
-        fightSelectionPoster.release()
-        fightSelectionPosterMask.release()
-        lockBody.release()
-        lockShackle.release()
-        todoPreview.release()
-        weaponBackground.release()
-        weaponBackgroundHovered.release()
-        weaponSelected.release()
-        weaponMask.release()
-        shopBackground.release()
-        walletBackground.release()
-        highscoreBackground.release()
-        reelgunPreview.release()
-        hyperHarpoonPreview.release()
-        scattergunPreview.release()
-        baitblasterPreview.release()
-        shockminePreview.release()
-        currencyIcon.release()
-        messageBannerBackground.release()
-        checkmark.release()
-        playerSlot.release()
-        playerSlotEmpty.release()
-        playerSlotBackground.release()
-        weaponSlot.release()
-        weaponSlotEmpty.release()
-        weaponSlotBackground.release()
-        captain.release()
-        crewBackground.release()
-        fightBackground.release()
-
-        transition.release()
-        borderIndicator.release()
-        debug.release()
-
-        energyBall.release()
-        energyBeam.release()
-        baitBall.release()
-        shockwave.release()
-        shield.release()
-
-        background.release()
-        asteroid0.release()
-        vortexBase.release()
-        vortex0.release()
-        vortex1.release()
-        vortex2.release()
-        vortex3.release()
-
-        playerShipBaseStill.release()
-        playerShipBaseSlow.release()
-        playerShipBaseFast.release()
-        playerShipTemplate.release()
-        playerHealthIndicator.release()
-        playerHealthEmptyIndicator.release()
-
-        bossTutorialHead.release()
-        bossTutorialEyes.release()
-        bossTutorialEyesDead.release()
-        bossTutorialMouth.release()
-        bossTutorialBody.release()
-        bossTutorialTail.release()
-        bossTutorialBackFin.release()
-        bossTutorialBodyFin.release()
-
-        boss1preview.release()
-        boss1head.release()
-        boss1headDead.release()
-        boss1beak.release()
-        boss1heart.release()
-        boss1tentacle.release()
-
-        boss2preview.release()
-        boss2head.release()
-        boss2headDead.release()
-        boss2sword.release()
-        boss2swordDead.release()
-        boss2fin.release()
-        boss2body.release()
-        boss2tail.release()
-
-        boss3preview.release()
-        boss3head.release()
-        boss3headDead.release()
-        boss3arm.release()
-        boss3clawBase.release()
-        boss3clawUpper.release()
-        boss3clawLower.release()
-        boss3clawLowerDead.release()
-        boss3legUpper.release()
-        boss3legLower.release()
-        boss3foot.release()
-
-        boss4preview.release()
-        boss4head.release()
-        boss4eyes.release()
-        boss4eyesDead.release()
-        boss4body.release()
-        boss4wing.release()
-        boss4tail.release()
+        atlas.release()
     }
 }

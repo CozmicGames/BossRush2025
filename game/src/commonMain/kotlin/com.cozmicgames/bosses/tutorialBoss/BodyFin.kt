@@ -5,13 +5,12 @@ import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class BodyFin(override val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialBodyFin"), PlayerDamageSource, BossHittable {
     override val renderLayer = layer
 
-    override val texture = Game.textures.bossTutorialBodyFin.slice()
+    override val texture = Game.textures.bossTutorialBodyFin
 
     override val width = Game.textures.bossTutorialBodyFin.width * scale
 

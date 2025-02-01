@@ -6,7 +6,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
 import kotlin.math.sqrt
@@ -23,7 +22,7 @@ class Body(override val boss: Boss4, private val bodyScale: Float, layer: Int) :
 
     override val height get() = Game.textures.boss4body.height * bodyScale * boss.bossScale
 
-    override val texture = Game.textures.boss4body.slice()
+    override val texture = Game.textures.boss4body
 
     override val baseColor get() = boss.camouflageColor
 

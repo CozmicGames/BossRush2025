@@ -6,7 +6,6 @@ import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
-import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
 class Sword(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2sword"), PlayerDamageSource, ProjectileSource, BossHittable {
@@ -20,7 +19,7 @@ class Sword(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("bos
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.4f), this)
 
-    override var texture = Game.textures.boss2sword.slice()
+    override var texture = Game.textures.boss2sword
 
     override val damageSourceX get() = boss.x
 

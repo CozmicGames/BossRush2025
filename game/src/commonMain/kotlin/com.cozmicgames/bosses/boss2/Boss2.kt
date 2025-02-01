@@ -13,7 +13,6 @@ import com.cozmicgames.graphics.particles.effects.DeathSplatterEffect
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
 import com.littlekt.math.geom.sine
@@ -311,8 +310,8 @@ class Boss2(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             removeFromPhysics()
 
             if (isFinalBattle) {
-                head.texture = Game.textures.boss2headDead.slice()
-                sword.texture = Game.textures.boss2swordDead.slice()
+                head.texture = Game.textures.boss2headDead
+                sword.texture = Game.textures.boss2swordDead
 
                 Game.world.remove(heart)
                 Game.particles.add(DeathSplatterEffect(heart.x, heart.y, heart.rotation - 90.0.degrees))

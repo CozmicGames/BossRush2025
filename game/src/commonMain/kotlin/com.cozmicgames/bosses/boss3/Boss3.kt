@@ -12,7 +12,6 @@ import com.cozmicgames.graphics.RenderLayers
 import com.cozmicgames.graphics.particles.effects.DeathSplatterEffect
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.graphics.g2d.shape.ShapeRenderer
-import com.littlekt.graphics.slice
 import com.littlekt.input.Key
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.degrees
@@ -355,9 +354,9 @@ class Boss3(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
             removeFromPhysics()
 
             if (isFinalBattle) {
-                head.texture = Game.textures.boss3headDead.slice()
+                head.texture = Game.textures.boss3headDead
                 arms.forEach {
-                    it.claw.lowerClawPart.texture = Game.textures.boss3clawLowerDead.slice()
+                    it.claw.lowerClawPart.texture = Game.textures.boss3clawLowerDead
                 }
 
                 Game.world.remove(heart)
