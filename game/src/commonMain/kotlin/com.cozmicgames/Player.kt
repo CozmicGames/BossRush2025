@@ -30,7 +30,7 @@ class Player {
         HighscoreEntries()
     }
 
-    var wallet = 0
+    var wallet = 100
         private set
 
     val unlockedBossIndices = hashSetOf(0)

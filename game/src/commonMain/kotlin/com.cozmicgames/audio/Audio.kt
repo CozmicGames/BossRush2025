@@ -7,6 +7,7 @@ import com.littlekt.async.KtScope
 import com.littlekt.audio.AudioClip
 import com.littlekt.audio.AudioStream
 import com.littlekt.file.vfs.readAudioClip
+import com.littlekt.file.vfs.readAudioStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -126,7 +127,7 @@ class Audio() : Releasable {
 
     private var loopingSounds = arrayListOf<Sound>()
 
-    lateinit var themeSound: Sound
+    lateinit var themeMusic: Music
 
     lateinit var hoverSound: Sound
     lateinit var clickSound: Sound
@@ -144,7 +145,7 @@ class Audio() : Releasable {
     lateinit var teleportSound: Sound
 
     suspend fun load(context: Context) {
-        themeSound = SingleSound(context.resourcesVfs["audio/theme.wav"].readAudioClip())
+        themeMusic = SingleMusic(context.resourcesVfs["audio/theme.wav"].readAudioStream())
 
         hoverSound = SingleSound(context.resourcesVfs["audio/hover.ogg"].readAudioClip())
         clickSound = SingleSound(context.resourcesVfs["audio/click.ogg"].readAudioClip())
@@ -169,7 +170,7 @@ class Audio() : Releasable {
     }
 
     override fun release() {
-        themeSound.release()
+        themeMusic.release()
 
         hoverSound.release()
         clickSound.release()

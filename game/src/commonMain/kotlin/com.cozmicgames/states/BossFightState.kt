@@ -10,7 +10,6 @@ import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.FightResults
 import com.cozmicgames.utils.HighscoreEntry
-import com.littlekt.graphics.g2d.shape.ShapeRenderer
 import com.littlekt.input.Key
 import com.littlekt.math.Vec2f
 import com.littlekt.math.geom.degrees
@@ -307,12 +306,11 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             }
         }
 
-        pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
-            Game.player.ship.collider.drawDebug(renderer)
-            asteroids.drawDebug(renderer)
-
-            //boss.drawDebug(renderer)
-        }
+       //pass.renderShapes(playerCamera.camera) { renderer: ShapeRenderer ->
+       //    Game.player.ship.collider.drawDebug(renderer)
+       //    asteroids.drawDebug(renderer)
+       //    boss.drawDebug(renderer)
+       //}
 
         pass.end()
 

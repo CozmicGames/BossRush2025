@@ -132,7 +132,7 @@ open class HighscoreUI : GUIElement() {
 
         repeat(3) {
             highscoreEntries[it].getX = { Game.graphics.width - 380.0f + (360.0f - 300.0f) * 0.5f }
-            highscoreEntries[it].getY = { (45.0f + 8.0f) * it + 5.0f }
+            highscoreEntries[it].getY = { (45.0f * 3 + 8.0f * 2) - (45.0f + 8.0f) * it + 5.0f }
             highscoreEntries[it].getWidth = { 300.0f }
             highscoreEntries[it].getHeight = { 45.0f }
         }

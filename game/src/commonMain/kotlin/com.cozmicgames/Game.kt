@@ -54,6 +54,8 @@ class Game(context: Context) : ContextListener(context) {
         textures.load(this)
         audio.load(this)
 
+        js("document.querySelector('.loading-message').style.display = 'none';")
+
         onResize { width, height ->
             g.resize(width, height)
         }
