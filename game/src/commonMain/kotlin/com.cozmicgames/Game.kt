@@ -67,6 +67,7 @@ class Game(context: Context) : ContextListener(context) {
         onUpdate { delta ->
             upTime += delta
 
+            audio.update(delta)
             projectiles.update(delta)
             areaEffects.update(delta)
             controls.update(delta.seconds)

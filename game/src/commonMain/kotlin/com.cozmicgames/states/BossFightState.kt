@@ -62,6 +62,8 @@ class BossFightState(val desc: BossDesc, var difficulty: Difficulty) : GameState
             }
             transitionIn = null
         }
+
+        Game.audio.fadeMusicTo(Game.audio.fightMusic, 0.5f)
     }
 
     private fun startFight(difficulty: Difficulty, isRetry: Boolean) {

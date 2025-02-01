@@ -9,7 +9,6 @@ import com.cozmicgames.bosses.boss3.Boss3
 import com.cozmicgames.bosses.boss4.Boss4
 import com.cozmicgames.entities.worldObjects.AsteroidManager
 import com.cozmicgames.graphics.*
-import com.cozmicgames.graphics.particles.effects.ExplosionEffect
 import com.cozmicgames.graphics.ui.*
 import com.cozmicgames.utils.Difficulty
 import com.littlekt.input.Key
@@ -66,6 +65,8 @@ class FinalFightState(var difficulty: Difficulty) : GameState {
             }
             transitionIn = null
         }
+
+        Game.audio.fadeMusicTo(Game.audio.fightMusic, 0.5f)
     }
 
     private fun startFight(difficulty: Difficulty, isRetry: Boolean) {

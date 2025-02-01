@@ -61,7 +61,7 @@ class BayState() : GameState {
         shop.getY = { 0.0f }
 
         Game.audio.baySound.play(0.4f)
-        Game.audio.themeMusic.play(0.5f, true)
+        Game.audio.fadeMusicTo(Game.audio.themeMusic, 0.5f)
 
         transitionIn?.start {
             canInteract = true
