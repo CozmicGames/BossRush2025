@@ -1,18 +1,18 @@
 package com.cozmicgames.bosses.boss4
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
 import com.littlekt.math.geom.sine
 import kotlin.math.sqrt
 import kotlin.time.Duration
 
-class Head(private val boss: Boss4, private val headScale: Float, layer: Int) : EnemyPart("boss4head"), Hittable, PlayerDamageSource {
+class Head(override val boss: Boss4, private val headScale: Float, layer: Int) : EnemyPart("boss4head"), BossHittable, PlayerDamageSource {
     override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer

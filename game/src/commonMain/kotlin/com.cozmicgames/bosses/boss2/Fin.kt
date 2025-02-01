@@ -1,15 +1,15 @@
 package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
-class Fin(val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int) : EnemyPart("boss2fin"), PlayerDamageSource, ProjectileSource, Hittable {
+class Fin(override val boss: Boss2, override val flipY: Boolean, scale: Float, layer: Int) : EnemyPart("boss2fin"), PlayerDamageSource, ProjectileSource, BossHittable {
     override val renderLayer = layer
 
     override val texture = Game.textures.boss2fin.slice()

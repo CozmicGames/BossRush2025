@@ -1,9 +1,9 @@
 package com.cozmicgames.bosses.boss3
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
-import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.Angle
 import com.littlekt.math.geom.degrees
 import kotlin.math.pow
@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Leg(val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : Hittable, PlayerDamageSource {
+class Leg(override val boss: Boss3, val index: Int, val flip: Boolean, val layer: Int, val baseRotation: Angle, val scale: Float) : BossHittable, PlayerDamageSource {
     override val id = "boss3leg$index"
 
     override var x = 0.0f

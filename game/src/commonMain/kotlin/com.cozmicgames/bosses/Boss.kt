@@ -25,6 +25,8 @@ interface Boss {
     fun addToPhysics()
     fun removeFromPhysics()
     fun update(delta: Duration, isFighting: Boolean)
+    fun paralyze()
+    fun hit()
 
     fun renderSpecials(delta: Duration, renderer: Renderer) {}
 

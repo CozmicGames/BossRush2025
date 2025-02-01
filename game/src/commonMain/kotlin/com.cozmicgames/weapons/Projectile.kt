@@ -1,6 +1,7 @@
 package com.cozmicgames.weapons
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.bosses.BossTarget
 import com.cozmicgames.entities.worldObjects.AreaEffectSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
@@ -25,8 +26,13 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
 
         val collider = Collider(CircleCollisionShape((type.baseType as BulletProjectileType).size * 0.5f), this)
 
-        override fun onDamageHit() {
-            Game.projectiles.removeProjectile(this@Projectile)
+        fun checkCollision() {
+            Game.physics.checkCollision(collider, { it != collider }) {
+                if (it.userData is BossHittable) {
+                    it.userData.boss.paralyze()
+                    Game.projectiles.removeProjectile(this@Projectile)
+                }
+            }
         }
     }
 
@@ -65,6 +71,7 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
         distance = sqrt(dx * dx + dy * dy)
 
         bossTarget?.collider?.update(currentX, currentY)
+        bossTarget?.checkCollision()
 
         (particleEffect as? ShootEffect)?.let {
             it.x = startX
@@ -87,12 +94,12 @@ class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var
             if (areaEffectTimer <= 0.0.seconds) {
                 when (type) {
                     ProjectileType.SHOCK_MINE -> {
-                        Game.areaEffects.spawnEffect(this, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 16.0f, 50.0f, 3.5.seconds)
+                        Game.areaEffects.spawnEffect(this, AreaEffectType.SHOCKWAVE, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 24.0f, 60.0f, 3.5.seconds)
                         areaEffectTimer = 2.0.seconds
                     }
 
                     ProjectileType.BAIT_BALL -> {
-                        Game.areaEffects.spawnEffect(this, AreaEffectType.BAIT, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 12.0f, 20.0f, 1.0.seconds)
+                        Game.areaEffects.spawnEffect(this, AreaEffectType.BAIT, AreaEffectSourceType.MOVING, AreaEffectGrowthType.LINEAR, 16.0f, 20.0f, 1.0.seconds)
                         areaEffectTimer = 0.7.seconds
                     }
 

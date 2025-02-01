@@ -1,15 +1,15 @@
 package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
-class Tail(val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2tail"), PlayerDamageSource, ProjectileSource, Hittable {
+class Tail(override val boss: Boss2, scale: Float, layer: Int) : EnemyPart("boss2tail"), PlayerDamageSource, ProjectileSource, BossHittable {
     override val renderLayer = layer
 
     override val texture = Game.textures.boss2tail.slice()

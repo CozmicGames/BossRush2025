@@ -249,7 +249,7 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         heart.rotation = rotation
     }
 
-    fun paralyze() {
+    override fun paralyze() {
         if (isInvulnerable)
             return
 
@@ -263,7 +263,7 @@ class Boss1(override val difficulty: Difficulty, val isFinalBattle: Boolean = fa
         isParalyzedTimer = PARALYZED_TIME
     }
 
-    fun hit() {
+    override fun hit() {
         if (isInvulnerable || health <= 0)
             return
 

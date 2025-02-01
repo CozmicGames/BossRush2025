@@ -1,15 +1,15 @@
 package com.cozmicgames.bosses.boss1
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
-class Head(private val boss: Boss1, size: Float, layer: Int) : EnemyPart("boss1head"), Hittable, PlayerDamageSource {
+class Head(override val boss: Boss1, size: Float, layer: Int) : EnemyPart("boss1head"), BossHittable, PlayerDamageSource {
     override val canBeHit get() = !boss.isInvulnerable
 
     override val renderLayer = layer

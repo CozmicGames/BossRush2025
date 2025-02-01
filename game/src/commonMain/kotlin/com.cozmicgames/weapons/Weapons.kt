@@ -17,6 +17,7 @@ enum class Weapons : Weapon {
         override val projectileSpeedFalloff = 0.0f
         override val spread = 10.0.degrees
         override val isRandomSpread = true
+        override val tooltipText = "Fires single energy shots"
     },
     HYPER_HARPOON {
         override val previewTexture get() = Game.textures.hyperHarpoonPreview
@@ -30,6 +31,7 @@ enum class Weapons : Weapon {
         override val projectileSpeedFalloff = 0.0f
         override val spread = 0.0.degrees
         override val isRandomSpread = false
+        override val tooltipText = "A high-power beam weapon"
     },
     SHOCKMINE {
         override val previewTexture get() = Game.textures.shockminePreview
@@ -39,10 +41,11 @@ enum class Weapons : Weapon {
         override val canContinoousFire = false
         override val projectileType = ProjectileType.SHOCK_MINE
         override val projectileCount = 1
-        override val projectileSpeed = 200.0f
-        override val projectileSpeedFalloff = 1.0f
+        override val projectileSpeed = 300.0f
+        override val projectileSpeedFalloff = 1.2f
         override val spread = 0.0.degrees
         override val isRandomSpread = false
+        override val tooltipText = "Creates a shockwave to\npush monsters away\nLasts for 30 seconds"
     },
     BAITBLASTER {
         override val previewTexture get() = Game.textures.baitblasterPreview
@@ -52,9 +55,10 @@ enum class Weapons : Weapon {
         override val canContinoousFire = false
         override val projectileType = ProjectileType.BAIT_BALL
         override val projectileCount = 1
-        override val projectileSpeed = 200.0f
-        override val projectileSpeedFalloff = 1.0f
+        override val projectileSpeed = 300.0f
+        override val projectileSpeedFalloff = 1.2f
         override val spread = 0.0.degrees
         override val isRandomSpread = false
+        override val tooltipText = "Lures monsters and\nstuns them on impact\nLasts for 45 seconds"
     }
 }

@@ -3,6 +3,7 @@ package com.cozmicgames.graphics.ui
 import com.cozmicgames.Game
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
+import com.cozmicgames.graphics.ui.elements.Tooltip
 import com.cozmicgames.weapons.Weapon
 import com.cozmicgames.weapons.Weapons
 import com.littlekt.graphics.Color
@@ -10,7 +11,7 @@ import com.littlekt.graphics.MutableColor
 import com.littlekt.input.Pointer
 import kotlin.time.Duration
 
-class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement() {
+class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean, private val onResetSelection: () -> Unit) : GUIElement() {
     companion object {
         private val PRIMARY_COLOR = Color.fromHex("0065ff")
         private val SECONDARY_COLOR = Color.fromHex("ff5d00")
@@ -22,7 +23,7 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
         SECONDARY
     }
 
-    private var selectionState = when {
+    var selectionState = when {
         Game.player.primaryWeapon == weapon -> SelectionState.PRIMARY
         Game.player.secondaryWeapon == weapon -> SelectionState.SECONDARY
         else -> SelectionState.UNSELECTED
@@ -46,6 +47,8 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
     private var isUnlocking = false
     private val overlayColor = MutableColor()
     private var wasHovered = false
+
+    private val tooltip = Tooltip(weapon.tooltipText)
 
     init {
         nameLabel.getX = { x + (width - nameLabel.width) * 0.5f }
@@ -100,13 +103,21 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
             val isClickedSecondary = (Game.input.isJustTouched(Pointer.MOUSE_MIDDLE) || Game.input.isJustTouched(Pointer.MOUSE_RIGHT)) && isHovered
 
             if (isClickedPrimary) {
+                if (selectionState == SelectionState.SECONDARY)
+                    Game.player.secondaryWeapon = null
+
                 Game.audio.selectPrimarySound.play()
                 selectionState = SelectionState.PRIMARY
                 Game.player.primaryWeapon = weapon
+                onResetSelection()
             } else if (isClickedSecondary) {
+                if (selectionState == SelectionState.PRIMARY)
+                    Game.player.primaryWeapon = null
+
                 Game.audio.selectSecondarySound.play()
                 selectionState = SelectionState.SECONDARY
                 Game.player.secondaryWeapon = weapon
+                onResetSelection()
             }
 
             renderer.submit(layer) {
@@ -146,5 +157,8 @@ class ShopWeaponSlot(val weapon: Weapon, var isUnlocked: Boolean) : GUIElement()
         lock?.render(delta, renderer)
         nameLabel.render(delta, renderer)
         priceLabel?.render(delta, renderer)
+
+        if (isHovered)
+            tooltip.render(delta, renderer)
     }
 }

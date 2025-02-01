@@ -1,10 +1,10 @@
 package com.cozmicgames.bosses.tutorialBoss
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.cozmicgames.physics.RectangleCollisionShape
 import com.littlekt.graphics.slice
 import com.littlekt.math.geom.cosine
@@ -13,7 +13,7 @@ import com.littlekt.math.geom.sine
 import kotlin.math.sqrt
 import kotlin.time.Duration
 
-class Mouth(private val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialMouth"), Hittable, PlayerDamageSource {
+class Mouth(override val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialMouth"), BossHittable, PlayerDamageSource {
 
     override val renderLayer = layer
 

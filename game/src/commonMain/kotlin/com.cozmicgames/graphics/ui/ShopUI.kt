@@ -18,11 +18,7 @@ open class ShopUI : GUIElement() {
             get() = this@ShopUI.layer + 1
             set(value) {}
     }
-    private var weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
-        val slot = ShopWeaponSlot(weapon, index in Game.player.unlockedWeaponIndices)
-        slot.layer = layer + 1
-        slot
-    }
+    private lateinit var weaponSlots: List<ShopWeaponSlot>
     private val walletLabel = object : CurrencyLabel({ Game.player.wallet }, 24.0f) {
         override var layer: Int
             get() = this@ShopUI.layer + 2
@@ -35,6 +31,17 @@ open class ShopUI : GUIElement() {
     }
 
     init {
+        weaponSlots = Weapons.entries.mapIndexed { index, weapon ->
+            lateinit var slot: ShopWeaponSlot
+            slot = ShopWeaponSlot(weapon, index in Game.player.unlockedWeaponIndices) {
+                weaponSlots.forEach {
+                    if (it !== slot && it.selectionState == slot.selectionState)
+                        it.selectionState = ShopWeaponSlot.SelectionState.UNSELECTED
+                }
+            }
+            slot.layer = layer + 1
+            slot
+        }
 
         val spacing = 10.0f
 

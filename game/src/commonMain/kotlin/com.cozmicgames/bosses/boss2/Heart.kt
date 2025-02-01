@@ -1,12 +1,12 @@
 package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.ProjectileSource
 import com.cozmicgames.physics.CircleCollisionShape
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import com.littlekt.util.seconds
 import kotlin.math.sin
@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Heart(private val boss: Boss2, layer: Int) : EnemyPart("boss2heart"), Hittable, PlayerDamageSource, ProjectileSource {
+class Heart(override val boss: Boss2, layer: Int) : EnemyPart("boss2heart"), BossHittable, PlayerDamageSource, ProjectileSource {
     override val canBeHit get() = boss.isParalyzed
 
     override val renderLayer = layer

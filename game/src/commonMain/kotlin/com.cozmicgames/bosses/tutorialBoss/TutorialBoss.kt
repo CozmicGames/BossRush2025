@@ -251,7 +251,7 @@ class TutorialBoss : Boss {
         tail.rotation = tailAngle
     }
 
-    fun paralyze() {
+    override fun paralyze() {
         if (Game.player.tutorialStage < TutorialStage.PARALYZE.ordinal)
             return
 
@@ -262,7 +262,7 @@ class TutorialBoss : Boss {
         movementController.onParalyze()
     }
 
-    fun hit() {
+    override fun hit() {
         if (Game.player.tutorialStage < TutorialStage.HIT.ordinal)
             return
 

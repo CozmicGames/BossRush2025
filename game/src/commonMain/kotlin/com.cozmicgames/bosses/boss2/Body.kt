@@ -2,15 +2,15 @@ package com.cozmicgames.bosses.boss2
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.entities.worldObjects.animations.ParalyzeAnimation
-import com.cozmicgames.physics.Hittable
 import com.littlekt.math.geom.degrees
 import kotlin.math.pow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Body(val boss: Boss2, val scale: Float, layer: Int) : Hittable, PlayerDamageSource {
+class Body(override val boss: Boss2, val scale: Float, layer: Int) : BossHittable, PlayerDamageSource {
     override val id = "boss2body"
 
     override var x = 0.0f

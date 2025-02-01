@@ -1,14 +1,14 @@
 package com.cozmicgames.bosses.tutorialBoss
 
 import com.cozmicgames.Game
+import com.cozmicgames.bosses.BossHittable
 import com.cozmicgames.entities.worldObjects.EnemyPart
 import com.cozmicgames.entities.worldObjects.PlayerDamageSource
 import com.cozmicgames.physics.Collider
-import com.cozmicgames.physics.Hittable
 import com.littlekt.graphics.slice
 import kotlin.math.sqrt
 
-class BodyFin(val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialBodyFin"), PlayerDamageSource, Hittable {
+class BodyFin(override val boss: TutorialBoss, scale: Float, layer: Int) : EnemyPart("bossTutorialBodyFin"), PlayerDamageSource, BossHittable {
     override val renderLayer = layer
 
     override val texture = Game.textures.bossTutorialBodyFin.slice()

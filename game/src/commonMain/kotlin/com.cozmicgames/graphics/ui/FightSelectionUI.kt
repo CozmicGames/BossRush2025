@@ -2,19 +2,16 @@ package com.cozmicgames.graphics.ui
 
 import com.cozmicgames.Constants
 import com.cozmicgames.Game
-import com.cozmicgames.bosses.boss1.Boss1Desc
-import com.cozmicgames.bosses.boss2.Boss2Desc
-import com.cozmicgames.bosses.boss3.Boss3Desc
-import com.cozmicgames.bosses.boss4.Boss4Desc
 import com.cozmicgames.graphics.Renderer
 import com.cozmicgames.graphics.ui.elements.Label
-import com.cozmicgames.states.GameState
 import com.cozmicgames.utils.Difficulty
 import com.cozmicgames.utils.Easing
 import com.littlekt.graphics.Color
 import com.littlekt.graphics.HAlign
 import com.littlekt.graphics.MutableColor
 import com.littlekt.math.clamp
+import com.littlekt.util.seconds
+import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -39,7 +36,7 @@ open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElemen
 
             return if (timer > TRANSITION_TIME_PER_POSTER) {
                 if (index == selectionPosters.lastIndex)
-                    null //TODO: transition to final fight
+                    null
                 else
                     PosterTransitionStage(index + 1)
             } else this
@@ -128,14 +125,14 @@ open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElemen
 
     init {
         upperLabel.getX = { Game.graphics.width * 0.5f }
-        upperLabel.getY = { 560.0f }
+        upperLabel.getY = { 560.0f + (sin(Game.upTime.seconds * 2.0f) * 0.5f + 0.5f) * 10.0f }
         upperLabel.shadowOffsetX = 3.0f
         upperLabel.shadowOffsetY = -3.0f
         upperLabel.shadowColor = labelShadowColor
         upperLabel.hAlign = HAlign.CENTER
 
         lowerLabel.getX = { Game.graphics.width * 0.5f }
-        lowerLabel.getY = { 520.0f }
+        lowerLabel.getY = { 520.0f + (sin(Game.upTime.seconds * 2.0f) * 0.5f + 0.5f) * 10.0f }
         lowerLabel.shadowOffsetX = 3.0f
         lowerLabel.shadowOffsetY = -3.0f
         lowerLabel.shadowColor = labelShadowColor

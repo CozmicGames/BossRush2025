@@ -12,6 +12,8 @@ open class IconButton(val texture: Texture, val color: Color, var scale: Float =
     var isEnabled = true
 
     private var wasHovered = false
+    var isHovered = false
+        private set
 
     override fun renderElement(delta: Duration, renderer: Renderer) {
         val minX = x
@@ -19,7 +21,7 @@ open class IconButton(val texture: Texture, val color: Color, var scale: Float =
         val maxX = x + width
         val maxY = y + height
 
-        val isHovered = isEnabled && Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
+        isHovered = isEnabled && Game.input.x.toFloat() in minX..maxX && (Game.graphics.height - Game.input.y - 1).toFloat() in minY..maxY
         val isClicked = isEnabled && Game.input.justTouched && isHovered
 
         if (!wasHovered && isHovered)

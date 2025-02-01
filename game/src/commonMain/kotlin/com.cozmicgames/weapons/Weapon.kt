@@ -16,4 +16,5 @@ interface Weapon {
     val projectileSpeedFalloff: Float
     val spread: Angle
     val isRandomSpread: Boolean
+    val tooltipText: String
 }
