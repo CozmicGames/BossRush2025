@@ -55,7 +55,7 @@ class ProjectileManager {
 
             if (nearestCollider != null) {
                 if (nearestCollider.userData is Hittable && nearestCollider.userData.canBeHit) {
-                    if(projectile.type == ProjectileType.BAIT_BALL)
+                    if (projectile.type == ProjectileType.BAIT_BALL)
                         nearestCollider.userData.onBaitHit()
                     else
                         nearestCollider.userData.onDamageHit()
@@ -107,7 +107,7 @@ class ProjectileManager {
             Game.particles.add(particleEffect)
         }
 
-        val projectile = Projectile(fromSource, type, x, y, direction, speed, speedFalloff)
+        val projectile = Projectile(fromSource, type, x, y, direction, speed, speedFalloff, fromSource.isStunMode)
         projectile.particleEffect = particleEffect
         projectile.onAdded()
         projectiles += projectile
@@ -124,13 +124,18 @@ class ProjectileManager {
             val x = it.currentX
             val y = it.currentY
 
+            val color = if (it.isStunMode)
+                it.type.stunColor
+            else
+                it.type.killColor
+
             when (val baseType = type.baseType) {
-                is BulletProjectileType -> baseType.render(batch, x, y)
+                is BulletProjectileType -> baseType.render(batch, x, y, color)
                 is BeamProjectileType -> {
                     val startX = it.startX
                     val startY = it.startY
 
-                    baseType.render(batch, startX, startY, x, y)
+                    baseType.render(batch, startX, startY, x, y, color)
                 }
             }
         }

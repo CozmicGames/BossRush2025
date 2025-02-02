@@ -83,7 +83,7 @@ open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElemen
             labelShadowColor.a = colorFactor
 
             val posterFactor = Easing.CUBIC_IN((timer / TRANSITION_TIME_FINAL_POSTER).toFloat()).clamp(0.0f, 1.0f)
-            finalFightSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT + (230.0f + Constants.BOSS_SELECTION_POSTER_HEIGHT) * posterFactor }
+            finalFightSelectionPoster.getY = { -Constants.BOSS_SELECTION_POSTER_HEIGHT + (250.0f + Constants.BOSS_SELECTION_POSTER_HEIGHT) * posterFactor }
 
             timer += delta
 
@@ -107,7 +107,7 @@ open class FightSelectionUI(val onSelect: (Int, Difficulty) -> Unit) : GUIElemen
     }
 
     private val selectionPosters = List(4) {
-        object : SelectionPoster(Constants.BOSS_DESCRIPTORS[it], it in Game.player.unlockedBossIndices, onSelect) {
+        object : SelectionPoster(Constants.BOSS_DESCRIPTORS[it], it in Game.player.unlockedBossIndices || Game.player.isFreePlay, onSelect) {
             override var layer: Int
                 get() = this@FightSelectionUI.layer + 1
                 set(value) {}

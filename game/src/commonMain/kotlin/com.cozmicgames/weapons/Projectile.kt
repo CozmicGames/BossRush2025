@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var startX: Float, var startY: Float, var direction: Angle, var speed: Float, val speedFalloff: Float) : AreaEffectSource {
+class Projectile(val fromSource: ProjectileSource, val type: ProjectileType, var startX: Float, var startY: Float, var direction: Angle, var speed: Float, val speedFalloff: Float, val isStunMode: Boolean) : AreaEffectSource {
     private inner class BaitTarget : BossTarget {
         override val id = "BaitBall${fromSource.projectileSourceId}"
 

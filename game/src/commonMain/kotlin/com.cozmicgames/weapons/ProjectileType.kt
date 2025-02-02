@@ -41,15 +41,15 @@ enum class ProjectileType(val baseType: ProjectileBaseType, val stunColor: Color
 sealed interface ProjectileBaseType
 
 class BulletProjectileType(val textureGetter: () -> TextureSlice, val size: Float) : ProjectileBaseType {
-    fun render(batch: SpriteBatch, x: Float, y: Float) {
-        batch.draw(textureGetter(), x, y, originX = size * 0.5f, originY = size * 0.5f, width = size, height = size)
+    fun render(batch: SpriteBatch, x: Float, y: Float, color: Color) {
+        batch.draw(textureGetter(), x, y, originX = size * 0.5f, originY = size * 0.5f, width = size, height = size, color = color)
     }
 }
 
 class BeamProjectileType(val maxDistance: Float, val textureGetter: () -> TextureSlice) : ProjectileBaseType {
     fun getLifetime(distance: Float) = (1.0f - distance / maxDistance).clamp(0.0f, 1.0f)
 
-    fun render(batch: SpriteBatch, startX: Float, startY: Float, x: Float, y: Float) {
+    fun render(batch: SpriteBatch, startX: Float, startY: Float, x: Float, y: Float, color: Color) {
         val texture = textureGetter()
 
         val centerX = (startX + x) * 0.5f
@@ -62,6 +62,6 @@ class BeamProjectileType(val maxDistance: Float, val textureGetter: () -> Textur
         val height = texture.height.toFloat()
         val angle = atan2(y - startY, x - startX).radians
 
-        batch.draw(texture, centerX, centerY, width * 0.5f, height * 0.5f, width, height, rotation = angle)
+        batch.draw(texture, centerX, centerY, width * 0.5f, height * 0.5f, width, height, rotation = angle, color = color)
     }
 }

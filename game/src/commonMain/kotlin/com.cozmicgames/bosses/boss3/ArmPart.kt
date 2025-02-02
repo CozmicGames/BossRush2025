@@ -13,9 +13,9 @@ import kotlin.time.Duration
 open class ArmPart(val arm: Arm, val parent: ArmPart? = null, val flip: Boolean, val index: Int, override val texture: TextureSlice, val partScale: Float, layer: Int) : EnemyPart("boss3arm${index}"), ProjectileSource {
     override val renderLayer = layer
 
-    override val width get() = texture.texture.width * partScale
+    override val width get() = texture.width * partScale
 
-    override val height get() = texture.texture.height * partScale
+    override val height get() = texture.height * partScale
 
     override val collider = Collider(getRectangleCollisionShape(scaleY = 0.8f - index * 0.1f), arm)
 
