@@ -32,6 +32,8 @@ class GameLogo : GUIElement() {
         var timer = 0.0.seconds
 
         override fun update(delta: Duration): Stage {
+            color.a = 1.0f
+
             timer += delta
 
             return if (timer > 0.5.seconds) Stage2() else this
@@ -42,6 +44,8 @@ class GameLogo : GUIElement() {
         var timer = 0.0.seconds
 
         override fun update(delta: Duration): Stage? {
+            color.a = 1.0f
+
             val factor = (timer / 0.7.seconds).toFloat().clamp(0.0f, 1.0f)
 
             offsetY = Easing.QUAD_IN_OUT(factor) * 100.0f
